@@ -13,7 +13,7 @@ class UpdatePengelolaRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return auth()->check();
     }
 
     /**
@@ -23,8 +23,17 @@ class UpdatePengelolaRequest extends FormRequest
      */
     public function rules()
     {
+        $id = request('id') ?? NULL;
+
         return [
             //
+            'nama' => 'required|string|max:255|unique:pengelolas,nama,' . $id,
+            'alamat' => 'required|string',
+            'telp' => 'nullable|numeric',
+            'email' => 'nullable|string|max:255|email|unique:pengelolas,email,' . $id,
+            'website' => 'nullable|string|max:255|url',
+            'keterangan' => 'nullable|string|max:255',
+            'sebagai' => 'required|string|max:255',
         ];
     }
 }

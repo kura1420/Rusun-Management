@@ -13,7 +13,7 @@ class StorePengelolaRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return auth()->check();
     }
 
     /**
@@ -25,6 +25,13 @@ class StorePengelolaRequest extends FormRequest
     {
         return [
             //
+            'nama' => 'required|string|max:255|unique:pengelolas',
+            'alamat' => 'required|string',
+            'telp' => 'nullable|numeric',
+            'email' => 'nullable|string|max:255|email|unique:pengelolas',
+            'website' => 'nullable|string|max:255|url',
+            'keterangan' => 'nullable|string|max:255',
+            'sebagai' => 'required|string|max:255',
         ];
     }
 }

@@ -13,7 +13,7 @@ class UpdatePengembangRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return auth()->check();
     }
 
     /**
@@ -25,6 +25,12 @@ class UpdatePengembangRequest extends FormRequest
     {
         return [
             //
+            'nama' => 'required|string|max:255|unique:pengembangs',
+            'alamat' => 'required|string',
+            'telp' => 'nullable|numeric|unique:pengembangs',
+            'email' => 'nullable|string|max:255|email|unique:pengembangs',
+            'website' => 'nullable|string|max:255|url',
+            'keterangan' => 'nullable|string',
         ];
     }
 }
