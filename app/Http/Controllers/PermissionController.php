@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePermissionRequest;
 use App\Http\Requests\UpdatePermissionRequest;
+use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Permission;
 
 class PermissionController extends Controller
@@ -28,7 +29,7 @@ class PermissionController extends Controller
             ->get()
             ->map(fn($row) => [
                 $row->name,
-                $row->guard_name,
+                strtoupper($row->guard_name),
                 '<nobr><a href="'.route(self::URL .'edit', $row->id).'" class="btn btn-info btn-sm" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a></nobr>',
             ]);
 
@@ -70,10 +71,7 @@ class PermissionController extends Controller
     public function store(StorePermissionRequest $request)
     {
         //
-        $input = $request->all();
-        $input['guard_name'] = 'web';
-
-        Permission::create($input);
+        Permission::create($request->all());
 
         return redirect()
             ->route(self::URL . 'index')
@@ -97,13 +95,13 @@ class PermissionController extends Controller
      * @param  \App\Models\Permission  $permission
      * @return \Illuminate\Http\Response
      */
-    public function edit(Permission $permission)
+    public function edit($id)
     {
         //
         $title = self::TITLE;
         $subTitle = 'Edit Data';
 
-        $row = $permission;
+        $row = DB::table('permissions')->where('id', $id)->first();
 
         return view(self::FOLDER_VIEW . 'edit', compact('title', 'subTitle', 'row'));
     }
@@ -115,10 +113,14 @@ class PermissionController extends Controller
      * @param  \App\Models\Permission  $permission
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdatePermissionRequest $request, Permission $permission)
+    public function update(UpdatePermissionRequest $request, $id)
     {
         //
-        $permission->update($request->all());
+        $input = $request->all();
+
+        unset($input['_token'], $input['_method']);
+
+        DB::table('permissions')->where('id', $id)->update($input);
 
         return redirect()
             ->route(self::URL . 'index')

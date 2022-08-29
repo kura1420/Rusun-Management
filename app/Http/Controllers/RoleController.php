@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreRoleRequest;
 use App\Http\Requests\UpdateRoleRequest;
+use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
@@ -28,7 +29,7 @@ class RoleController extends Controller
             ->get()
             ->map(fn($row) => [
                 $row->name,
-                $row->guard_name,
+                strtoupper($row->guard_name),
                 '<nobr><a href="'.route(self::URL .'edit', $row->id).'" class="btn btn-info btn-sm" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a></nobr>',
             ]);
 
@@ -70,10 +71,7 @@ class RoleController extends Controller
     public function store(StoreRoleRequest $request)
     {
         //
-        $input = $request->all();
-        $input['guard_name'] = 'web';
-
-        Role::create($input);
+        Role::create($request->all());
 
         return redirect()
             ->route(self::URL . 'index')
@@ -97,13 +95,13 @@ class RoleController extends Controller
      * @param  \App\Models\Role  $role
      * @return \Illuminate\Http\Response
      */
-    public function edit(Role $role)
+    public function edit($id)
     {
         //
         $title = self::TITLE;
         $subTitle = 'Edit Data';
 
-        $row = $role;
+        $row = DB::table('roles')->where('id', $id)->first();
 
         return view(self::FOLDER_VIEW . 'edit', compact('title', 'subTitle', 'row'));
     }
@@ -115,10 +113,13 @@ class RoleController extends Controller
      * @param  \App\Models\Role  $role
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateRoleRequest $request, Role $role)
+    public function update(UpdateRoleRequest $request, $id)
     {
         //
-        $role->update($request->all());
+        $input = $request->all();
+        unset($input['_token'], $input['_method']);
+
+        DB::table('roles')->where('id', $id)->update($input);
 
         return redirect()
             ->route(self::URL . 'index')

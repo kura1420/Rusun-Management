@@ -3,6 +3,7 @@
 use App\Http\Controllers\PengelolaController;
 use App\Http\Controllers\PengembangController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\RestController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -73,7 +74,7 @@ Route::middleware(['auth'])->group(function () {
         
                 Route::post('/', 'store')->name('store');
                 Route::put('/{id}', 'update')->name('update');
-                Route::delete('/{id}', 'destroy')->name('destroy');
+                Route::delete('/delete', 'destroy')->name('destroy');
             });
         }
     );
@@ -87,7 +88,18 @@ Route::middleware(['auth'])->group(function () {
         
                 Route::post('/', 'store')->name('store');
                 Route::put('/{id}', 'update')->name('update');
-                Route::delete('/{id}', 'destroy')->name('destroy');
+                Route::delete('/delete', 'destroy')->name('destroy');
+            });
+        }
+    );
+
+    Route::group(['prefix' => 'rest', 'as' => 'rest.'],
+        function () {
+            Route::controller(RestController::class)->group(function () {
+                Route::get('/provinsi', 'provinsis')->name('provinsis');
+                Route::get('/kotas', 'kotas')->name('kotas');
+                Route::get('/kecamatans', 'kecamatans')->name('kecamatans');
+                Route::get('/desas', 'desas')->name('desas');
             });
         }
     );

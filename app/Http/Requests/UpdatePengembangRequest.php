@@ -23,14 +23,35 @@ class UpdatePengembangRequest extends FormRequest
      */
     public function rules()
     {
+        $id = request('id');
+
         return [
             //
-            'nama' => 'required|string|max:255|unique:pengembangs',
+            'nama' => 'required|string|max:255|unique:pengembangs,nama,' . $id,
             'alamat' => 'required|string',
-            'telp' => 'nullable|numeric|unique:pengembangs',
-            'email' => 'nullable|string|max:255|email|unique:pengembangs',
+            'telp' => 'nullable|numeric|unique:pengembangs,telp,' . $id,
+            'email' => 'nullable|string|max:255|email|unique:pengembangs,email,' . $id,
             'website' => 'nullable|string|max:255|url',
             'keterangan' => 'nullable|string',
+            'province_id' => 'required|string',
+            'regencie_id' => 'required|string',
+            'district_id' => 'nullable|string',
+            'village_id' => 'nullable|string',
+        ];
+    }
+
+    /**
+     * Get custom attributes for validator errors.
+     *
+     * @return array
+     */
+    public function attributes()
+    {
+        return [
+            'province_id' => 'provinsi',
+            'regencie_id' => 'kota',
+            'district_id' => 'kecamatan',
+            'village_id' => 'desa',
         ];
     }
 }

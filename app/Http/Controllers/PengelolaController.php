@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StorePengelolaRequest;
 use App\Http\Requests\UpdatePengelolaRequest;
 use App\Models\Pengelola;
+use Illuminate\Http\Request;
 
 class PengelolaController extends Controller
 {
@@ -31,7 +32,8 @@ class PengelolaController extends Controller
                 $row->telp,
                 $row->email,
                 $row->sebagai,
-                '<nobr><a href="'.route(self::URL .'edit', $row->id).'" class="btn btn-info btn-sm" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a></nobr>',
+                '<nobr><a href="'.route(self::URL .'edit', $row->id).'" class="btn btn-info btn-sm" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a> ' . 
+                '<button type="button" class="btn btn-danger btn-sm btnDelete" value="'.$row->id.'"><i class="fas fa-trash"></i> Hapus</button></nobr>',
             ]);
 
         $heads = [
@@ -39,7 +41,7 @@ class PengelolaController extends Controller
             'Telp',
             'Email',
             'Sebagai',
-            ['label' => 'Aksi', 'no-export' => true, 'width' => 5],
+            ['label' => 'Aksi', 'no-export' => true, 'width' => 10],
         ];
         
         $config = [
@@ -75,10 +77,8 @@ class PengelolaController extends Controller
     {
         //
         Pengelola::create($request->all());
-
-        return redirect()
-            ->route(self::URL . 'index')
-            ->with('success', 'Tambah data berhasil...');
+        
+        return response()->json('Success');
     }
 
     /**
@@ -98,13 +98,18 @@ class PengelolaController extends Controller
      * @param  \App\Models\Pengelola  $pengelola
      * @return \Illuminate\Http\Response
      */
-    public function edit(Pengelola $pengelola)
+    public function edit($id)
     {
         //
         $title = self::TITLE;
         $subTitle = 'Edit Data';
 
-        $row = $pengelola;
+        $row = Pengelola::with([
+            'provinces',
+            'kotas',
+            'kecamatans',
+            'desas',
+        ])->findOrFail($id);
 
         return view(self::FOLDER_VIEW . 'edit', compact('title', 'subTitle', 'row'));
     }
@@ -116,14 +121,12 @@ class PengelolaController extends Controller
      * @param  \App\Models\Pengelola  $pengelola
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdatePengelolaRequest $request, Pengelola $pengelola)
+    public function update(UpdatePengelolaRequest $request, $id)
     {
         //
-        $pengelola->update($request->all());
-
-        return redirect()
-            ->route(self::URL . 'index')
-            ->with('success', 'Update data berhasil...');
+        Pengelola::findOrFail($id)->update($request->all());
+        
+        return response()->json('Success');
     }
 
     /**
@@ -132,11 +135,11 @@ class PengelolaController extends Controller
      * @param  \App\Models\Pengelola  $pengelola
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Pengelola $pengelola)
+    public function destroy(Request $request)
     {
         //
-        $pengelola->delete();
+        Pengelola::where('id', $request->id)->delete();
 
-        return response()->json('OK');
+        return response()->json('Success');
     }
 }

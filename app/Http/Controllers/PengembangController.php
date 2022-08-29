@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StorePengembangRequest;
 use App\Http\Requests\UpdatePengembangRequest;
 use App\Models\Pengembang;
+use Illuminate\Http\Request;
 
 class PengembangController extends Controller
 {
@@ -30,7 +31,8 @@ class PengembangController extends Controller
                 $row->nama,
                 $row->telp,
                 $row->email,
-                '<nobr><a href="'.route(self::URL .'edit', $row->id).'" class="btn btn-info btn-sm" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a></nobr>',
+                '<nobr><a href="'.route(self::URL .'edit', $row->id).'" class="btn btn-info btn-sm" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a> ' . 
+                '<button type="button" class="btn btn-danger btn-sm btnDelete" value="'.$row->id.'"><i class="fas fa-trash"></i> Hapus</button></nobr>',
             ]);
 
         $heads = [
@@ -73,10 +75,8 @@ class PengembangController extends Controller
     {
         //
         Pengembang::create($request->all());
-
-        return redirect()
-            ->route(self::URL . 'index')
-            ->with('success', 'Tambah data berhasil...');
+        
+        return response()->json('Success');
     }
 
     /**
@@ -96,13 +96,13 @@ class PengembangController extends Controller
      * @param  \App\Models\Pengembang  $pengembang
      * @return \Illuminate\Http\Response
      */
-    public function edit(Pengembang $pengembang)
+    public function edit($id)
     {
         //
         $title = self::TITLE;
         $subTitle = 'Edit Data';
 
-        $row = $pengembang;
+        $row = Pengembang::findOrFail($id);
 
         return view(self::FOLDER_VIEW . 'edit', compact('title', 'subTitle', 'row'));
     }
@@ -114,14 +114,12 @@ class PengembangController extends Controller
      * @param  \App\Models\Pengembang  $pengembang
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdatePengembangRequest $request, Pengembang $pengembang)
+    public function update(UpdatePengembangRequest $request, $id)
     {
         //
-        $pengembang->update($request->all());
-
-        return redirect()
-            ->route(self::URL . 'index')
-            ->with('success', 'Update data berhasil...');
+        Pengembang::findOrFail($id)->update($request->all());
+        
+        return response()->json('Success');
     }
 
     /**
@@ -130,10 +128,10 @@ class PengembangController extends Controller
      * @param  \App\Models\Pengembang  $pengembang
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Pengembang $pengembang)
+    public function destroy(Request $request)
     {
         //
-        $pengembang->delete();
+        Pengembang::where('id', $request->id)->delete();
 
         return response()->json('OK');
     }
