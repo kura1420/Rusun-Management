@@ -253,7 +253,7 @@ $(function () {
                     cancelButtonText: 'Tidak',
                 }).then((result) => {
                     if (result.value) {
-                        window.location.href = '{{route("user.index")}}';
+                        window.location.href = '{{route("pengelola-kontak.create")}}?pengelola_id=' + response.id;
                     }
                 });
                 

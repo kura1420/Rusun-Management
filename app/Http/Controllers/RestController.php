@@ -6,6 +6,7 @@ use App\Models\Desa;
 use App\Models\Kecamatan;
 use App\Models\Kota;
 use App\Models\Provinsi;
+use App\Models\RusunDetail;
 use Illuminate\Http\Request;
 
 class RestController extends Controller
@@ -86,6 +87,28 @@ class RestController extends Controller
                 $rows = Desa::orderBy('name', 'asc')
                     ->where('district_id', $district_id)
                     ->where('name', 'like', "%$search%")
+                    ->get();
+            }
+        }
+
+        return response()->json($rows);
+    }
+
+    public function rusun_details(Request $request)
+    {
+        $rusun_id = $request->rusun_id;
+        $search = $request->search ?? NULL;
+
+        $rows = [];
+        if ($rusun_id) {
+            $rows = RusunDetail::orderBy('nama_tower', 'asc')
+                ->where('rusun_id', $rusun_id)
+                ->get();
+
+            if ($search) {
+                $rows = RusunDetail::orderBy('nama_tower', 'asc')
+                    ->where('rusun_id', $rusun_id)
+                    ->where('nama_tower', 'like', "%$search%")
                     ->get();
             }
         }

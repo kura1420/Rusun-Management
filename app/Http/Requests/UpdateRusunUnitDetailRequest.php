@@ -13,7 +13,7 @@ class UpdateRusunUnitDetailRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return auth()->check();
     }
 
     /**
@@ -23,8 +23,29 @@ class UpdateRusunUnitDetailRequest extends FormRequest
      */
     public function rules()
     {
+        $id = request()->segment(2);
+
         return [
             //
+            'ukuran' => 'required|string|max:255',
+            'jumlah' => 'required|numeric',
+            'foto' => 'nullable|image',
+            'keterangan' => 'nullable|string',
+            'rusun_id' => 'required|string',
+            'rusun_detail_id' => 'required|string',
+        ];
+    }
+
+    /**
+     * Get custom attributes for validator errors.
+     *
+     * @return array
+     */
+    public function attributes()
+    {
+        return [
+            'rusun_id' => 'rusun',
+            'rusun_detail_id' => 'tower',
         ];
     }
 }

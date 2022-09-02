@@ -33,4 +33,14 @@ class Pengembang extends Model
     {
         return $this->belongsTo(Desa::class, 'village_id');
     }
+
+    public function pengembang_kontaks()
+    {
+        return $this->hasMany(PengembangKontak::class);
+    }
+
+    public function pengembang_dokumens()
+    {
+        return $this->hasMany(PengembangDokumen::class);
+    }
 }

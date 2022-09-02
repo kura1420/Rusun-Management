@@ -33,4 +33,14 @@ class Pengelola extends Model
     {
         return $this->belongsTo(Desa::class, 'village_id');
     }
+
+    public function pengelola_kontaks()
+    {
+        return $this->hasMany(PengelolaKontak::class);
+    }
+
+    public function pengelola_dokumens()
+    {
+        return $this->hasMany(PengelolaDokumen::class);
+    }
 }

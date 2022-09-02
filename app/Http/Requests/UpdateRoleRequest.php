@@ -23,7 +23,7 @@ class UpdateRoleRequest extends FormRequest
      */
     public function rules()
     {
-        $id = request('id') ?? NULL;
+        $id = request()->route('role');
 
         return [
             //

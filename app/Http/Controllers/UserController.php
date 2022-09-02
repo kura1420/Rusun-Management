@@ -108,13 +108,13 @@ class UserController extends Controller
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function edit(User $user, $id)
+    public function edit(User $user)
     {
         //
         $title = self::TITLE;
         $subTitle = 'Edit Data';
 
-        $row = User::findOrFail($id);
+        $row = $user;
 
         return view(self::FOLDER_VIEW . 'edit', compact('title', 'subTitle', 'row'));
     }
@@ -126,14 +126,17 @@ class UserController extends Controller
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateUserRequest $request, $id)
+    public function update(UpdateUserRequest $request, User $user)
     {
         //
         $input = $request->all();
 
         // $input['username'] = strtolower($request->username);
         $input['email'] = strtolower($request->email);
-        $input['active'] = $request->active == 'true' ? 1 : 0;
+
+        if ($request->active) {
+            $input['active'] = $request->active == 'true' ? 1 : 0;
+        }
 
         if ($request->password) {
             $input['password'] = Hash::make($request->password);
@@ -141,7 +144,7 @@ class UserController extends Controller
             unset($input['password']);
         }
 
-        User::find($id)->update($input);
+        $user->update($input);
 
         return redirect()
             ->route(self::URL . 'index')

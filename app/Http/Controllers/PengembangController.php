@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StorePengembangRequest;
 use App\Http\Requests\UpdatePengembangRequest;
 use App\Models\Pengembang;
-use Illuminate\Http\Request;
 
 class PengembangController extends Controller
 {
@@ -31,8 +30,11 @@ class PengembangController extends Controller
                 $row->nama,
                 $row->telp,
                 $row->email,
-                '<nobr><a href="'.route(self::URL .'edit', $row->id).'" class="btn btn-info btn-sm" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a> ' . 
-                '<button type="button" class="btn btn-danger btn-sm btnDelete" value="'.$row->id.'"><i class="fas fa-trash"></i> Hapus</button></nobr>',
+                '<nobr>' .
+                    '<a href="'.route(self::URL .'show', $row->id).'" class="btn btn-success btn-sm" title="Show"><i class="fas fa-folder"></i> Detail</a> ' . 
+                    '<a href="'.route(self::URL .'edit', $row->id).'" class="btn btn-info btn-sm" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a> ' . 
+                    '<button type="button" class="btn btn-danger btn-sm btnDelete" value="'.$row->id.'" id="'.route(self::URL . 'destroy', $row->id).'"><i class="fas fa-trash"></i> Hapus</button>' .
+                '</nobr>',
             ]);
 
         $heads = [
@@ -74,9 +76,9 @@ class PengembangController extends Controller
     public function store(StorePengembangRequest $request)
     {
         //
-        Pengembang::create($request->all());
+        $row = Pengembang::create($request->all());
         
-        return response()->json('Success');
+        return response()->json($row);
     }
 
     /**
@@ -85,9 +87,22 @@ class PengembangController extends Controller
      * @param  \App\Models\Pengembang  $pengembang
      * @return \Illuminate\Http\Response
      */
-    public function show(Pengembang $pengembang)
+    public function show($id)
     {
         //
+        $title = self::TITLE;
+        $subTitle = 'Detail Data';
+
+        $row = Pengembang::with([
+            'provinces',
+            'kotas',
+            'kecamatans',
+            'desas',
+            'pengembang_kontaks',
+            'pengembang_dokumens',
+        ])->findOrFail($id);
+
+        return view(self::FOLDER_VIEW . 'show', compact('title', 'subTitle', 'row'));
     }
 
     /**
@@ -102,7 +117,12 @@ class PengembangController extends Controller
         $title = self::TITLE;
         $subTitle = 'Edit Data';
 
-        $row = Pengembang::findOrFail($id);
+        $row = Pengembang::with([
+            'provinces',
+            'kotas',
+            'kecamatans',
+            'desas',
+        ])->findOrFail($id);
 
         return view(self::FOLDER_VIEW . 'edit', compact('title', 'subTitle', 'row'));
     }
@@ -128,10 +148,10 @@ class PengembangController extends Controller
      * @param  \App\Models\Pengembang  $pengembang
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request)
+    public function destroy($id)
     {
         //
-        Pengembang::where('id', $request->id)->delete();
+        Pengembang::findOrFail($id)->delete();
 
         return response()->json('OK');
     }

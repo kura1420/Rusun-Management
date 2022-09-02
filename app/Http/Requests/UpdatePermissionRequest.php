@@ -23,7 +23,7 @@ class UpdatePermissionRequest extends FormRequest
      */
     public function rules()
     {
-        $id = request('id') ?? NULL;
+        $id = request()->route('permission');
 
         return [
             //

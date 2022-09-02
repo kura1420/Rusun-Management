@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StorePengelolaRequest;
 use App\Http\Requests\UpdatePengelolaRequest;
 use App\Models\Pengelola;
-use Illuminate\Http\Request;
 
 class PengelolaController extends Controller
 {
@@ -32,8 +31,11 @@ class PengelolaController extends Controller
                 $row->telp,
                 $row->email,
                 $row->sebagai,
-                '<nobr><a href="'.route(self::URL .'edit', $row->id).'" class="btn btn-info btn-sm" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a> ' . 
-                '<button type="button" class="btn btn-danger btn-sm btnDelete" value="'.$row->id.'"><i class="fas fa-trash"></i> Hapus</button></nobr>',
+                '<nobr>' . 
+                    '<a href="'.route(self::URL .'show', $row->id).'" class="btn btn-success btn-sm" title="Detail"><i class="fas fa-folder"></i> Detail</a> ' .
+                    '<a href="'.route(self::URL .'edit', $row->id).'" class="btn btn-info btn-sm" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a> ' .
+                    '<button type="button" class="btn btn-danger btn-sm btnDelete" value="'.$row->id.'" id="'.route(self::URL . 'destroy', $row->id).'"><i class="fas fa-trash"></i> Hapus</button>' . 
+                '</nobr>',
             ]);
 
         $heads = [
@@ -76,9 +78,9 @@ class PengelolaController extends Controller
     public function store(StorePengelolaRequest $request)
     {
         //
-        Pengelola::create($request->all());
+        $row = Pengelola::create($request->all());
         
-        return response()->json('Success');
+        return response()->json($row);
     }
 
     /**
@@ -87,9 +89,22 @@ class PengelolaController extends Controller
      * @param  \App\Models\Pengelola  $pengelola
      * @return \Illuminate\Http\Response
      */
-    public function show(Pengelola $pengelola)
+    public function show($id)
     {
         //
+        $title = self::TITLE;
+        $subTitle = 'Detail Data';
+
+        $row = Pengelola::with([
+            'provinces',
+            'kotas',
+            'kecamatans',
+            'desas',
+            'pengelola_kontaks',
+            'pengelola_dokumens',
+        ])->findOrFail($id);
+
+        return view(self::FOLDER_VIEW . 'show', compact('title', 'subTitle', 'row'));
     }
 
     /**
@@ -135,10 +150,10 @@ class PengelolaController extends Controller
      * @param  \App\Models\Pengelola  $pengelola
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request)
+    public function destroy($id)
     {
         //
-        Pengelola::where('id', $request->id)->delete();
+        Pengelola::findOrFail($id)->delete();
 
         return response()->json('Success');
     }

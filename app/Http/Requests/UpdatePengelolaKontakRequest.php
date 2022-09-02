@@ -13,7 +13,7 @@ class UpdatePengelolaKontakRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return auth()->check();
     }
 
     /**
@@ -23,8 +23,27 @@ class UpdatePengelolaKontakRequest extends FormRequest
      */
     public function rules()
     {
+        $id = request()->segment(2);
+
         return [
             //
+            'nama' => 'required|string|max:255',
+            'handphone' => 'required|numeric|unique:pengelola_kontaks,handphone,' . $id,
+            'email' => 'required|string|max:255|email|unique:pengelola_kontaks,email,' . $id,
+            'posisi' => 'nullable|string|max:255',
+            'pengelola_id' => 'required|string|max:255',
+        ];
+    }
+
+    /**
+     * Get custom attributes for validator errors.
+     *
+     * @return array
+     */
+    public function attributes()
+    {
+        return [
+            'pengelola_id' => 'pengelola',
         ];
     }
 }

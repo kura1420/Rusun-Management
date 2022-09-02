@@ -331,16 +331,62 @@ return [
         // ],
 
         [
-            'text'    => 'Master Data',
-            'icon'    => 'fas fa-fw fa-database',
+            'text'    => 'Pengembang',
+            'icon'    => 'fas fa-fw fa-building',
             'submenu' => [
                 [
-                    'text' => 'Pengembang',
+                    'text' => 'List',
                     'route'  => 'pengembang.index',
                 ],
                 [
-                    'text' => 'Pengelola',
+                    'text' => 'Kontak',
+                    'route'  => 'pengembang-kontak.index',
+                ],
+                [
+                    'text' => 'Dokument',
+                    'route'  => 'pengembang-dokumen.index',
+                ],
+            ],
+        ],
+
+        [
+            'text'    => 'Pengelola',
+            'icon'    => 'fas fa-fw fa-stream',
+            'submenu' => [
+                [
+                    'text' => 'List',
                     'route'  => 'pengelola.index',
+                ],
+                [
+                    'text' => 'Kontak',
+                    'route'  => 'pengelola-kontak.index',
+                ],
+                [
+                    'text' => 'Dokumen',
+                    'route'  => 'pengelola-dokumen.index',
+                ],
+            ],
+        ],
+
+        [
+            'text'    => 'Rusun',
+            'icon'    => 'fas fa-fw fa-city',
+            'submenu' => [
+                [
+                    'text' => 'List',
+                    'route'  => 'rusun.index',
+                ],
+                [
+                    'text' => 'Detail',
+                    'route'  => 'rusun-detail.index',
+                ],
+                [
+                    'text' => 'Unit',
+                    'route'  => 'rusun-unit-detail.index',
+                ],
+                [
+                    'text' => 'Fasilitas',
+                    'route'  => 'rusun-fasilitas.index',
                 ],
             ],
         ],
@@ -359,6 +405,10 @@ return [
                 ],
                 [
                     'text' => 'Permission',
+                    'route'  => 'permission.index',
+                ],
+                [
+                    'text' => 'API Manage',
                     'route'  => 'permission.index',
                 ],
                 // [
@@ -450,17 +500,17 @@ return [
                 [
                     'type' => 'js',
                     'asset' => false,
-                    'location' => '//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js',
+                    'location' => 'https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js',
                 ],
                 [
                     'type' => 'js',
                     'asset' => false,
-                    'location' => '//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js',
+                    'location' => 'https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap4.min.js',
                 ],
                 [
                     'type' => 'css',
                     'asset' => false,
-                    'location' => '//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css',
+                    'location' => 'https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap4.min.css',
                 ],
             ],
         ],

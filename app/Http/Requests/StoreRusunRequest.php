@@ -13,7 +13,7 @@ class StoreRusunRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return auth()->check();
     }
 
     /**
@@ -25,6 +25,40 @@ class StoreRusunRequest extends FormRequest
     {
         return [
             //
+            'nama' => 'required|string|max:255|unique:rusuns',
+            'alamat' => 'required|string|max:255',
+            'kode_pos' => 'required|string|max:10',
+            'latitude' => 'nullable|string|max:255',
+            'longitude' => 'nullable|string|max:255',
+            'total_tower' => 'required|numeric',
+            'total_unit' => 'required|numeric',
+            'foto_1' => 'nullable|image',
+            'foto_2' => 'nullable|image',
+            'foto_3' => 'nullable|image',
+            'website' => 'nullable|string|max:100|url|unique:rusuns',
+            'facebook' => 'nullable|string|max:100|unique:rusuns',
+            'instgram' => 'nullable|string|max:100|unique:rusuns',
+            'email' => 'nullable|string|max:100|email|unique:rusuns',
+            'telp' => 'nullable|numeric|unique:rusuns',
+            'province_id' => 'required|string',
+            'regencie_id' => 'required|string',
+            'district_id' => 'required|string',
+            'village_id' => 'required|string',
+        ];
+    }
+
+    /**
+     * Get custom attributes for validator errors.
+     *
+     * @return array
+     */
+    public function attributes()
+    {
+        return [
+            'province_id' => 'provinsi',
+            'regencie_id' => 'kota',
+            'district_id' => 'kecamatan',
+            'village_id' => 'desa',
         ];
     }
 }

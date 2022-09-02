@@ -23,7 +23,7 @@ class UpdatePengembangRequest extends FormRequest
      */
     public function rules()
     {
-        $id = request('id');
+        $id = request()->route('pengembang');
 
         return [
             //

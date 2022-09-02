@@ -43,6 +43,7 @@ $(function () {
         e.preventDefault();
 
         const value = $(this).val();
+        const url = $(this).attr('id');
         const columnRemove = $(this).parents('tr');
 
         Swal.fire({
@@ -58,7 +59,7 @@ $(function () {
             if (result.value) {
                 $.ajax({
                     type: "DELETE",
-                    url: "{{route('pengembang.destroy')}}",
+                    url: url,
                     data: {
                         id: value,
                     },
@@ -68,25 +69,25 @@ $(function () {
                             .row(columnRemove)
                             .remove()
                             .draw();                  
-
+    
                         Swal.fire(
                             'Deleted!',
                             'Your file has been deleted.',
                             'success'
                         );
-                        
+
                     },
                     error: function (xhr) {
                         const {responseJSON, status, statusText} = xhr;
-
+    
                         switch (status) {
                             case 500:
                                 Swal.fire({
                                     title: 'Error',
                                     text: statusText,
-                                });                        
+                                });                 
                                 break;
-                        
+                            
                             default:
                                 break;
                         }

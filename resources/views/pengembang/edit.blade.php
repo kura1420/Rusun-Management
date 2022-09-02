@@ -259,10 +259,10 @@ $(function () {
             dataType: "json",
             success: function (response) {  
                 Swal.fire(
-                'Informasi!',
-                'Data berhasil diperbarui!',
-                'success'
-            )
+                    'Informasi!',
+                    'Data berhasil diperbarui!',
+                    'success'
+                );
                 
                 $this
                     .prop('disabled', false)

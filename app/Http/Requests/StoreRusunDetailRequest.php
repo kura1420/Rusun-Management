@@ -13,7 +13,7 @@ class StoreRusunDetailRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return auth()->check();
     }
 
     /**
@@ -25,6 +25,27 @@ class StoreRusunDetailRequest extends FormRequest
     {
         return [
             //
+            'nama_tower' => 'required|string|max:255',
+            'jumlah_unit' => 'required|numeric',
+            'jumlah_jenis_unit' => 'required|numeric',
+            'foto' => 'nullable|image',
+            'jumlah_lantai' => 'required|numeric',
+            'keterangan' => 'nullable|string',
+            'ukuran_paling_kecil' => 'required|string|max:255',
+            'ukuran_paling_besar' => 'required|string|max:255',
+            'rusun_id' => 'required|string',
+        ];
+    }
+
+    /**
+     * Get custom attributes for validator errors.
+     *
+     * @return array
+     */
+    public function attributes()
+    {
+        return [
+            'rusun_id' => 'rusun',
         ];
     }
 }
