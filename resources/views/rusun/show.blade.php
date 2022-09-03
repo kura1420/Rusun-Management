@@ -6,6 +6,17 @@
     <h1>
         {{$subTitle}}
         <a href="{{route('rusun.index')}}" class="btn btn-xs btn-dark"> <i class="fa fa-arrow-left"></i> Kembali </a>
+        <div class="btn-group">
+            <button type="button" class="btn btn-xs btn-primary"><i class="fa fa-plus"></i> Tambah</button>
+            <button type="button" class="btn btn-xs btn-primary dropdown-toggle dropdown-icon" data-toggle="dropdown" aria-expanded="false">
+                <span class="sr-only">Toggle Dropdown</span>
+            </button>
+            <div class="dropdown-menu" role="menu">
+                <a class="dropdown-item" href="{{route('rusun-detail.create')}}?rusun_id={{$row->id}}">Detail</a>
+                <a class="dropdown-item" href="{{route('rusun-unit-detail.create')}}?rusun_id={{$row->id}}">Unit</a>
+                <a class="dropdown-item" href="{{route('rusun-fasilitas.create')}}?rusun_id={{$row->id}}">Fasilitas</a>
+            </div>
+        </div>
     </h1>
 @stop
 
@@ -105,7 +116,7 @@
             </nav>
             <div class="tab-content p-3" id="nav-tabContent">
                 <div class="tab-pane fade show active" id="product-desc" role="tabpanel" aria-labelledby="product-desc-tab">
-                    <x-adminlte-datatable id="table1" :heads="[
+                    <x-adminlte-datatable id="tableTower" :heads="[
                             'Nama Tower',
                             'Jml. Unit',
                             'Jml. Jenis',
@@ -119,39 +130,59 @@
                                     <td>{{$rusun_detail->jumlah_jenis_unit}}</td>
                                     <td>{{$rusun_detail->jumlah_lantai}}</td>
                                     <td>
-                                        <a href="{{route('rusun-detail.show', $rusun_detail->id)}}?pengelola_id={{$row->id}}" class="btn btn-success btn-xs" title="Show"><i class="fas fa-eye"></i> Detail</a>
-                                        <a href="{{route('rusun-detail.edit', $rusun_detail->id)}}?pengelola_id={{$row->id}}" class="btn btn-info btn-xs" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a>
-                                        <button type="button" class="btn btn-danger btn-xs btnDeleteDokumen" value="{{$rusun_detail->id}}" id="{{route('rusun-detail.destroy', $rusun_detail->id)}}"><i class="fas fa-trash"></i> Hapus</button>                                        
+                                        <a href="{{route('rusun-detail.show', $rusun_detail->id)}}?rusun_id={{$row->id}}" class="btn btn-success btn-xs" title="Show"><i class="fas fa-eye"></i> Detail</a>
+                                        <a href="{{route('rusun-detail.edit', $rusun_detail->id)}}?rusun_id={{$row->id}}" class="btn btn-info btn-xs" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a>
+                                        <button type="button" class="btn btn-danger btn-xs btnDeleteTower" value="{{$rusun_detail->id}}" id="{{route('rusun-detail.destroy', $rusun_detail->id)}}"><i class="fas fa-trash"></i> Hapus</button>                                        
                                     </td>
                                 </tr>
                             @endforeach
                     </x-adminlte-datatable>
                 </div>
                 <div class="tab-pane fade" id="product-comments" role="tabpanel" aria-labelledby="product-comments-tab">
-                    <x-adminlte-datatable id="table1" :heads="[
-                            'Nama Tower',
-                            'Jml. Unit',
-                            'Jml. Jenis',
-                            'Jml. Lantai',
+                    <x-adminlte-datatable id="tableUnit" :heads="[
+                            'Tower',
+                            'Ukuran',
+                            'Jumlah',
+                            'Keterangan',
                             ['label' => 'Aksi', 'no-export' => true, 'width' => 15],
                         ]">
-                            @foreach($row->rusun_details as $rusun_detail)
+                            @foreach($row->rusun_unit_details as $rusun_unit_detail)
                                 <tr>
-                                    <td>{{$rusun_detail->nama_tower}}</td>
-                                    <td>{{$rusun_detail->jumlah_unit}}</td>
-                                    <td>{{$rusun_detail->jumlah_jenis_unit}}</td>
-                                    <td>{{$rusun_detail->jumlah_lantai}}</td>
+                                    <td>{{$rusun_unit_detail->rusun_details->nama_tower}}</td>
+                                    <td>{{$rusun_unit_detail->ukuran}}</td>
+                                    <td>{{$rusun_unit_detail->jumlah}}</td>
+                                    <td>{{$rusun_unit_detail->keterangan}}</td>
                                     <td>
-                                        <a href="{{route('rusun-detail.show', $rusun_detail->id)}}?pengelola_id={{$row->id}}" class="btn btn-success btn-xs" title="Show"><i class="fas fa-eye"></i> Detail</a>
-                                        <a href="{{route('rusun-detail.edit', $rusun_detail->id)}}?pengelola_id={{$row->id}}" class="btn btn-info btn-xs" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a>
-                                        <button type="button" class="btn btn-danger btn-xs btnDeleteDokumen" value="{{$rusun_detail->id}}" id="{{route('rusun-detail.destroy', $rusun_detail->id)}}"><i class="fas fa-trash"></i> Hapus</button>                                        
+                                        <a href="{{route('rusun-unit-detail.show', $rusun_unit_detail->id)}}?rusun_id={{$row->id}}" class="btn btn-success btn-xs" title="Show"><i class="fas fa-eye"></i> Detail</a>
+                                        <a href="{{route('rusun-unit-detail.edit', $rusun_unit_detail->id)}}?rusun_id={{$row->id}}" class="btn btn-info btn-xs" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a>
+                                        <button type="button" class="btn btn-danger btn-xs btnDeleteUnit" value="{{$rusun_unit_detail->id}}" id="{{route('rusun-unit-detail.destroy', $rusun_unit_detail->id)}}"><i class="fas fa-trash"></i> Hapus</button>                                        
                                     </td>
                                 </tr>
                             @endforeach
                     </x-adminlte-datatable>
                 </div>
                 <div class="tab-pane fade" id="product-fasilitas" role="tabpanel" aria-labelledby="product-fasilitas-tab">
-                    fasilitas
+                    <x-adminlte-datatable id="tableFasilitas" :heads="[
+                            'Tower',
+                            'Nama',
+                            'Jumlah',
+                            'Keterangan',
+                            ['label' => 'Aksi', 'no-export' => true, 'width' => 15],
+                        ]">
+                            @foreach($row->rusun_fasilitas as $rusun_fasilitas)
+                                <tr>
+                                    <td>{{$rusun_fasilitas->rusun_details->nama_tower ?? NULL}}</td>
+                                    <td>{{$rusun_fasilitas->nama}}</td>
+                                    <td>{{$rusun_fasilitas->jumlah}}</td>
+                                    <td>{{$rusun_fasilitas->keterangan}}</td>
+                                    <td>
+                                        <a href="{{route('rusun-fasilitas.show', $rusun_fasilitas->id)}}?rusun_id={{$row->id}}" class="btn btn-success btn-xs" title="Show"><i class="fas fa-eye"></i> Detail</a>
+                                        <a href="{{route('rusun-fasilitas.edit', $rusun_fasilitas->id)}}?rusun_id={{$row->id}}" class="btn btn-info btn-xs" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a>
+                                        <button type="button" class="btn btn-danger btn-xs btnDeleteFasilitas" value="{{$rusun_fasilitas->id}}" id="{{route('rusun-fasilitas.destroy', $rusun_fasilitas->id)}}"><i class="fas fa-trash"></i> Hapus</button>                                        
+                                    </td>
+                                </tr>
+                            @endforeach
+                    </x-adminlte-datatable>
                 </div>
             </div>
         </div>
@@ -166,11 +197,195 @@
 @section('js')
 <script>
 $(function () {
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+        }
+    });
+
     $('.product-image-thumb').on('click', function () {
         var $image_element = $(this).find('img')
         $('.product-image').prop('src', $image_element.attr('src'))
         $('.product-image-thumb.active').removeClass('active')
         $(this).addClass('active')
+    });
+
+    const tableTower = $('#tableTower').DataTable();
+    const tableUnit = $('#tableUnit').DataTable();
+    const tableFasilitas = $('#tableFasilitas').DataTable();
+
+    $('body').on('click', '.btnDeleteTower', function (e) {
+        e.preventDefault();
+
+        const value = $(this).val();
+        const url = $(this).attr('id');
+        const columnRemove = $(this).parents('tr');
+
+        Swal.fire({
+            title: 'Apakah anda yakin?',
+            text: "Ingin menghapus data ini!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, hapus!',
+            cancelButtonText: 'Tidak',
+        }).then((result) => {
+            if (result.value) {
+                $.ajax({
+                    type: "DELETE",
+                    url: url,
+                    data: {
+                        id: value,
+                    },
+                    dataType: "json",
+                    success: function (response) {
+                        tableTower
+                            .row(columnRemove)
+                            .remove()
+                            .draw();                  
+
+                        Swal.fire(
+                            'Deleted!',
+                            'Your file has been deleted.',
+                            'success'
+                        );
+                        
+                    },
+                    error: function (xhr) {
+                        const {responseJSON, status, statusText} = xhr;
+
+                        switch (status) {
+                            case 500:
+                                Swal.fire({
+                                    title: 'Error',
+                                    text: statusText,
+                                });                        
+                                break;
+                        
+                            default:
+                                break;
+                        }
+                    }
+                });
+            }
+        });
+    });
+
+    $('body').on('click', '.btnDeleteUnit', function (e) {
+        e.preventDefault();
+
+        const value = $(this).val();
+        const url = $(this).attr('id');
+        const columnRemove = $(this).parents('tr');
+
+        Swal.fire({
+            title: 'Apakah anda yakin?',
+            text: "Ingin menghapus data ini!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, hapus!',
+            cancelButtonText: 'Tidak',
+        }).then((result) => {
+            if (result.value) {
+                $.ajax({
+                    type: "DELETE",
+                    url: url,
+                    data: {
+                        id: value,
+                    },
+                    dataType: "json",
+                    success: function (response) {
+                        tableUnit
+                            .row(columnRemove)
+                            .remove()
+                            .draw();                  
+
+                        Swal.fire(
+                            'Deleted!',
+                            'Your file has been deleted.',
+                            'success'
+                        );
+                        
+                    },
+                    error: function (xhr) {
+                        const {responseJSON, status, statusText} = xhr;
+
+                        switch (status) {
+                            case 500:
+                                Swal.fire({
+                                    title: 'Error',
+                                    text: statusText,
+                                });                        
+                                break;
+                        
+                            default:
+                                break;
+                        }
+                    }
+                });
+            }
+        });
+    });
+
+    $('body').on('click', '.btnDeleteFasilitas', function (e) {
+        e.preventDefault();
+
+        const value = $(this).val();
+        const url = $(this).attr('id');
+        const columnRemove = $(this).parents('tr');
+
+        Swal.fire({
+            title: 'Apakah anda yakin?',
+            text: "Ingin menghapus data ini!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, hapus!',
+            cancelButtonText: 'Tidak',
+        }).then((result) => {
+            if (result.value) {
+                $.ajax({
+                    type: "DELETE",
+                    url: url,
+                    data: {
+                        id: value,
+                    },
+                    dataType: "json",
+                    success: function (response) {
+                        tableFasilitas
+                            .row(columnRemove)
+                            .remove()
+                            .draw();                  
+
+                        Swal.fire(
+                            'Deleted!',
+                            'Your file has been deleted.',
+                            'success'
+                        );
+                        
+                    },
+                    error: function (xhr) {
+                        const {responseJSON, status, statusText} = xhr;
+
+                        switch (status) {
+                            case 500:
+                                Swal.fire({
+                                    title: 'Error',
+                                    text: statusText,
+                                });                        
+                                break;
+                        
+                            default:
+                                break;
+                        }
+                    }
+                });
+            }
+        });
     });
 });
 </script>

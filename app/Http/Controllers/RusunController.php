@@ -160,7 +160,8 @@ class RusunController extends Controller
             'rusun_details',
             'rusun_unit_details',
             'rusun_fasilitas',
-        ])->findOrFail($id);
+        ])
+        ->findOrFail($id);
 
         $row->foto_1 = $row->foto_1 ? asset('storage/' . self::FOLDER_FOTO . '/' . $row->foto_1) : NULL;
         $row->foto_2 = $row->foto_2 ? asset('storage/' . self::FOLDER_FOTO . '/' . $row->foto_2) : NULL;

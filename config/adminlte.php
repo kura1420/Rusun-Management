@@ -130,11 +130,11 @@ return [
     */
 
     'usermenu_enabled' => true,
-    'usermenu_header' => false,
+    'usermenu_header' => true,
     'usermenu_header_class' => 'bg-primary',
-    'usermenu_image' => false,
-    'usermenu_desc' => false,
-    'usermenu_profile_url' => false,
+    'usermenu_image' => true,
+    'usermenu_desc' => true,
+    'usermenu_profile_url' => true,
 
     /*
     |--------------------------------------------------------------------------
@@ -324,11 +324,11 @@ return [
             'route' => 'home',
             'icon' => 'fas fa-fw fa-tachometer-alt',
         ],
-        // [
-        //     'text' => 'change_password',
-        //     'url'  => 'admin/settings',
-        //     'icon' => 'fas fa-fw fa-lock',
-        // ],
+        [
+            'text' => 'FAQ',
+            'route'  => 'faq.helps',
+            'icon' => 'fas fa-fw fa-question-circle',
+        ],
 
         [
             'text'    => 'Pengembang',
@@ -388,6 +388,39 @@ return [
                     'text' => 'Fasilitas',
                     'route'  => 'rusun-fasilitas.index',
                 ],
+                [
+                    'text' => 'Penghuni',
+                    'route'  => 'rusun-penghuni.index',
+                ],
+            ],
+        ],
+
+        [
+            'text'    => 'P3SRS',
+            'icon'    => 'fas fa-fw fa-users',
+            'submenu' => [                
+                [
+                    'text'    => 'Kegiatan',
+                    'url'     => '#',
+                    'submenu' => [
+                        [
+                            'text' => 'List',
+                            'url'  => '#',
+                        ],
+                        [
+                            'text' => 'Jadwal',
+                            'url'  => '#',
+                        ],
+                        [
+                            'text' => 'Laporan',
+                            'url'  => '#',
+                        ],
+                    ],
+                ],
+                [
+                    'text' => 'Jabatan',
+                    'url'  => '#',
+                ],
             ],
         ],
 
@@ -395,6 +428,10 @@ return [
             'text'    => 'Setting',
             'icon'    => 'fas fa-fw fa-cogs',
             'submenu' => [
+                [
+                    'text' => 'Faq',
+                    'route'  => 'faq.index',
+                ],
                 [
                     'text' => 'User',
                     'route'  => 'user.index',
@@ -409,32 +446,8 @@ return [
                 ],
                 [
                     'text' => 'API Manage',
-                    'route'  => 'permission.index',
+                    'url'  => '#',
                 ],
-                // [
-                //     'text'    => 'level_one',
-                //     'url'     => '#',
-                //     'submenu' => [
-                //         [
-                //             'text' => 'level_two',
-                //             'url'  => '#',
-                //         ],
-                //         [
-                //             'text'    => 'level_two',
-                //             'url'     => '#',
-                //             'submenu' => [
-                //                 [
-                //                     'text' => 'level_three',
-                //                     'url'  => '#',
-                //                 ],
-                //                 [
-                //                     'text' => 'level_three',
-                //                     'url'  => '#',
-                //                 ],
-                //             ],
-                //         ],
-                //     ],
-                // ],
                 // [
                 //     'text' => 'level_one',
                 //     'url'  => '#',
@@ -576,6 +589,21 @@ return [
                     'type' => 'js',
                     'asset' => true,
                     'location' => 'vendor/bootstrap-switch/js/bootstrap-switch.min.js',
+                ],
+            ],
+        ],
+        'Summernote' => [
+            'active' => true,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'vendor/summernote/summernote-bs4.min.js',
+                ],
+                [
+                    'type' => 'css',
+                    'asset' => true,
+                    'location' => 'vendor/summernote/summernote-bs4.min.css',
                 ],
             ],
         ],

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FaqController;
 use App\Http\Controllers\PengelolaController;
 use App\Http\Controllers\PengelolaDokumenController;
 use App\Http\Controllers\PengelolaKontakController;
@@ -12,6 +13,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\RusunController;
 use App\Http\Controllers\RusunDetailController;
 use App\Http\Controllers\RusunFasilitasController;
+use App\Http\Controllers\RusunPenghuniController;
 use App\Http\Controllers\RusunUnitDetailController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -38,6 +40,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('user', UserController::class);
     Route::resource('role', RoleController::class);
     Route::resource('permission', PermissionController::class);
+    Route::resource('faq', FaqController::class);
     
     Route::resource('pengelola', PengelolaController::class);
     Route::resource('pengelola-kontak', PengelolaKontakController::class);
@@ -51,7 +54,14 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('rusun-detail', RusunDetailController::class);
     Route::resource('rusun-unit-detail', RusunUnitDetailController::class);
     Route::resource('rusun-fasilitas', RusunFasilitasController::class);
+    Route::resource('rusun-penghuni', RusunPenghuniController::class);
 
+
+    Route::prefix('faq')->group(function () {
+        Route::controller(FaqController::class)->group(function () {
+            Route::get('helps/users', 'helps')->name('faq.helps');
+        });
+    });
     
     Route::prefix('pengelola-dokumen')->group(function () {
         Route::controller(PengelolaDokumenController::class)->group(function () {

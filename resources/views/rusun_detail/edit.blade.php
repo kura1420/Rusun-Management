@@ -12,9 +12,7 @@
     @method('PUT')
     <x-adminlte-card theme="primary" theme-mode="outline" title="{{$subTitle}}">
         <x-slot name="toolsSlot">
-            <a href="{{route('rusun-detail.index')}}" class="btn btn-sm btn-dark">
-                <i class="fa fa-arrow-left"></i> Kembali
-            </a>
+            <x-adminlte-button label="Kembali" theme="dark" icon="fa fa-arrow-left" class="btn btn-sm" onClick="history.back()" />
         </x-slot>
         
         <div class="row">
