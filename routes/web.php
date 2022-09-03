@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DokumenController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\PengelolaController;
 use App\Http\Controllers\PengelolaDokumenController;
@@ -31,7 +32,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index']);
 
-Auth::routes();
+Auth::routes(['register' => false]);
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
@@ -40,7 +41,9 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('user', UserController::class);
     Route::resource('role', RoleController::class);
     Route::resource('permission', PermissionController::class);
+
     Route::resource('faq', FaqController::class);
+    Route::resource('dokumen', DokumenController::class);
     
     Route::resource('pengelola', PengelolaController::class);
     Route::resource('pengelola-kontak', PengelolaKontakController::class);

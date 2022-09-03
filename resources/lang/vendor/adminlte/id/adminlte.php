@@ -4,6 +4,7 @@ return [
 
     'full_name'                   => 'Nama lengkap',
     'email'                       => 'Email',
+    'username'                    => 'Username',
     'password'                    => 'Kata sandi',
     'retype_password'             => 'Ketik ulang kata sandi',
     'remember_me'                 => 'Ingat Saya',

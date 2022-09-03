@@ -16,6 +16,8 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')->hourly();
+        
+        $this->_daily($schedule);
     }
 
     /**
@@ -28,5 +30,10 @@ class Kernel extends ConsoleKernel
         $this->load(__DIR__.'/Commands');
 
         require base_path('routes/console.php');
+    }
+
+    public function _daily(Schedule $schedule)
+    {
+        $schedule->command('rusun:penghuni')->daily();
     }
 }

@@ -15,7 +15,7 @@
 
 <x-adminlte-card theme="primary" theme-mode="outline" title="{{$subTitle}}">
     <x-slot name="toolsSlot">
-        <a href="{{route('faq.create')}}" class="btn btn-sm btn-primary">
+        <a href="{{route('dokumen.create')}}" class="btn btn-sm btn-primary">
             <i class="fa fa-plus"></i> Tambah
         </a>
     </x-slot>

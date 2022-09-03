@@ -26,11 +26,13 @@ class RusunPenghuniController extends Controller
 
         $rows = RusunPenghuni::with([
                 'rusuns',
+                'rusun_details',
             ])
             ->orderBy('updated_at', 'desc')
             ->get()
             ->map(fn($row) => [
                 $row->rusuns->nama,
+                $row->rusun_details->nama_tower ?? NULL,
                 $row->nama,
                 $row->email,
                 $row->phone,
@@ -39,6 +41,7 @@ class RusunPenghuniController extends Controller
 
         $heads = [
             'Rusun',
+            'Tower',
             'Nama',
             'Email',
             'Phone',
@@ -47,11 +50,11 @@ class RusunPenghuniController extends Controller
         $config = [
             'data' => $rows,
             'order' => [[1, 'asc']],
-            'columns' => [null, null, null, null],
+            'columns' => [null, null, null, null, null],
         ];
 
         $lastUpdate = collect($rows)
-            ->sortBy(['updated_at', 'desc'])
+            ->sortKeysDesc(5)
             ->first();
 
         return view(self::FOLDER_VIEW . 'index', compact('title', 'subTitle', 'heads', 'config', 'lastUpdate'));

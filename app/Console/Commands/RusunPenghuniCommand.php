@@ -54,12 +54,13 @@ class RusunPenghuniCommand extends Command
                 foreach ($objects as $key => $value) {
                     RusunPenghuni::updateOrCreate(
                         [
-                            'email' => $value->email,
+                            'id' => $value->id,
                         ],
                         [
-                            'id' => uniqid(),
                             'nama' => $value->name,
+                            'email' => $value->email,                            
                             'phone' => $value->phone,
+                            // 'rusun_detail_id' => '',
                             'rusun_id' => \App\Models\Rusun::inRandomOrder()->first()->id,
                         ]
                     );
@@ -68,6 +69,8 @@ class RusunPenghuniCommand extends Command
     
             $this->info('Done');
         } catch (\Exception $e) {
+            Log::error('RusunPenghuniCommand: ' . $e->getMessage());
+
             $this->error($e->getMessage());
         }
     }

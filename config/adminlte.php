@@ -256,10 +256,10 @@ return [
     'dashboard_url' => 'home',
     'logout_url' => 'logout',
     'login_url' => 'login',
-    'register_url' => 'register',
+    'register_url' => false,
     'password_reset_url' => 'password/reset',
     'password_email_url' => 'password/email',
-    'profile_url' => false,
+    'profile_url' => true,
 
     /*
     |--------------------------------------------------------------------------
@@ -425,13 +425,45 @@ return [
         ],
 
         [
-            'text'    => 'Setting',
-            'icon'    => 'fas fa-fw fa-cogs',
+            'text'    => 'Keluhan',
+            'icon'    => 'fas fa-fw fa-mail-bulk',
+            'submenu' => [
+                [
+                    'text' => 'Tulis',
+                    'url'  => '#',
+                ],
+                [
+                    'text' => 'Daftar',
+                    'url'  => '#',
+                    'label' => 0,
+                    'label_color' => 'danger',
+                ],
+                [
+                    'text' => 'Laporan',
+                    'url'  => '#',
+                ],
+            ],
+        ],
+
+        [
+            'text'    => 'Master',
+            'icon'    => 'fas fa-fw fa-layer-group',
             'submenu' => [
                 [
                     'text' => 'Faq',
                     'route'  => 'faq.index',
                 ],
+                [
+                    'text' => 'Dokumen',
+                    'route'  => 'dokumen.index',
+                ],
+            ],
+        ],
+
+        [
+            'text'    => 'Setting',
+            'icon'    => 'fas fa-fw fa-cogs',
+            'submenu' => [
                 [
                     'text' => 'User',
                     'route'  => 'user.index',
