@@ -33,7 +33,6 @@ class UpdatePengelolaRequest extends FormRequest
             'email' => 'nullable|string|max:255|email|unique:pengelolas,email,' . $id,
             'website' => 'nullable|string|max:255|url',
             'keterangan' => 'nullable|string|max:255',
-            'sebagai' => 'required|string|max:255',
             'province_id' => 'required|string',
             'regencie_id' => 'required|string',
             'district_id' => 'nullable|string',

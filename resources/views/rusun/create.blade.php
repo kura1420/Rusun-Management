@@ -41,9 +41,84 @@
         <x-adminlte-input name="latitude" id="latitude" label="Latitude" placeholder="Latitude" fgroup-class="col-md-2" />
         <x-adminlte-input name="longitude" id="longitude" label="Longitude" placeholder="Longitude" fgroup-class="col-md-2" />
 
-        <x-adminlte-input-file name="foto_1" id="foto_1" label="Foto 1" fgroup-class="col-md-6" />
-        <x-adminlte-input-file name="foto_2" id="foto_2" label="Foto 2" fgroup-class="col-md-6" />
-        <x-adminlte-input-file name="foto_3" id="foto_3" label="Foto 3" fgroup-class="col-md-6" />
+        <x-adminlte-input-file name="foto_1" id="foto_1" label="Foto 1" fgroup-class="col-md-4" />
+        <x-adminlte-input-file name="foto_2" id="foto_2" label="Foto 2" fgroup-class="col-md-4" />
+        <x-adminlte-input-file name="foto_3" id="foto_3" label="Foto 3" fgroup-class="col-md-4" />
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-12">
+        <nav class="w-100">
+                <div class="nav nav-tabs" id="product-tab" role="tablist">
+                    <a class="nav-item nav-link active" id="product-desc-tab" data-toggle="tab" href="#product-desc" role="tab" aria-controls="product-desc" aria-selected="true">Pengembang</a>
+                    <a class="nav-item nav-link" id="product-comments-tab" data-toggle="tab" href="#product-comments" role="tab" aria-controls="product-comments" aria-selected="false">Pengelola</a>
+                </div>
+            </nav>
+            <div class="tab-content p-3" id="nav-tabContent">
+                <div class="tab-pane fade show active" id="product-desc" role="tabpanel" aria-labelledby="product-desc-tab">
+                    <div class="row">
+                        <div class="col-md-5">
+                            <x-adminlte-select2 name="pengembangs" id="pengembangs">
+                                <option></option>
+                            </x-adminlte-select2>
+                        </div>
+                        <div class="col-md-5">
+                            <x-adminlte-input name="pengembang_keterangan" id="pengembang_keterangan" placeholder="Keterangan" />
+                        </div>
+                        <div class="col-md-2">
+                            <x-adminlte-button type="button" id="btnAddPengembang" label="Tambah" class="btn-md" theme="info" icon="fas fa-plus"/>
+                        </div>
+                    </div>
+
+                    <table id="tablePengembang" class="table table-hover text-nowrap">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nama</th>
+                                <th>Telp</th>
+                                <th>Email</th>
+                                <th>Keterangan</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                </div>
+                <div class="tab-pane fade" id="product-comments" role="tabpanel" aria-labelledby="product-comments-tab">
+                    <div class="row">
+                        <div class="col-md-5">
+                            <x-adminlte-select2 name="pengelolas" id="pengelolas" style="width:100%;">
+                                <option></option>
+                            </x-adminlte-select2>
+                        </div>
+                        <div class="col-md-5">
+                            <x-adminlte-input name="pengelola_keterangan" id="pengelola_keterangan" placeholder="Keterangan" />
+                        </div>
+                        <div class="col-md-2">
+                            <x-adminlte-button type="button" id="btnAddPengelola" label="Tambah" class="btn-md" theme="info" icon="fas fa-plus"/>
+                        </div>
+                    </div>
+                
+                    <table id="tablePengelola" class="table table-hover text-nowrap" style="width:100%;">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nama</th>
+                                <th>Telp</th>
+                                <th>Email</th>
+                                <th>Keterangan</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 
     <x-slot name="footerSlot">
@@ -63,6 +138,221 @@ $(function () {
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
         }
+    });
+
+    const tablePengembang = $('#tablePengembang').DataTable({
+        columnDefs: [
+            {
+                target: 0,
+                visible: false,
+            },
+        ],
+    });
+
+    const tablePengelola = $('#tablePengelola').DataTable({
+        columnDefs: [
+            {
+                target: 0,
+                visible: false,
+            },
+        ],
+    });
+
+    const btnDeletePengembang = id => `<button type="button" class="btn btn-danger btn-sm btnDeletePengembang" id="${id}">Hapus</button>`;
+    const btnDeletePengelola = id => `<button type="button" class="btn btn-danger btn-sm btnDeletePengelola" id="${id}">Hapus</button>`;
+
+    $('#pengembangs').select2({
+        placeholder: 'Pilih Pengembang',
+        allowClear: true,
+        ajax: {
+            url: '{{route("rest.pengembangs")}}',
+            dataType: 'json',
+            data: function (params) {
+                var query = {
+                    search: params.term,
+                }
+
+                return query;
+            },
+            processResults: function (data) {
+                let results = [];
+                if (data.length > 0) {
+                    $.each(data, function (index, value) { 
+                        results.push({
+                            id: value.id,
+                            text: value.nama,
+                            telp: value.telp,
+                            email: value.email,
+                        });
+                    });
+                }
+
+                return { results };
+            }
+        }
+    });
+
+    $('#pengelolas').select2({
+        placeholder: 'Pilih Pengelola',
+        allowClear: true,
+        ajax: {
+            url: '{{route("rest.pengelolas")}}',
+            dataType: 'json',
+            data: function (params) {
+                var query = {
+                    search: params.term,
+                }
+
+                return query;
+            },
+            processResults: function (data) {
+                let results = [];
+                if (data.length > 0) {
+                    $.each(data, function (index, value) { 
+                        results.push({
+                            id: value.id,
+                            text: value.nama,
+                            telp: value.telp,
+                            email: value.email,
+                        });
+                    });
+                }
+
+                return { results };
+            }
+        }
+    });
+
+    $('#btnAddPengelola').click(function (e) { 
+        e.preventDefault();
+        
+        let pengelolas = $('#pengelolas').select2('data');
+        const pengelola_keterangan = $('#pengelola_keterangan').val();
+        
+        const {
+            id,
+            text,
+            telp,
+            email,
+        } = pengelolas[0];
+
+        if (id !== '' && text !== '') {
+            const tablePengelolaRows = tablePengelola
+                .rows()
+                .data()
+                .toArray();
+                
+            if (tablePengelolaRows.length == 0) {
+                tablePengelola
+                    .row
+                    .add([
+                        id,
+                        text,
+                        telp,
+                        email,
+                        pengelola_keterangan,
+                        btnDeletePengelola(id),
+                    ])
+                    .draw();
+            } else {
+                const tablePengelolaCheck = tablePengelolaRows.filter(r => r[0] == text);
+                
+                if (tablePengelolaCheck.length == 0) {
+                    tablePengelola
+                        .row
+                        .add([
+                            id,
+                            text,
+                            telp,
+                            email,
+                            pengelola_keterangan,
+                            btnDeletePengelola(id),
+                        ])
+                        .draw();
+                } else {
+                    Swal.fire('Data sudah tersedia.');                    
+                }
+            }
+        } else {
+            Swal.fire('Harap pilih pengembang terlebih dahulu.');
+        }
+    });
+
+    $('#btnAddPengembang').click(function (e) { 
+        e.preventDefault();
+        
+        let pengembangs = $('#pengembangs').select2('data');
+        const pengembang_keterangan = $('#pengembang_keterangan').val();
+        
+        const {
+            id,
+            text,
+            telp,
+            email,
+        } = pengembangs[0];
+
+        if (id !== '' && text !== '') {
+            const tablePengembangRows = tablePengembang
+                .rows()
+                .data()
+                .toArray();
+                
+            if (tablePengembangRows.length == 0) {
+                tablePengembang
+                    .row
+                    .add([
+                        id,
+                        text,
+                        telp,
+                        email,
+                        pengembang_keterangan,
+                        btnDeletePengembang(id),
+                    ])
+                    .draw();
+            } else {
+                const tablePengembangCheck = tablePengembangRows.filter(r => r[0] == text);
+                
+                if (tablePengembangCheck.length == 0) {
+                    tablePengembang
+                        .row
+                        .add([
+                            id,
+                            text,
+                            telp,
+                            email,
+                            pengembang_keterangan,
+                            btnDeletePengembang(id),
+                        ])
+                        .draw();
+                } else {
+                    Swal.fire('Data sudah tersedia.');                    
+                }
+            }
+        } else {
+            Swal.fire('Harap pilih pengembang terlebih dahulu.');
+        }
+    });
+
+    $('body').on('click', '.btnDeletePengembang', function (e) {
+        e.preventDefault();
+
+        const columnRemovePengembang = $(this).parents('tr');
+
+        tablePengembang
+            .row(columnRemovePengembang)
+            .remove()
+            .draw();
+    });
+
+    $('body').on('click', '.btnDeletePengelola', function (e) {
+        e.preventDefault();
+
+        const columnRemovePengelola = $(this).parents('tr');
+
+        tablePengelola
+            .row(columnRemovePengelola)
+            .remove()
+            .draw();
     });
 
     $('#province_id').select2({

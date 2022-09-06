@@ -27,12 +27,15 @@ class PengembangDokumenController extends Controller
         $title = self::TITLE;
         $subTitle = 'List Data';
 
-        $rows = PengembangDokumen::with(['pengembangs'])
+        $rows = PengembangDokumen::with([
+                'pengembangs',
+                'dokumens',
+            ])
             ->orderBy('created_at')
             ->get()
             ->map(fn($row) => [
                 $row->pengembangs->nama,
-                $row->nama,
+                $row->dokumens->nama,
                 $row->tersedia ? 'Ya' : 'Tidak',
                 $row->keterangan,
                 '<nobr>' .
@@ -44,7 +47,7 @@ class PengembangDokumenController extends Controller
 
         $heads = [
             'Pengembang',
-            'Nama',
+            'Dokumen',
             'Tersedia',
             'Keterangan',
             ['label' => 'Aksi', 'no-export' => true, 'width' => 5],
@@ -70,10 +73,11 @@ class PengembangDokumenController extends Controller
         $title = self::TITLE;
         $subTitle = 'Tambah Data';
 
+        $dokumens = \App\Models\Dokumen::orderBy('nama', 'asc')->get();
         $pengembangs = \App\Models\Pengembang::orderBy('nama', 'asc')->get();
         $pengembang_id = $request->pengembang_id ?? NULL;
 
-        return view(self::FOLDER_VIEW . 'create', compact('title', 'subTitle', 'pengembangs', 'pengembang_id'));
+        return view(self::FOLDER_VIEW . 'create', compact('title', 'subTitle', 'dokumens', 'pengembangs', 'pengembang_id'));
     }
 
     /**
@@ -130,7 +134,8 @@ class PengembangDokumenController extends Controller
         $subTitle = 'Detail Data';
         
         $row = PengembangDokumen::with([
-            'pengembangs'
+            'pengembangs',
+            'dokumens',
         ])->findOrFail($id);
 
         return view(self::FOLDER_VIEW . 'show', compact('title', 'subTitle', 'row'));
@@ -148,11 +153,12 @@ class PengembangDokumenController extends Controller
         $title = self::TITLE;
         $subTitle = 'Edit Data';
 
+        $dokumens = \App\Models\Dokumen::orderBy('nama', 'asc')->get();
         $pengembangs = \App\Models\Pengembang::orderBy('nama', 'asc')->get();
         $pengembang_id = $request->pengembang_id ?? NULL;
         $row = PengembangDokumen::findOrFail($id);
 
-        return view(self::FOLDER_VIEW . 'edit', compact('title', 'subTitle', 'row', 'pengembangs', 'pengembang_id'));
+        return view(self::FOLDER_VIEW . 'edit', compact('title', 'subTitle', 'row', 'dokumens', 'pengembangs', 'pengembang_id'));
     }
 
     /**

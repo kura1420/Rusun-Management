@@ -13,7 +13,7 @@ class StoreP3srsJabatanRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return auth()->check();
     }
 
     /**
@@ -25,6 +25,8 @@ class StoreP3srsJabatanRequest extends FormRequest
     {
         return [
             //
+            'nama' => 'required|string|max:255|unique:p3srs_jabatans',
+            'keterangan' => 'nullable|string',
         ];
     }
 }

@@ -2,10 +2,25 @@
 
 namespace App\Models;
 
+use App\Traits\Uuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class P3srsKegiatanJadwal extends Model
 {
-    use HasFactory;
+    use HasFactory, Uuid;
+
+    public $incrementing = false;
+
+    protected $guarded = [];
+
+    public function p3srs_kegiatans()
+    {
+        return $this->belongsTo(P3srsKegiatan::class, 'p3srs_kegiatan_id');
+    }
+
+    public function rusuns()
+    {
+        return $this->belongsTo(Rusun::class, 'rusun_id');
+    }
 }

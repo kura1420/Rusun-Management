@@ -17,7 +17,8 @@
         </x-slot>
         
         <div class="row">
-            <x-adminlte-input name="nama" id="nama" label="Nama" placeholder="Nama" fgroup-class="col-md-12" value="{{old('nama')}}" />
+            <x-adminlte-input name="code" id="code" label="Kode" placeholder="Kode" fgroup-class="col-md-6" value="{{old('code')}}" />
+            <x-adminlte-input name="nama" id="nama" label="Nama" placeholder="Nama" fgroup-class="col-md-6" value="{{old('nama')}}" />
 
             <x-adminlte-text-editor name="keterangan" id="keterangan" fgroup-class="col-md-12" :config="[
                 'height' => '300',

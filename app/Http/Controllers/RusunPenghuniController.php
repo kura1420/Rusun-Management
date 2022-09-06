@@ -27,30 +27,37 @@ class RusunPenghuniController extends Controller
         $rows = RusunPenghuni::with([
                 'rusuns',
                 'rusun_details',
+                'rusun_pemiliks',
             ])
             ->orderBy('updated_at', 'desc')
             ->get()
             ->map(fn($row) => [
                 $row->rusuns->nama,
                 $row->rusun_details->nama_tower ?? NULL,
+                $row->rusun_pemiliks->nama ?? NULL,
                 $row->nama,
                 $row->email,
                 $row->phone,
+                $row->identitas_tipe,
+                $row->identitas_nomor,
                 $row->updated_at,
             ]);
 
         $heads = [
             'Rusun',
             'Tower',
+            'Pemilik',
             'Nama',
             'Email',
             'Phone',
+            'Identitas Tipe',
+            'Identitas Nomor',
         ];
         
         $config = [
             'data' => $rows,
             'order' => [[1, 'asc']],
-            'columns' => [null, null, null, null, null],
+            'columns' => [null, null, null, null, null, null, null, null],
         ];
 
         $lastUpdate = collect($rows)

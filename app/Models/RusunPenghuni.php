@@ -22,4 +22,9 @@ class RusunPenghuni extends Model
     {
         return $this->belongsTo(RusunDetail::class, 'rusun_detail_id');
     }
+
+    public function rusun_pemiliks()
+    {
+        return $this->belongsTo(RusunPemilik::class, 'rusun_pemilik_id');
+    }
 }

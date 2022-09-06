@@ -343,7 +343,7 @@ return [
                     'route'  => 'pengembang-kontak.index',
                 ],
                 [
-                    'text' => 'Dokument',
+                    'text' => 'Dokumen',
                     'route'  => 'pengembang-dokumen.index',
                 ],
             ],
@@ -389,6 +389,10 @@ return [
                     'route'  => 'rusun-fasilitas.index',
                 ],
                 [
+                    'text' => 'Pemilik',
+                    'route'  => 'rusun-pemilik.index',
+                ],
+                [
                     'text' => 'Penghuni',
                     'route'  => 'rusun-penghuni.index',
                 ],
@@ -405,11 +409,11 @@ return [
                     'submenu' => [
                         [
                             'text' => 'List',
-                            'url'  => '#',
+                            'route'  => 'p3srs-kegiatan.index',
                         ],
                         [
                             'text' => 'Jadwal',
-                            'url'  => '#',
+                            'route'  => 'p3srs-jadwal.index',
                         ],
                         [
                             'text' => 'Laporan',
@@ -419,7 +423,7 @@ return [
                 ],
                 [
                     'text' => 'Jabatan',
-                    'url'  => '#',
+                    'route'  => 'p3srs-jabatan.index',
                 ],
             ],
         ],
@@ -636,6 +640,26 @@ return [
                     'type' => 'css',
                     'asset' => true,
                     'location' => 'vendor/summernote/summernote-bs4.min.css',
+                ],
+            ],
+        ],
+        'TempusDominusBs4' => [
+            'active' => true,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'vendor/moment/moment.min.js',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'vendor/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js',
+                ],
+                [
+                    'type' => 'css',
+                    'asset' => true,
+                    'location' => 'vendor/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css',
                 ],
             ],
         ],

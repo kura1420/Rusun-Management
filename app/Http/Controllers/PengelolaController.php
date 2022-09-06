@@ -30,7 +30,6 @@ class PengelolaController extends Controller
                 $row->nama,
                 $row->telp,
                 $row->email,
-                $row->sebagai,
                 '<nobr>' . 
                     '<a href="'.route(self::URL .'show', $row->id).'" class="btn btn-success btn-sm" title="Detail"><i class="fas fa-folder"></i> Detail</a> ' .
                     '<a href="'.route(self::URL .'edit', $row->id).'" class="btn btn-info btn-sm" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a> ' .
@@ -42,14 +41,13 @@ class PengelolaController extends Controller
             'Nama',
             'Telp',
             'Email',
-            'Sebagai',
             ['label' => 'Aksi', 'no-export' => true, 'width' => 10],
         ];
         
         $config = [
             'data' => $rows,
             'order' => [[1, 'asc']],
-            'columns' => [null, null, null, null, ['orderable' => false]],
+            'columns' => [null, null, null, ['orderable' => false]],
         ];
 
         return view(self::FOLDER_VIEW . 'index', compact('title', 'subTitle', 'heads', 'config'));

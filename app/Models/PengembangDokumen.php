@@ -18,4 +18,9 @@ class PengembangDokumen extends Model
     {
         return $this->belongsTo(Pengembang::class, 'pengembang_id');
     }
+
+    public function dokumens()
+    {
+        return $this->belongsTo(Dokumen::class, 'dokumen_id');
+    }
 }

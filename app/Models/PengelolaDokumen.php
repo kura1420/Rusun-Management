@@ -18,4 +18,9 @@ class PengelolaDokumen extends Model
     {
         return $this->belongsTo(Pengelola::class, 'pengelola_id');
     }
+
+    public function dokumens()
+    {
+        return $this->belongsTo(Dokumen::class, 'dokumen_id');
+    }
 }

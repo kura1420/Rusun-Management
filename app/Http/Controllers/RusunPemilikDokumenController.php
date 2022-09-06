@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreRusunBendaBersamaRequest;
-use App\Http\Requests\UpdateRusunBendaBersamaRequest;
-use App\Models\RusunBendaBersama;
+use App\Http\Requests\StoreRusunPemilikDokumenRequest;
+use App\Http\Requests\UpdateRusunPemilikDokumenRequest;
+use App\Models\RusunPemilikDokumen;
 
-class RusunBendaBersamaController extends Controller
+class RusunPemilikDokumenController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -31,10 +31,10 @@ class RusunBendaBersamaController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StoreRusunBendaBersamaRequest  $request
+     * @param  \App\Http\Requests\StoreRusunPemilikDokumenRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreRusunBendaBersamaRequest $request)
+    public function store(StoreRusunPemilikDokumenRequest $request)
     {
         //
     }
@@ -42,10 +42,10 @@ class RusunBendaBersamaController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\RusunBendaBersama  $rusunBendaBersama
+     * @param  \App\Models\RusunPemilikDokumen  $rusunPemilikDokumen
      * @return \Illuminate\Http\Response
      */
-    public function show(RusunBendaBersama $rusunBendaBersama)
+    public function show(RusunPemilikDokumen $rusunPemilikDokumen)
     {
         //
     }
@@ -53,10 +53,10 @@ class RusunBendaBersamaController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\RusunBendaBersama  $rusunBendaBersama
+     * @param  \App\Models\RusunPemilikDokumen  $rusunPemilikDokumen
      * @return \Illuminate\Http\Response
      */
-    public function edit(RusunBendaBersama $rusunBendaBersama)
+    public function edit(RusunPemilikDokumen $rusunPemilikDokumen)
     {
         //
     }
@@ -64,11 +64,11 @@ class RusunBendaBersamaController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\UpdateRusunBendaBersamaRequest  $request
-     * @param  \App\Models\RusunBendaBersama  $rusunBendaBersama
+     * @param  \App\Http\Requests\UpdateRusunPemilikDokumenRequest  $request
+     * @param  \App\Models\RusunPemilikDokumen  $rusunPemilikDokumen
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateRusunBendaBersamaRequest $request, RusunBendaBersama $rusunBendaBersama)
+    public function update(UpdateRusunPemilikDokumenRequest $request, RusunPemilikDokumen $rusunPemilikDokumen)
     {
         //
     }
@@ -76,10 +76,10 @@ class RusunBendaBersamaController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\RusunBendaBersama  $rusunBendaBersama
+     * @param  \App\Models\RusunPemilikDokumen  $rusunPemilikDokumen
      * @return \Illuminate\Http\Response
      */
-    public function destroy(RusunBendaBersama $rusunBendaBersama)
+    public function destroy(RusunPemilikDokumen $rusunPemilikDokumen)
     {
         //
     }

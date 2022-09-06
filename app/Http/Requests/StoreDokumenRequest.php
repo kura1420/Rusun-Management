@@ -25,7 +25,8 @@ class StoreDokumenRequest extends FormRequest
     {
         return [
             //
-            'nama' => 'required|string|max:255|unique:dokumens',
+            'code' => 'required|string|max:50|alpha_num|unique:dokumens',
+            'nama' => 'required|string|max:255',
             'keterangan' => 'nullable|string',
         ];
     }

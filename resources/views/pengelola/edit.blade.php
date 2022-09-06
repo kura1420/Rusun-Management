@@ -50,7 +50,6 @@
         <x-adminlte-input name="email" id="email" label="Email" placeholder="Email" fgroup-class="col-md-6" value="{{$row->email}}" />
         <x-adminlte-input name="website" id="website" label="Website" placeholder="Website" fgroup-class="col-md-6" value="{{$row->website}}" />
         <x-adminlte-input name="keterangan" id="keterangan" label="Keterangan" placeholder="Keterangan" fgroup-class="col-md-6" value="{{$row->keterangan}}" />
-        <x-adminlte-input name="sebagai" id="sebagai" label="Sebagai" placeholder="Sebagai" fgroup-class="col-md-6" value="{{$row->sebagai}}" />
     </div>
 
     <x-slot name="footerSlot">
@@ -246,7 +245,6 @@ $(function () {
             email: $('#email').val(),
             website: $('#website').val(),
             keterangan: $('#keterangan').val(),
-            sebagai: $('#sebagai').val(),
             province_id: $('#province_id').val(),
             regencie_id: $('#regencie_id').val(),
             district_id: $('#district_id').val(),

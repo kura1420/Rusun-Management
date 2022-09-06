@@ -2,6 +2,9 @@
 
 use App\Http\Controllers\DokumenController;
 use App\Http\Controllers\FaqController;
+use App\Http\Controllers\P3srsJabatanController;
+use App\Http\Controllers\P3srsKegiatanController;
+use App\Http\Controllers\P3srsKegiatanJadwalController;
 use App\Http\Controllers\PengelolaController;
 use App\Http\Controllers\PengelolaDokumenController;
 use App\Http\Controllers\PengelolaKontakController;
@@ -14,6 +17,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\RusunController;
 use App\Http\Controllers\RusunDetailController;
 use App\Http\Controllers\RusunFasilitasController;
+use App\Http\Controllers\RusunPemilikController;
 use App\Http\Controllers\RusunPenghuniController;
 use App\Http\Controllers\RusunUnitDetailController;
 use App\Http\Controllers\UserController;
@@ -44,20 +48,25 @@ Route::middleware(['auth'])->group(function () {
 
     Route::resource('faq', FaqController::class);
     Route::resource('dokumen', DokumenController::class);
+
+    Route::resource('pengembang', PengembangController::class);
+    Route::resource('pengembang-kontak', PengembangKontakController::class);
+    Route::resource('pengembang-dokumen', PengembangDokumenController::class);
     
     Route::resource('pengelola', PengelolaController::class);
     Route::resource('pengelola-kontak', PengelolaKontakController::class);
     Route::resource('pengelola-dokumen', PengelolaDokumenController::class);
 
-    Route::resource('pengembang', PengembangController::class);
-    Route::resource('pengembang-kontak', PengembangKontakController::class);
-    Route::resource('pengembang-dokumen', PengembangDokumenController::class);
-
     Route::resource('rusun', RusunController::class);
     Route::resource('rusun-detail', RusunDetailController::class);
     Route::resource('rusun-unit-detail', RusunUnitDetailController::class);
     Route::resource('rusun-fasilitas', RusunFasilitasController::class);
+    Route::resource('rusun-pemilik', RusunPemilikController::class);
     Route::resource('rusun-penghuni', RusunPenghuniController::class);
+
+    Route::resource('p3srs-jabatan', P3srsJabatanController::class);
+    Route::resource('p3srs-kegiatan', P3srsKegiatanController::class);
+    Route::resource('p3srs-jadwal', P3srsKegiatanJadwalController::class);
 
 
     Route::prefix('faq')->group(function () {
@@ -101,11 +110,13 @@ Route::middleware(['auth'])->group(function () {
     Route::group(['prefix' => 'rest', 'as' => 'rest.'],
         function () {
             Route::controller(RestController::class)->group(function () {
-                Route::get('/provinsi', 'provinsis')->name('provinsis');
-                Route::get('/kotas', 'kotas')->name('kotas');
-                Route::get('/kecamatans', 'kecamatans')->name('kecamatans');
-                Route::get('/desas', 'desas')->name('desas');
-                Route::get('/rusun-details', 'rusun_details')->name('rusun_details');
+                Route::get('provinsi', 'provinsis')->name('provinsis');
+                Route::get('kotas', 'kotas')->name('kotas');
+                Route::get('kecamatans', 'kecamatans')->name('kecamatans');
+                Route::get('desas', 'desas')->name('desas');
+                Route::get('rusun-details', 'rusun_details')->name('rusun_details');
+                Route::get('pengembangs', 'pengembangs')->name('pengembangs');
+                Route::get('pengelolas', 'pengelolas')->name('pengelolas');
             });
         }
     );

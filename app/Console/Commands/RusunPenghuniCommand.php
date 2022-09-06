@@ -23,7 +23,7 @@ class RusunPenghuniCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Rusun Penghuni Auto Sync';
+    protected $description = 'Rusun Penghuni Sync';
 
     /**
      * Create a new command instance.
@@ -60,6 +60,12 @@ class RusunPenghuniCommand extends Command
                             'nama' => $value->name,
                             'email' => $value->email,                            
                             'phone' => $value->phone,
+                            // 'status' => '',
+                            // 'identitas_tipe' => '',
+                            // 'identitas_file' => '',
+                            // 'identitas_nomor' => '',
+                            // 'rusun_pemilik_id' => '',
+                            // 'rusun_unit_detail_id' => '',
                             // 'rusun_detail_id' => '',
                             'rusun_id' => \App\Models\Rusun::inRandomOrder()->first()->id,
                         ]

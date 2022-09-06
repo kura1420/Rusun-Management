@@ -26,8 +26,17 @@
                 <option value="{{$pengembang->id}}" {{$pengembang->id == old('pengembang_id') || $pengembang_id == $pengembang->id ? 'selected' : ''}}>{{$pengembang->nama}}</option>
                 @endforeach
             </x-adminlte-select2>
-
-            <x-adminlte-input name="nama" label="Nama" placeholder="Nama" fgroup-class="col-md-6" value="{{old('nama')}}" />
+            
+            <x-adminlte-select2 name="dokumen_id" label="Dokumen" fgroup-class="col-md-6" :config="[
+                'placeholder' => 'Pilih Dokumen',
+                'allowClear' => true,
+            ]">
+                <option value=""></option>
+                @foreach ($dokumens as $dokumen)
+                <option value="{{$dokumen->id}}" {{$dokumen->id == old('dokumen_id') ? 'selected' : ''}}>{{$dokumen->nama}}</option>
+                @endforeach
+            </x-adminlte-select2>
+            
             <x-adminlte-input type="file" name="file" label="File" placeholder="File" fgroup-class="col-md-6" value="{{old('file')}}">
                 <x-slot name="bottomSlot">
                     <small class="text-lightblue">*Hanya file <strong>PDF</strong> dan Maksimal <strong>5MB</strong></small>

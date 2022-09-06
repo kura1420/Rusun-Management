@@ -25,9 +25,9 @@ class UpdatePengelolaDokumenRequest extends FormRequest
     {
         return [
             //
-            'nama' => 'required|string|max:255',
             'file' => 'nullable|max:15000|mimes:pdf',
             'keterangan' => 'nullable|string|max:255',
+            'dokumen_id' => 'required|string',
             'pengelola_id' => 'required|string|max:255',
         ];
     }
@@ -40,6 +40,7 @@ class UpdatePengelolaDokumenRequest extends FormRequest
     public function attributes()
     {
         return [
+            'dokumen_id' => 'dokumen',
             'pengelola_id' => 'pengelola',
         ];
     }

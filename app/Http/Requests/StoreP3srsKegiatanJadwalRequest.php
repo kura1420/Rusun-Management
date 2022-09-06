@@ -13,7 +13,7 @@ class StoreP3srsKegiatanJadwalRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return auth()->check();
     }
 
     /**
@@ -25,6 +25,24 @@ class StoreP3srsKegiatanJadwalRequest extends FormRequest
     {
         return [
             //
+            'tanggal' => 'required|date',
+            'lokasi' => 'required|string|max:255',
+            'keterangan' => 'required|string',
+            'p3srs_kegiatan_id' => 'required|string',
+            'rusun_id' => 'required|string',
+        ];
+    }
+
+    /**
+     * Get custom attributes for validator errors.
+     *
+     * @return array
+     */
+    public function attributes()
+    {
+        return [
+            'p3srs_kegiatan_id' => 'kegiatan',
+            'rusun_id' => 'rusun',
         ];
     }
 }

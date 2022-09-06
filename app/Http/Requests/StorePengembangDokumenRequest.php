@@ -25,9 +25,9 @@ class StorePengembangDokumenRequest extends FormRequest
     {
         return [
             //
-            'nama' => 'required|string|max:255',
             'file' => 'nullable|max:15000|mimes:pdf',
             'keterangan' => 'nullable|string|max:255',
+            'dokumen_id' => 'required|string|max:255',
             'pengembang_id' => 'required|string|max:255',
         ];
     }
@@ -40,6 +40,7 @@ class StorePengembangDokumenRequest extends FormRequest
     public function attributes()
     {
         return [
+            'dokumen_id' => 'dokumen',
             'pengembang_id' => 'pengembang',
         ];
     }

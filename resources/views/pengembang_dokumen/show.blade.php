@@ -26,7 +26,7 @@
 
     <div class="col-md-8">
         @if (isset($row->file) && $row->tersedia == TRUE)
-        <x-adminlte-card theme="success" theme-mode="outline" title="{{$row->nama}}">
+        <x-adminlte-card theme="success" theme-mode="outline" title="{{$row->dokumens->nama}}">
             <embed type="application/pdf" src="{{route('pengembang-dokumen.view_file', [$row->id, $row->file])}}" width="100%" height="800"></embed>
         </x-adminlte-card>
         @else

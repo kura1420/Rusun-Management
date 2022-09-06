@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Desa;
 use App\Models\Kecamatan;
 use App\Models\Kota;
+use App\Models\Pengelola;
+use App\Models\Pengembang;
 use App\Models\Provinsi;
 use App\Models\RusunDetail;
 use Illuminate\Http\Request;
@@ -111,6 +113,38 @@ class RestController extends Controller
                     ->where('nama_tower', 'like', "%$search%")
                     ->get();
             }
+        }
+
+        return response()->json($rows);
+    }
+
+    public function pengembangs(Request $request)
+    {
+        $search = $request->search ?? NULL;
+
+        $rows = [];
+        if (!$search) {
+            $rows = Pengembang::orderBy('nama', 'asc')->get();
+        } else {
+            $rows = Pengembang::orderBy('nama', 'asc')
+                ->where('nama', 'like', "%$search%")
+                ->get();
+        }
+
+        return response()->json($rows);
+    }
+
+    public function pengelolas(Request $request)
+    {
+        $search = $request->search ?? NULL;
+
+        $rows = [];
+        if (!$search) {
+            $rows = Pengelola::orderBy('nama', 'asc')->get();
+        } else {
+            $rows = Pengelola::orderBy('nama', 'asc')
+                ->where('nama', 'like', "%$search%")
+                ->get();
         }
 
         return response()->json($rows);

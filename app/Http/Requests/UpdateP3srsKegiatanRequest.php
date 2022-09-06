@@ -13,7 +13,7 @@ class UpdateP3srsKegiatanRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return auth()->check();
     }
 
     /**
@@ -23,8 +23,12 @@ class UpdateP3srsKegiatanRequest extends FormRequest
      */
     public function rules()
     {
+        $id = request()->segment(2);
+
         return [
             //
+            'nama' => 'required|string|max:255|unique:p3srs_jabatans,nama,' . $id,
+            'keterangan' => 'nullable|string',
         ];
     }
 }

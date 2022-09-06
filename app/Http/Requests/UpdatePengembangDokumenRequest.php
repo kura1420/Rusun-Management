@@ -27,9 +27,9 @@ class UpdatePengembangDokumenRequest extends FormRequest
 
         return [
             //
-            'nama' => 'required|string|max:255',
             'file' => 'nullable|file|size:5120',
             'keterangan' => 'nullable|string|max:255',
+            'dokumen_id' => 'required|string|max:255',
             'pengembang_id' => 'required|string|max:255',
         ];
     }
@@ -42,6 +42,7 @@ class UpdatePengembangDokumenRequest extends FormRequest
     public function attributes()
     {
         return [
+            'dokumen_id' => 'dokumen',
             'pengembang_id' => 'pengembang',
         ];
     }

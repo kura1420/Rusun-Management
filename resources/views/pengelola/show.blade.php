@@ -30,7 +30,6 @@
     <div class="col-md-4">
         <x-adminlte-card theme="primary" theme-mode="outline" title="{{$subTitle}}">
             <h3 class="text-primary">{{$row->nama}}</h3>
-            <small><i>{{$row->sebagai}}</i></small>
             <p class="text-muted">{{$row->keterangan}}</p>
 
             <br>
