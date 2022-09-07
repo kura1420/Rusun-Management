@@ -158,8 +158,8 @@ $(function () {
         ],
     });
 
-    const btnDeletePengembang = id => `<button type="button" class="btn btn-danger btn-sm btnDeletePengembang" id="${id}">Hapus</button>`;
-    const btnDeletePengelola = id => `<button type="button" class="btn btn-danger btn-sm btnDeletePengelola" id="${id}">Hapus</button>`;
+    const btnDeletePengembang = () => `<button type="button" class="btn btn-danger btn-sm btnDeletePengembang">Hapus</button>`;
+    const btnDeletePengelola = () => `<button type="button" class="btn btn-danger btn-sm btnDeletePengelola">Hapus</button>`;
 
     $('#pengembangs').select2({
         placeholder: 'Pilih Pengembang',
@@ -251,11 +251,11 @@ $(function () {
                         telp,
                         email,
                         pengelola_keterangan,
-                        btnDeletePengelola(id),
+                        btnDeletePengelola(),
                     ])
                     .draw();
             } else {
-                const tablePengelolaCheck = tablePengelolaRows.filter(r => r[0] == text);
+                const tablePengelolaCheck = tablePengelolaRows.filter(r => r[1] == text);
                 
                 if (tablePengelolaCheck.length == 0) {
                     tablePengelola
@@ -266,7 +266,7 @@ $(function () {
                             telp,
                             email,
                             pengelola_keterangan,
-                            btnDeletePengelola(id),
+                            btnDeletePengelola(),
                         ])
                         .draw();
                 } else {
@@ -306,11 +306,11 @@ $(function () {
                         telp,
                         email,
                         pengembang_keterangan,
-                        btnDeletePengembang(id),
+                        btnDeletePengembang(),
                     ])
                     .draw();
             } else {
-                const tablePengembangCheck = tablePengembangRows.filter(r => r[0] == text);
+                const tablePengembangCheck = tablePengembangRows.filter(r => r[1] == text);
                 
                 if (tablePengembangCheck.length == 0) {
                     tablePengembang
@@ -321,7 +321,7 @@ $(function () {
                             telp,
                             email,
                             pengembang_keterangan,
-                            btnDeletePengembang(id),
+                            btnDeletePengembang(),
                         ])
                         .draw();
                 } else {
@@ -541,6 +541,9 @@ $(function () {
         formData.append('regencie_id', $('#regencie_id').val());
         formData.append('district_id', $('#district_id').val());
         formData.append('village_id', $('#village_id').val());
+
+        formData.append('pengembangs', JSON.stringify(tablePengembang.rows().data().toArray()));
+        formData.append('pengelolas', JSON.stringify(tablePengelola.rows().data().toArray()));
 
         $this
             .prop('disabled', true)

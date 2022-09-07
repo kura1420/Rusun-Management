@@ -28,7 +28,8 @@ class StorePengelolaDokumenRequest extends FormRequest
             'file' => 'nullable|max:15000|mimes:pdf',
             'keterangan' => 'nullable|string|max:255',
             'dokumen_id' => 'required|string',
-            'pengelola_id' => 'required|string|max:255',
+            'pengelola_id' => 'required|string',
+            'rusun_id' => 'required|string',
         ];
     }
 
@@ -42,6 +43,7 @@ class StorePengelolaDokumenRequest extends FormRequest
         return [
             'dokumen_id' => 'dokumen',
             'pengelola_id' => 'pengelola',
+            'rusun_id' => 'rusun',
         ];
     }
 }

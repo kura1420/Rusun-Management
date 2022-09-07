@@ -90,14 +90,16 @@
                     </div>
                     <div class="tab-pane fade" id="custom-tabs-one-profile" role="tabpanel" aria-labelledby="custom-tabs-one-profile-tab">
                         <x-adminlte-datatable id="table2" :heads="[
-                            'Nama',
+                            'Rusun',
+                            'Dokumen',
                             'Tersedia',
                             'Keterangan',
-                            ['label' => 'Aksi', 'no-export' => true, 'width' => 15],
+                            ['label' => 'Aksi', 'no-export' => true, 'width' => 20],
                         ]">
                             @foreach($row->pengembang_dokumens as $pengembang_dokumen)
                                 <tr>
-                                    <td>{{$pengembang_dokumen->nama}}</td>
+                                    <td>{{$pengembang_dokumen->rusun->nama}}</td>
+                                    <td>{{$pengembang_dokumen->dokumen->nama}}</td>
                                     <td>{{$pengembang_dokumen->tersedia ? 'Ya' : 'Tidak'}}</td>
                                     <td>{{$pengembang_dokumen->keterangan}}</td>
                                     <td>

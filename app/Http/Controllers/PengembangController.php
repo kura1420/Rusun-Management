@@ -102,6 +102,13 @@ class PengembangController extends Controller
             'pengembang_dokumens',
         ])->findOrFail($id);
 
+        $row->pengembang_dokumens = $row->pengembang_dokumens->map(function ($pengembang_dokumen) {
+            $pengembang_dokumen->dokumen = $pengembang_dokumen->dokumens()->first();
+            $pengembang_dokumen->rusun = $pengembang_dokumen->rusuns()->first();
+
+            return $pengembang_dokumen;
+        });
+
         return view(self::FOLDER_VIEW . 'show', compact('title', 'subTitle', 'row'));
     }
 

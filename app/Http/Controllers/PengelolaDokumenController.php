@@ -30,14 +30,15 @@ class PengelolaDokumenController extends Controller
         $rows = PengelolaDokumen::with([
                 'pengelolas',
                 'dokumens',
+                'rusuns',
             ])
             ->orderBy('created_at')
             ->get()
             ->map(fn($row) => [
                 $row->pengelolas->nama,
+                $row->rusuns->nama,
                 $row->dokumens->nama,
                 $row->tersedia ? 'Ya' : 'Tidak',
-                $row->keterangan,
                 '<nobr>' .
                     '<a href="'.route(self::URL .'show', $row->id).'" class="btn btn-success btn-sm" title="Detail"><i class="fas fa-folder"></i> Detail</a> ' . 
                     '<a href="'.route(self::URL .'edit', $row->id).'" class="btn btn-info btn-sm" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a> ' . 
@@ -47,9 +48,9 @@ class PengelolaDokumenController extends Controller
 
         $heads = [
             'Pengelola',
+            'Rusun',
             'Dokumen',
             'Tersedia',
-            'Keterangan',
             ['label' => 'Aksi', 'no-export' => true, 'width' => 5],
         ];
         
@@ -73,11 +74,12 @@ class PengelolaDokumenController extends Controller
         $title = self::TITLE;
         $subTitle = 'Tambah Data';
 
+        $rusuns = \App\Models\Rusun::orderBy('nama', 'asc')->get();
         $dokumens = \App\Models\Dokumen::orderBy('nama', 'asc')->get();
         $pengelolas = \App\Models\Pengelola::orderBy('nama', 'asc')->get();
         $pengelola_id = $request->pengelola_id ?? NULL;
 
-        return view(self::FOLDER_VIEW . 'create', compact('title', 'subTitle', 'dokumens', 'pengelolas', 'pengelola_id'));
+        return view(self::FOLDER_VIEW . 'create', compact('title', 'subTitle', 'rusuns', 'dokumens', 'pengelolas', 'pengelola_id'));
     }
 
     /**
@@ -136,6 +138,7 @@ class PengelolaDokumenController extends Controller
         $row = PengelolaDokumen::with([
             'pengelolas',
             'dokumens',
+            'rusuns',
         ])->findOrFail($id);
 
         return view(self::FOLDER_VIEW . 'show', compact('title', 'subTitle', 'row'));
@@ -153,13 +156,14 @@ class PengelolaDokumenController extends Controller
         $title = self::TITLE;
         $subTitle = 'Edit Data';
 
+        $rusuns = \App\Models\Rusun::orderBy('nama', 'asc')->get();
         $dokumens = \App\Models\Dokumen::orderBy('nama', 'asc')->get();
         $pengelolas = \App\Models\Pengelola::orderBy('nama', 'asc')->get();
         $pengelola_id = $request->pengelola_id ?? NULL;
 
         $row = PengelolaDokumen::findOrFail($id);
 
-        return view(self::FOLDER_VIEW . 'edit', compact('title', 'subTitle', 'row', 'dokumens', 'pengelolas', 'pengelola_id'));
+        return view(self::FOLDER_VIEW . 'edit', compact('title', 'subTitle', 'row', 'rusuns', 'dokumens', 'pengelolas', 'pengelola_id'));
     }
 
     /**

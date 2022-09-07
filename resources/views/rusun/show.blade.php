@@ -112,6 +112,8 @@
                     <a class="nav-item nav-link active" id="product-desc-tab" data-toggle="tab" href="#product-desc" role="tab" aria-controls="product-desc" aria-selected="true">Tower</a>
                     <a class="nav-item nav-link" id="product-comments-tab" data-toggle="tab" href="#product-comments" role="tab" aria-controls="product-comments" aria-selected="false">Unit</a>
                     <a class="nav-item nav-link" id="product-fasilitas-tab" data-toggle="tab" href="#product-fasilitas" role="tab" aria-controls="product-fasilitas" aria-selected="false">Fasilitas</a>
+                    <a class="nav-item nav-link" id="pengembang-tab" data-toggle="tab" href="#pengembang" role="tab" aria-controls="pengembang" aria-selected="false">Pengembang</a>
+                    <a class="nav-item nav-link" id="pengelola-tab" data-toggle="tab" href="#pengelola" role="tab" aria-controls="pengelola" aria-selected="false">Pengelola</a>
                 </div>
             </nav>
             <div class="tab-content p-3" id="nav-tabContent">
@@ -184,10 +186,84 @@
                             @endforeach
                     </x-adminlte-datatable>
                 </div>
+                <div class="tab-pane fade" id="pengembang" role="tabpanel" aria-labelledby="pengembang-tab">
+                    <x-adminlte-datatable id="tablePengembang" :heads="[
+                            'Nama',
+                            'Telp',
+                            'Email',
+                            'Keterangan',
+                            ['label' => 'Aksi', 'no-export' => true, 'width' => 15],
+                        ]">
+                            @foreach($row->rusun_pengembangs as $rusun_pengembang)
+                                <tr>
+                                    <td>{{$rusun_pengembang->nama}}</td>
+                                    <td>{{$rusun_pengembang->telp}}</td>
+                                    <td>{{$rusun_pengembang->email}}</td>
+                                    <td>{{$rusun_pengembang->keterangan}}</td>
+                                    <td>@php echo $rusun_pengembang->aksi; @endphp</td>
+                                </tr>
+                            @endforeach
+                    </x-adminlte-datatable>
+                </div>
+                <div class="tab-pane fade" id="pengelola" role="tabpanel" aria-labelledby="pengelola-tab">
+                    <x-adminlte-datatable id="tablePengelola" :heads="[
+                            'Nama',
+                            'Telp',
+                            'Email',
+                            'Keterangan',
+                            ['label' => 'Aksi', 'no-export' => true, 'width' => 15],
+                        ]">
+                            @foreach($row->rusun_pengelolas as $rusun_pengelola)
+                                <tr>
+                                    <td>{{$rusun_pengelola->nama}}</td>
+                                    <td>{{$rusun_pengelola->telp}}</td>
+                                    <td>{{$rusun_pengelola->email}}</td>
+                                    <td>{{$rusun_pengelola->keterangan}}</td>
+                                    <td>@php echo $rusun_pengelola->aksi; @endphp</td>
+                                </tr>
+                            @endforeach
+                    </x-adminlte-datatable>
+                </div>
             </div>
         </div>
     </div>
 </x-adminlte-card>
+
+<x-adminlte-modal id="modalPengembang" title="Dokumen Pengembang" theme="purple"
+    icon="fas fa-file-alt" size='lg' static-backdrop v-centered>
+    <div class="table-responsive p-0">
+        <table class="table table-hover text-nowrap">
+            <thead>
+                <tr>
+                    <th>Dokumen</th>
+                    <th>Keterangan</th>
+                    <th>File</th>
+                </tr>
+            </thead>
+            <tbody id="listDokumenPengembang">
+                
+            </tbody>
+        </table>
+    </div>
+</x-adminlte-modal>
+
+<x-adminlte-modal id="modalPengelola" title="Dokumen Pengelola" theme="purple"
+    icon="fas fa-file-alt" size='lg' static-backdrop v-centered>
+    <div class="table-responsive p-0">
+        <table class="table table-hover text-nowrap">
+            <thead>
+                <tr>
+                    <th>Dokumen</th>
+                    <th>Keterangan</th>
+                    <th>File</th>
+                </tr>
+            </thead>
+            <tbody id="listDokumenPengelola">
+                
+            </tbody>
+        </table>
+    </div>
+</x-adminlte-modal>
 @stop
 
 @section('css')
@@ -213,6 +289,8 @@ $(function () {
     const tableTower = $('#tableTower').DataTable();
     const tableUnit = $('#tableUnit').DataTable();
     const tableFasilitas = $('#tableFasilitas').DataTable();
+
+    const buttonViewFile = url => `<a href="${url}" class="btn btn-sm btn-info" target="_blank">Lihat</a>`;
 
     $('body').on('click', '.btnDeleteTower', function (e) {
         e.preventDefault();
@@ -384,6 +462,100 @@ $(function () {
                         }
                     }
                 });
+            }
+        });
+    });
+
+    $('body').on('click', '.btnModalPengembang', function (e) {
+        e.preventDefault();
+
+        const dokumen_pengembang_id = $(this).val();
+
+        $.ajax({
+            type: "GET",
+            url: "{{route('rusun.pengembangDokumen', $row->id)}}",
+            data: {
+                pengembang_id: dokumen_pengembang_id,
+            },
+            dataType: "json",
+            success: function (response) {
+                if (response.length > 0) {
+                    $('#listDokumenPengelola').html('');
+
+                    $.each(response, function (index, value) { 
+                        $('#listDokumenPengelola').append(`<tr>
+                            <td>${value.dokumens.nama}</td>
+                            <td>${value.keterangan}</td>
+                            <td>${buttonViewFile(value.file)}</td>
+                        </tr>`);
+                    });
+
+                    $('#modalPengelola').modal('show');
+                } else {
+                    Swal.fire('Data tidak sudah tersedia.');
+                }
+            },
+            error: function (xhr) {
+                const {responseJSON, status, statusText} = xhr;
+
+                switch (status) {
+                    case 500:
+                        Swal.fire({
+                            title: 'Error',
+                            text: statusText,
+                        });             
+                        break;
+                    
+                    default:
+                        break;
+                }
+            }
+        });
+    });
+
+    $('body').on('click', '.btnModalPengelola', function (e) {
+        e.preventDefault();
+
+        const dokumen_pengelola_id = $(this).val();
+
+        $.ajax({
+            type: "GET",
+            url: "{{route('rusun.pengelolaDokumen', $row->id)}}",
+            data: {
+                pengelola_id: dokumen_pengelola_id,
+            },
+            dataType: "json",
+            success: function (response) {
+                if (response.length > 0) {
+                    $('#listDokumenPengembang').html('');
+
+                    $.each(response, function (index, value) { 
+                        $('#listDokumenPengembang').append(`<tr>
+                            <td>${value.dokumens.nama}</td>
+                            <td>${value.keterangan}</td>
+                            <td>${buttonViewFile(value.file)}</td>
+                        </tr>`);
+                    });
+
+                    $('#modalPengembang').modal('show');
+                } else {
+                    Swal.fire('Data tidak sudah tersedia.');
+                }
+            },
+            error: function (xhr) {
+                const {responseJSON, status, statusText} = xhr;
+
+                switch (status) {
+                    case 500:
+                        Swal.fire({
+                            title: 'Error',
+                            text: statusText,
+                        });             
+                        break;
+                    
+                    default:
+                        break;
+                }
             }
         });
     });

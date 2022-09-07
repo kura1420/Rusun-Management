@@ -27,8 +27,9 @@ class StorePengembangDokumenRequest extends FormRequest
             //
             'file' => 'nullable|max:15000|mimes:pdf',
             'keterangan' => 'nullable|string|max:255',
-            'dokumen_id' => 'required|string|max:255',
-            'pengembang_id' => 'required|string|max:255',
+            'dokumen_id' => 'required|string',
+            'pengembang_id' => 'required|string',
+            'rusun_id' => 'required|string',
         ];
     }
 
@@ -42,6 +43,7 @@ class StorePengembangDokumenRequest extends FormRequest
         return [
             'dokumen_id' => 'dokumen',
             'pengembang_id' => 'pengembang',
+            'rusun_id' => 'rusun',
         ];
     }
 }

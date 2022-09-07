@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreRusunRequest;
 use App\Http\Requests\UpdateRusunRequest;
 use App\Models\Rusun;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class RusunController extends Controller
@@ -92,6 +94,11 @@ class RusunController extends Controller
         //
         $input = $request->all();
 
+        $pengembangs = json_decode($input['pengembangs'], TRUE);
+        $pengelolas = json_decode($input['pengelolas'], TRUE);
+
+        unset($input['pengembangs'], $input['pengelolas']);
+
         $foto_1 = NULL;
         $foto_2 = NULL;
         $foto_3 = NULL;
@@ -135,9 +142,41 @@ class RusunController extends Controller
                 );
         }
 
-        $row = Rusun::create($input);
+        $insertPengembangs = [];
+        if (count($pengembangs)>0) {
+            for ($i=0; $i < count($pengembangs); $i++) {
+                $insertPengembangs[] = [
+                    'keterangan' => $pengembangs[$i][4],
+                    'pengembang_id' => $pengembangs[$i][0],
+                ];
+            }
+        }
 
-        return response()->json($row);
+        $insertPengelolas = [];
+        if (count($pengelolas)>0) {
+            for ($i=0; $i < count($pengelolas); $i++) {
+                $insertPengelolas[] = [
+                    'keterangan' => $pengelolas[$i][4],
+                    'pengelola_id' => $pengelolas[$i][0],
+                ];
+            }
+        }
+
+        $return = DB::transaction(function () use ($input, $insertPengembangs, $insertPengelolas) {
+            $row = Rusun::create($input);
+            
+            if (count($insertPengembangs)>0) {
+                $row->rusun_pengembangs()->createMany($insertPengembangs);
+            }
+
+            if (count($insertPengelolas)>0) {
+                $row->rusun_pengelolas()->createMany($insertPengelolas);
+            }
+
+            return $row;
+        });
+
+        return response()->json($return);
     }
 
     /**
@@ -160,12 +199,36 @@ class RusunController extends Controller
             'rusun_details',
             'rusun_unit_details',
             'rusun_fasilitas',
+            'rusun_pengelolas',
+            'rusun_pengembangs',
         ])
         ->findOrFail($id);
 
         $row->foto_1 = $row->foto_1 ? asset('storage/' . self::FOLDER_FOTO . '/' . $row->foto_1) : NULL;
         $row->foto_2 = $row->foto_2 ? asset('storage/' . self::FOLDER_FOTO . '/' . $row->foto_2) : NULL;
         $row->foto_3 = $row->foto_3 ? asset('storage/' . self::FOLDER_FOTO . '/' . $row->foto_3) : NULL;
+
+        $row->rusun_pengelolas = $row->rusun_pengelolas->map(function ($rusun_pengelola) {
+            $pengelola = \App\Models\Pengelola::where('id', $rusun_pengelola->pengelola_id)->first();
+
+            $rusun_pengelola->nama = $pengelola->nama;
+            $rusun_pengelola->telp = $pengelola->telp;
+            $rusun_pengelola->email = $pengelola->email;
+            $rusun_pengelola->aksi = '<button type="button" class="btn btn-success btn-xs btnModalPengelola" value="'. $rusun_pengelola->pengelola_id .'"><i class="fa fa-file"></i> Cek Dokumen</button>';
+
+            return $rusun_pengelola;
+        });
+
+        $row->rusun_pengembangs = $row->rusun_pengembangs->map(function ($rusun_pengembang) {
+            $pengembang = \App\Models\Pengembang::where('id', $rusun_pengembang->pengembang_id)->first();
+
+            $rusun_pengembang->nama = $pengembang->nama;
+            $rusun_pengembang->telp = $pengembang->telp;
+            $rusun_pengembang->email = $pengembang->email;
+            $rusun_pengembang->aksi = '<button type="button" class="btn btn-success btn-xs btnModalPengembang" value="'. $rusun_pengembang->pengembang_id .'"><i class="fa fa-file"></i> Cek Dokumen</button>';
+
+            return $rusun_pengembang;
+        });
 
         $fotos = collect([$row->foto_1, $row->foto_2, $row->foto_3])
             ->filter(function ($value, $key) {
@@ -193,7 +256,31 @@ class RusunController extends Controller
             'kotas',
             'kecamatans',
             'desas',
+            'rusun_pengelolas',
+            'rusun_pengembangs',
         ])->findOrFail($id);
+
+        $row->rusun_pengelolas = $row->rusun_pengelolas->map(function ($rusun_pengelola) {
+            $pengelola = \App\Models\Pengelola::where('id', $rusun_pengelola->pengelola_id)->first();
+
+            $rusun_pengelola->nama = $pengelola->nama;
+            $rusun_pengelola->telp = $pengelola->telp;
+            $rusun_pengelola->email = $pengelola->email;
+            $rusun_pengelola->aksi = '<button type="button" class="btn btn-danger btn-sm btnDeletePengelola" id="'.route(self::URL . 'pengelolaDestroy', $rusun_pengelola->id).'" value="'.$rusun_pengelola->id.'">Hapus</button>';
+
+            return $rusun_pengelola;
+        });
+
+        $row->rusun_pengembangs = $row->rusun_pengembangs->map(function ($rusun_pengembang) {
+            $pengembang = \App\Models\Pengembang::where('id', $rusun_pengembang->pengembang_id)->first();
+
+            $rusun_pengembang->nama = $pengembang->nama;
+            $rusun_pengembang->telp = $pengembang->telp;
+            $rusun_pengembang->email = $pengembang->email;
+            $rusun_pengembang->aksi = '<button type="button" class="btn btn-danger btn-sm btnDeletePengembang" id="'.route(self::URL . 'pengembangDestroy', $rusun_pengembang->id).'" value="'.$rusun_pengembang->id.'">Hapus</button>';
+
+            return $rusun_pengembang;
+        });
 
         return view(self::FOLDER_VIEW . 'edit', compact('title', 'subTitle', 'row'));
     }
@@ -215,6 +302,11 @@ class RusunController extends Controller
         $rusun = Rusun::findOrFail($id);
 
         $input = $request->all();
+
+        $pengembangs = json_decode($input['pengembangs'], TRUE);
+        $pengelolas = json_decode($input['pengelolas'], TRUE);
+
+        unset($input['pengembangs'], $input['pengelolas']);
 
         $foto_1 = $rusun->foto_1;
         $foto_2 = $rusun->foto_2;
@@ -271,7 +363,37 @@ class RusunController extends Controller
 
         $input['foto_3'] = $foto_3;
 
-        $rusun->update($input);
+        DB::transaction(function () use ($rusun, $pengembangs, $pengelolas, $input) {
+            if (count($pengembangs)>0) {
+                for ($i=0; $i < count($pengembangs); $i++) { 
+                    \App\Models\RusunPengembang::updateOrCreate(
+                        [
+                            'rusun_id' => $rusun->id,
+                            'pengembang_id' => $pengembangs[$i][0],
+                        ],
+                        [
+                            'keterangan' => $pengembangs[$i][4],
+                        ]
+                    );                
+                }
+            }
+    
+            if (count($pengelolas)>0) {
+                for ($i=0; $i < count($pengelolas); $i++) { 
+                    \App\Models\RusunPengelola::updateOrCreate(
+                        [
+                            'rusun_id' => $rusun->id,
+                            'pengelola_id' => $pengelolas[$i][0],
+                        ],
+                        [
+                            'keterangan' => $pengelolas[$i][4],
+                        ]
+                    );
+                }
+            }
+    
+            $rusun->update($input);
+        });
 
         return response()->json('Success');
     }
@@ -299,5 +421,63 @@ class RusunController extends Controller
         $file = storage_path('app/' . self::FOLDER_FOTO . '/' . $row->file);
 
         return response()->file($file);
+    }
+
+    public function pengelolaDestroy($id)
+    {
+        \App\Models\RusunPengelola::findOrFail($id)->delete();
+
+        return response()->json('Success');
+    }
+
+    public function pengelolaDokumen(Request $request, $id)
+    {
+        $pengelola_id = $request->pengelola_id ?? NULL;
+
+        $rows = \App\Models\PengelolaDokumen::with([
+            'dokumens',
+            'pengelolas',
+        ])
+        ->where([
+            ['rusun_id', $id],
+            ['pengelola_id', $pengelola_id],
+        ])
+        ->get()
+        ->map(function ($row) {
+            $row->file = route('pengelola-dokumen.view_file', [$row->id, $row->file]);
+
+            return $row;
+        });
+
+        return response()->json($rows);
+    }
+
+    public function pengembangDestroy($id)
+    {
+        \App\Models\RusunPengembang::findOrFail($id)->delete();
+
+        return response()->json('Success');        
+    }
+
+    public function pengembangDokumen(Request $request, $id)
+    {
+        $pengembang_id = $request->pengembang_id ?? NULL;
+
+        $rows = \App\Models\PengembangDokumen::with([
+            'dokumens',
+            'pengembangs',
+        ])
+        ->where([
+            ['rusun_id', $id],
+            ['pengembang_id', $pengembang_id],
+        ])
+        ->get()
+        ->map(function ($row) {
+            $row->file = route('pengembang-dokumen.view_file', [$row->id, $row->file]);
+
+            return $row;
+        });
+
+        return $rows;
     }
 }

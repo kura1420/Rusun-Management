@@ -89,8 +89,14 @@ Route::middleware(['auth'])->group(function () {
 
     Route::prefix('rusun')->group(function () {
         Route::controller(RusunController::class)->group(function () {
-            Route::post('/{id}', 'updateAsStore')->name('rusun.updateAsStore');
             Route::get('{id}/view-file/{filename}', 'view_file')->name('rusun.view_file');
+            Route::get('{id}/pengembang-dokumen', 'pengembangDokumen')->name('rusun.pengembangDokumen');
+            Route::get('{id}/pengelola-dokumen', 'pengelolaDokumen')->name('rusun.pengelolaDokumen');
+
+            Route::post('{id}', 'updateAsStore')->name('rusun.updateAsStore');
+
+            Route::delete('rusun-pengelola/{id}', 'pengelolaDestroy')->name('rusun.pengelolaDestroy');
+            Route::delete('rusun-pengembang/{id}', 'pengembangDestroy')->name('rusun.pengembangDestroy');
         });
     });
 

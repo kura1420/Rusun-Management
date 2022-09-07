@@ -12,9 +12,10 @@
 @section('content')
 <div class="row">
     <div class="col-md-4">
-        <x-adminlte-card theme="primary" theme-mode="outline" title="{{$subTitle}}">
-            <h3 class="text-primary">{{$row->pengelolas->nama}}</h3>
-            <p class="text-muted">{{$row->pengelolas->keterangan}}</p>
+        <x-adminlte-card theme="primary" theme-mode="outline" title="{{$row->pengelolas->nama}}">
+            <h3 class="text-info">
+                <i class="fa fa-building"></i> {{$row->rusuns->nama}}
+            </h3>
 
             <br>
 

@@ -102,6 +102,13 @@ class PengelolaController extends Controller
             'pengelola_dokumens',
         ])->findOrFail($id);
 
+        $row->pengelola_dokumens = $row->pengelola_dokumens->map(function ($pengelola_dokumen) {
+            $pengelola_dokumen->dokumen = $pengelola_dokumen->dokumens()->first();
+            $pengelola_dokumen->rusun = $pengelola_dokumen->rusuns()->first();
+
+            return $pengelola_dokumen;
+        });
+
         return view(self::FOLDER_VIEW . 'show', compact('title', 'subTitle', 'row'));
     }
 

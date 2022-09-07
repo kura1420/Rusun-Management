@@ -17,7 +17,7 @@
         <div class="row">
             <input type="hidden" name="redirect_to" value="{{$pengembang_id}}">
             
-            <x-adminlte-select2 name="pengembang_id" label="Pengembang" fgroup-class="col-md-6" :config="[
+            <x-adminlte-select2 name="pengembang_id" label="Pengembang" fgroup-class="col-md-4" :config="[
                 'placeholder' => 'Pilih Pengembang',
                 'allowClear' => true,
             ]">
@@ -26,8 +26,18 @@
                 <option value="{{$pengembang->id}}" {{$pengembang->id == old('pengembang_id') || $pengembang_id == $pengembang->id ? 'selected' : ''}}>{{$pengembang->nama}}</option>
                 @endforeach
             </x-adminlte-select2>
+
+            <x-adminlte-select2 name="rusun_id" label="Rusun" fgroup-class="col-md-4" :config="[
+                'placeholder' => 'Pilih Rusun',
+                'allowClear' => true,
+            ]">
+                <option value=""></option>
+                @foreach ($rusuns as $rusun)
+                <option value="{{$rusun->id}}" {{$rusun->id == old('rusun_id') ? 'selected' : ''}}>{{$rusun->nama}}</option>
+                @endforeach
+            </x-adminlte-select2>
             
-            <x-adminlte-select2 name="dokumen_id" label="Dokumen" fgroup-class="col-md-6" :config="[
+            <x-adminlte-select2 name="dokumen_id" label="Dokumen" fgroup-class="col-md-4" :config="[
                 'placeholder' => 'Pilih Dokumen',
                 'allowClear' => true,
             ]">
