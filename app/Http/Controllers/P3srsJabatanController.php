@@ -10,7 +10,7 @@ class P3srsJabatanController extends Controller
 {
 
     const TITLE = 'P3SRS - Jabatan';
-    const FOLDER_VIEW = 'p3srs_jawaban.';
+    const FOLDER_VIEW = 'p3srs_jabatan.';
     const URL = 'p3srs-jabatan.';
 
     /**

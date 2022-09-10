@@ -42,6 +42,7 @@ class UpdateRusunRequest extends FormRequest
             'instgram' => 'nullable|string|max:100|unique:rusuns,instgram,' . $id,
             'email' => 'nullable|string|max:100|email|unique:rusuns,email,' . $id,
             'telp' => 'nullable|numeric|unique:rusuns,telp,' . $id,
+            'endpoint' => 'nullable|string|url',
             'province_id' => 'required|string',
             'regencie_id' => 'required|string',
             'district_id' => 'required|string',

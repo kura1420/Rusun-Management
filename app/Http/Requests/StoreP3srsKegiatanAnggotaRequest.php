@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreP3srsKegiatanDokumentasiRequest extends FormRequest
+class StoreP3srsKegiatanAnggotaRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -13,7 +13,7 @@ class StoreP3srsKegiatanDokumentasiRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return auth()->check();
     }
 
     /**
@@ -25,6 +25,7 @@ class StoreP3srsKegiatanDokumentasiRequest extends FormRequest
     {
         return [
             //
+            'rusun_pemilik_penghunis' => 'required|array',
         ];
     }
 }

@@ -18,4 +18,9 @@ class RusunDetail extends Model
     {
         return $this->belongsTo(Rusun::class, 'rusun_id');
     }
+
+    public function rusun_unit_details()
+    {
+        return $this->hasMany(RusunUnitDetail::class);
+    }
 }

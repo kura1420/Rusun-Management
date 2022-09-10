@@ -2,15 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ApiService;
 use App\Http\Requests\StoreRusunPenghuniRequest;
 use App\Http\Requests\UpdateRusunPenghuniRequest;
 use App\Models\RusunPenghuni;
+use Illuminate\Support\Facades\Storage;
 
 class RusunPenghuniController extends Controller
 {
 
     const TITLE = 'Rusun Penghuni';
     const FOLDER_VIEW = 'rusun_penghuni.';
+    const FOLDER_DOKUMEN = 'rusun_penghuni/dokumen';
     const URL = 'rusun-penghuni.';
     
     /**
@@ -27,41 +30,47 @@ class RusunPenghuniController extends Controller
         $rows = RusunPenghuni::with([
                 'rusuns',
                 'rusun_details',
-                'rusun_pemiliks',
+                'rusun_unit_details',
+                'pemiliks',
             ])
             ->orderBy('updated_at', 'desc')
             ->get()
             ->map(fn($row) => [
                 $row->rusuns->nama,
                 $row->rusun_details->nama_tower ?? NULL,
-                $row->rusun_pemiliks->nama ?? NULL,
+                $row->rusun_unit_details->ukuran ?? NULL,
+                $row->pemiliks->nama,
                 $row->nama,
                 $row->email,
                 $row->phone,
-                $row->identitas_tipe,
-                $row->identitas_nomor,
+                $row->status_label,
+                '<nobr>' . 
+                    '<a href="'.route(self::URL .'show', $row->id).'" class="btn btn-success btn-sm" title="Detail"><i class="fas fa-folder"></i> Detail</a> ' .
+                    '<a href="'.route(self::URL .'edit', $row->id).'" class="btn btn-info btn-sm" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a> ' .
+                '</nobr>',
                 $row->updated_at,
             ]);
 
         $heads = [
             'Rusun',
             'Tower',
+            'Unit',
             'Pemilik',
             'Nama',
             'Email',
             'Phone',
-            'Identitas Tipe',
-            'Identitas Nomor',
+            'Status',
+            ['label' => 'Aksi', 'no-export' => true, 'width' => 10],
         ];
         
         $config = [
             'data' => $rows,
             'order' => [[1, 'asc']],
-            'columns' => [null, null, null, null, null, null, null, null],
+            'columns' => [null, null, null, null, null, null, null, null, ['orderable' => false]],
         ];
 
         $lastUpdate = collect($rows)
-            ->sortKeysDesc(5)
+            ->sortKeysDesc(9)
             ->first();
 
         return view(self::FOLDER_VIEW . 'index', compact('title', 'subTitle', 'heads', 'config', 'lastUpdate'));
@@ -75,6 +84,7 @@ class RusunPenghuniController extends Controller
     public function create()
     {
         //
+        return abort(404);
     }
 
     /**
@@ -86,6 +96,9 @@ class RusunPenghuniController extends Controller
     public function store(StoreRusunPenghuniRequest $request)
     {
         //
+        $res = ApiService::run('/penghuni', 'GET', NULL);
+
+        return $res->object();
     }
 
     /**
@@ -94,9 +107,28 @@ class RusunPenghuniController extends Controller
      * @param  \App\Models\RusunPenghuni  $rusunPenghuni
      * @return \Illuminate\Http\Response
      */
-    public function show(RusunPenghuni $rusunPenghuni)
+    public function show($id)
     {
         //
+        $title = self::TITLE;
+        $subTitle = 'Detail Data';
+
+        $row = RusunPenghuni::with([
+            'rusuns',
+            'rusun_details',
+            'rusun_unit_details',
+            'rusun_penghuni_dokumens'
+        ])->findOrFail($id);
+
+        $row->rusun_penghuni_dokumens = $row->rusun_penghuni_dokumens->map(function ($rusun_penghuni_dokumen) {
+            $rusun_penghuni_dokumen->dokumens = $rusun_penghuni_dokumen->dokumens()->first();
+
+            return $rusun_penghuni_dokumen;
+        });
+
+        // TODO: check IPL
+
+        return view(self::FOLDER_VIEW . 'show', compact('title', 'subTitle', 'row',));
     }
 
     /**
@@ -108,6 +140,12 @@ class RusunPenghuniController extends Controller
     public function edit(RusunPenghuni $rusunPenghuni)
     {
         //
+        $title = self::TITLE;
+        $subTitle = 'Edit Data';
+
+        $row = $rusunPenghuni;
+
+        return view(self::FOLDER_VIEW . 'edit', compact('title', 'subTitle', 'row',));
     }
 
     /**
@@ -120,6 +158,31 @@ class RusunPenghuniController extends Controller
     public function update(UpdateRusunPenghuniRequest $request, RusunPenghuni $rusunPenghuni)
     {
         //
+        $input = $request->all();
+
+        $identitas_file = $rusunPenghuni->identitas_file;
+        if ($request->identitas_file) {
+            $identitas_file = md5(uniqid()) . '.' . $request->identitas_file->extension();
+
+            $request->file('identitas_file')
+                ->storeAs(
+                    self::FOLDER_DOKUMEN,
+                    $identitas_file,
+                    'local',
+                );
+
+            if ($rusunPenghuni->identitas_file) {
+                Storage::delete(self::FOLDER_DOKUMEN . '/' . $rusunPenghuni->identitas_file);
+            }
+        }
+
+        $input['identitas_file'] = $identitas_file;
+
+        $rusunPenghuni->update($input);
+
+        return redirect()
+            ->route(self::URL . 'index')
+            ->with('success', 'Perbarui data berhasil...');
     }
 
     /**
@@ -131,5 +194,17 @@ class RusunPenghuniController extends Controller
     public function destroy(RusunPenghuni $rusunPenghuni)
     {
         //
+        return abort(404);
+    }
+
+    public function view_file($id, $file)
+    {
+        $row = RusunPenghuni::where('id', $id)
+            ->where('identitas_file', $file)
+            ->first();
+
+        $file = storage_path('app/' . self::FOLDER_DOKUMEN . '/' . $row->identitas_file);
+
+        return response()->file($file);
     }
 }

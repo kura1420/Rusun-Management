@@ -17,8 +17,16 @@
         </x-slot>
         
         <div class="row">
-            <x-adminlte-input name="code" id="code" label="Kode" placeholder="Kode" fgroup-class="col-md-6" value="{{old('code')}}" />
+            <x-adminlte-input name="code" id="code" label="Kode" placeholder="Kode" fgroup-class="col-md-3" value="{{old('code')}}" />
             <x-adminlte-input name="nama" id="nama" label="Nama" placeholder="Nama" fgroup-class="col-md-6" value="{{old('nama')}}" />
+
+            <x-adminlte-select name="kepada" label="Kepada" placeholder="Kepada" fgroup-class="col-md-3">
+                <option value="">Pilih</option>
+                <option value="pengelola" {{old('kepada') == 'pengelola' ? 'selected' : ''}}>Pengelola</option>
+                <option value="pengembang" {{old('kepada') == 'pengembang' ? 'selected' : ''}}>Pengembang</option>
+                <option value="pemilik" {{old('kepada') == 'pemilik' ? 'selected' : ''}}>Pemilik</option>
+                <option value="penghuni" {{old('kepada') == 'penghuni' ? 'selected' : ''}}>Penghuni</option>
+            </x-adminlte-select>
 
             <x-adminlte-text-editor name="keterangan" id="keterangan" fgroup-class="col-md-12" :config="[
                 'height' => '300',

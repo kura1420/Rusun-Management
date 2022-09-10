@@ -13,7 +13,7 @@ class UpdateP3srsKegiatanLaporanRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return auth()->check();
     }
 
     /**
@@ -25,6 +25,10 @@ class UpdateP3srsKegiatanLaporanRequest extends FormRequest
     {
         return [
             //
+            'tanggal' => 'required|date',
+            'judul' => 'required|string|max:255',
+            'penjelasan' => 'required|string',
+            'dokumentasis' => 'nullable|array|max:5|mimes:pdf,jpg,jpeg,png',
         ];
     }
 }

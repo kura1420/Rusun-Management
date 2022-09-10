@@ -68,18 +68,36 @@
     </div>
 
     <div class="row mt-4">
-        <nav class="w-100">
-            <div class="nav nav-tabs" id="product-tab" role="tablist">
-                <a class="nav-item nav-link active" id="product-desc-tab" data-toggle="tab" href="#product-desc" role="tab" aria-controls="product-desc" aria-selected="true">Unit</a>
-            </div>
-        </nav>
-        <div class="tab-content p-3" id="nav-tabContent">
-            <div class="tab-pane fade show active" id="product-desc" role="tabpanel" aria-labelledby="product-desc-tab">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi vitae condimentum erat. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed posuere, purus at efficitur hendrerit, augue elit
-                lacinia arcu, a eleifend sem elit et nunc. Sed rutrum vestibulum est, sit amet cursus dolor fermentum vel. Suspendisse mi nibh, congue et ante et, commodo mattis lacus. Duis varius finibus purus sed venenatis. Vivamus varius
-                metus quam, id dapibus velit mattis eu. Praesent et semper risus. Vestibulum erat erat, condimentum at elit at, bibendum placerat orci. Nullam gravida velit mauris, in pellentesque urna pellentesque viverra. Nullam non
-                pellentesque justo, et ultricies neque. Praesent vel metus rutrum, tempus erat a, rutrum ante. Quisque interdum efficitur nunc vitae consectetur. Suspendisse venenatis, tortor non convallis interdum, urna mi molestie eros, vel
-                tempor justo lacus ac justo. Fusce id enim a erat fringilla sollicitudin ultrices vel metus.
+        <div class="col-md-12">
+            <nav class="w-100">
+                <div class="nav nav-tabs" id="product-tab" role="tablist">
+                    <a class="nav-item nav-link active" id="product-desc-tab" data-toggle="tab" href="#product-desc" role="tab" aria-controls="product-desc" aria-selected="true">Unit</a>
+                </div>
+            </nav>
+            <div class="tab-content p-3" id="nav-tabContent">
+                <div class="tab-pane fade show active" id="product-desc" role="tabpanel" aria-labelledby="product-desc-tab">
+                    <x-adminlte-datatable id="tableUnit" :heads="[
+                            'Tower',
+                            'Ukuran',
+                            'Jumlah',
+                            'Keterangan',
+                            ['label' => 'Aksi', 'no-export' => true, 'width' => 15],
+                        ]">
+                            @foreach($row->rusun_unit_details as $rusun_unit_detail)
+                                <tr>
+                                    <td>{{$rusun_unit_detail->rusun_details->nama_tower}}</td>
+                                    <td>{{$rusun_unit_detail->ukuran}}</td>
+                                    <td>{{$rusun_unit_detail->jumlah}}</td>
+                                    <td>{{$rusun_unit_detail->keterangan}}</td>
+                                    <td>
+                                        <a href="{{route('rusun-unit-detail.show', $rusun_unit_detail->id)}}?rusun_id={{$row->rusun_id}}" class="btn btn-success btn-xs" title="Show"><i class="fas fa-eye"></i> Detail</a>
+                                        <a href="{{route('rusun-unit-detail.edit', $rusun_unit_detail->id)}}?rusun_id={{$row->rusun_id}}" class="btn btn-info btn-xs" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a>
+                                        <button type="button" class="btn btn-danger btn-xs btnDeleteUnit" value="{{$rusun_unit_detail->id}}" id="{{route('rusun-unit-detail.destroy', $rusun_unit_detail->id)}}"><i class="fas fa-trash"></i> Hapus</button>                
+                                    </td>
+                                </tr>
+                            @endforeach
+                    </x-adminlte-datatable>
+                </div>
             </div>
         </div>
     </div>
@@ -91,5 +109,72 @@
 @stop
 
 @section('js')
+<script>
+$(function () {
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+        }
+    });
+    const tableUnit = $('#tableUnit').DataTable();
 
+    $('body').on('click', '.btnDeleteUnit', function (e) {
+        e.preventDefault();
+
+        const value = $(this).val();
+        const url = $(this).attr('id');
+        const columnRemove = $(this).parents('tr');
+
+        Swal.fire({
+            title: 'Apakah anda yakin?',
+            text: "Ingin menghapus data ini!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, hapus!',
+            cancelButtonText: 'Tidak',
+        }).then((result) => {
+            if (result.value) {
+                $.ajax({
+                    type: "DELETE",
+                    url: url,
+                    data: {
+                        id: value,
+                    },
+                    dataType: "json",
+                    success: function (response) {
+                        tableUnit
+                            .row(columnRemove)
+                            .remove()
+                            .draw();                  
+
+                        Swal.fire(
+                            'Deleted!',
+                            'Your file has been deleted.',
+                            'success'
+                        );
+                        
+                    },
+                    error: function (xhr) {
+                        const {responseJSON, status, statusText} = xhr;
+
+                        switch (status) {
+                            case 500:
+                                Swal.fire({
+                                    title: 'Error',
+                                    text: statusText,
+                                });                        
+                                break;
+                        
+                            default:
+                                break;
+                        }
+                    }
+                });
+            }
+        });
+    });
+});
+</script>
 @stop

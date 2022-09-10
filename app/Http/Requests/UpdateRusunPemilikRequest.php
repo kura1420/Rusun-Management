@@ -13,7 +13,7 @@ class UpdateRusunPemilikRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return auth()->check();
     }
 
     /**
@@ -23,6 +23,8 @@ class UpdateRusunPemilikRequest extends FormRequest
      */
     public function rules()
     {
+        $id = request()->segment(2);
+
         return [
             //
         ];

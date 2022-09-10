@@ -28,8 +28,13 @@ class RusunPemilik extends Model
         return $this->belongsTo(RusunUnitDetail::class, 'rusun_unit_detail_id');
     }
 
-    public function rusun_penghunis()
+    public function rusun_pemilik_dokumens()
     {
-        return $this->hasMany(RusunPenghuni::class, 'rusun_penghuni_id');
+        return $this->hasMany(RusunPemilikDokumen::class);
+    }
+
+    public function pemiliks()
+    {
+        return $this->belongsTo(Pemilik::class, 'pemilik_id');
     }
 }

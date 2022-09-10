@@ -40,6 +40,7 @@ class StoreRusunRequest extends FormRequest
             'instgram' => 'nullable|string|max:100|unique:rusuns',
             'email' => 'nullable|string|max:100|email|unique:rusuns',
             'telp' => 'nullable|numeric|unique:rusuns',
+            'endpoint' => 'nullable|url|string',
             'province_id' => 'required|string',
             'regencie_id' => 'required|string',
             'district_id' => 'required|string',

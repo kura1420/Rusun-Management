@@ -480,17 +480,17 @@ $(function () {
             dataType: "json",
             success: function (response) {
                 if (response.length > 0) {
-                    $('#listDokumenPengelola').html('');
+                    $('#listDokumenPengembang').html('');
 
                     $.each(response, function (index, value) { 
-                        $('#listDokumenPengelola').append(`<tr>
+                        $('#listDokumenPengembang').append(`<tr>
                             <td>${value.dokumens.nama}</td>
                             <td>${value.keterangan}</td>
                             <td>${buttonViewFile(value.file)}</td>
                         </tr>`);
                     });
 
-                    $('#modalPengelola').modal('show');
+                    $('#modalPengembang').modal('show');
                 } else {
                     Swal.fire('Data tidak sudah tersedia.');
                 }
@@ -527,17 +527,17 @@ $(function () {
             dataType: "json",
             success: function (response) {
                 if (response.length > 0) {
-                    $('#listDokumenPengembang').html('');
+                    $('#listDokumenPengelola').html('');
 
                     $.each(response, function (index, value) { 
-                        $('#listDokumenPengembang').append(`<tr>
+                        $('#listDokumenPengelola').append(`<tr>
                             <td>${value.dokumens.nama}</td>
                             <td>${value.keterangan}</td>
                             <td>${buttonViewFile(value.file)}</td>
                         </tr>`);
                     });
 
-                    $('#modalPengembang').modal('show');
+                    $('#modalPengelola').modal('show');
                 } else {
                     Swal.fire('Data tidak sudah tersedia.');
                 }

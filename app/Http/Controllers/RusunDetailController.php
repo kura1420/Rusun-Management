@@ -125,6 +125,7 @@ class RusunDetailController extends Controller
 
         $row = RusunDetail::with([
                 'rusuns',
+                'rusun_unit_details',
             ])
             ->findOrFail($id);
 

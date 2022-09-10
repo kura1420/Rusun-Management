@@ -60,6 +60,8 @@
         <x-adminlte-input-file name="foto_1" id="foto_1" label="Foto 1" fgroup-class="col-md-6" />
         <x-adminlte-input-file name="foto_2" id="foto_2" label="Foto 2" fgroup-class="col-md-6" />
         <x-adminlte-input-file name="foto_3" id="foto_3" label="Foto 3" fgroup-class="col-md-6" />
+
+        <x-adminlte-input name="endpoint" id="endpoint" label="Endpoint" placeholder="Endpoint" fgroup-class="col-md-12" value="{{$row->endpoint}}" />
     </div>
 
     <div class="row mt-4">
@@ -634,6 +636,7 @@ $(function () {
         formData.append('instgram', $('#instgram').val());
         formData.append('email', $('#email').val());
         formData.append('telp', $('#telp').val());
+        formData.append('endpoint', $('#endpoint').val());
 
         formData.append('foto_1', $('#foto_1')[0].files[0] ?? '');
         formData.append('foto_2', $('#foto_2')[0].files[0] ?? '');

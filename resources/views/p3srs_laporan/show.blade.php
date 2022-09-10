@@ -1,0 +1,167 @@
+@extends('adminlte::page')
+
+@section('title', $title)
+
+@section('content_header')
+    <h1>{{$title . ' ' .$row->p3srs_kegiatans->nama}}</h1>
+@stop
+
+@section('content')
+@if (session()->has('success'))
+<x-adminlte-alert theme="primary" title="Information" dismissable>
+    {{session()->get('success')}}
+</x-adminlte-alert>
+@endif
+
+<x-adminlte-card theme="primary" theme-mode="outline" title="{{$row->rusuns->nama}}">
+    <x-slot name="toolsSlot">
+        <x-adminlte-button type="button" label="Verifikasi" theme="primary" icon="fas fa-check" class="btn-sm" />
+
+        <a href="{{route('p3srs-laporan.index')}}" class="btn btn-sm btn-dark">
+            <i class="fa fa-arrow-left"></i> Kembali
+        </a>
+    </x-slot>
+
+    <div class="col-md-12">
+        <div class="timeline">
+            <div class="time-label">
+                <span class="bg-red">{{date('d M Y', strtotime($row->tanggal))}}</span>
+            </div>
+
+            <div>
+                <i class="fas fa-pencil-alt bg-blue"></i>
+                <div class="timeline-item">
+                    <span class="time"><i class="fas fa-clock"></i> {{$row->created_at}}</span>
+                    <h3 class="timeline-header"><a href="#">{{$row->p3srs_kegiatans->nama}}</a></h3>
+                    <div class="timeline-body">
+                        @php echo $row->keterangan; @endphp 
+                        <i class="fa fa-map-marker-alt"></i> {{$row->lokasi}}
+                    </div>
+                </div>
+            </div>
+
+            @foreach ($row->p3srs_kegiatan_laporans as $p3srs_kegiatan_laporan)
+            <div id="timeline_{{$p3srs_kegiatan_laporan->id}}">
+                <i class="fas fa-spinner bg-warning"></i>
+                <div class="timeline-item">
+                    <span class="time"><i class="fas fa-clock"></i> {{$p3srs_kegiatan_laporan->created_at}}</span>
+                    <h3 class="timeline-header"><a href="#">{{$p3srs_kegiatan_laporan->judul}}</a></h3>
+                    <div class="timeline-body">
+                        @php echo $p3srs_kegiatan_laporan->penjelasan; @endphp
+
+                        @if (count($p3srs_kegiatan_laporan->p3srs_kegiatan_dokumentasis)>0)
+                            @foreach ($p3srs_kegiatan_laporan->p3srs_kegiatan_dokumentasis as $p3srs_kegiatan_dokumentasi) 
+                                @switch($p3srs_kegiatan_dokumentasi->type)
+                                    @case('jpg')
+                                    @case('jpeg')
+                                    @case('png')
+                                        <a href="{{route('p3srs-laporan.dokumentasiViewFile', [$p3srs_kegiatan_dokumentasi->id, $p3srs_kegiatan_dokumentasi->filename])}}" data-toggle="lightbox">
+                                            <img src="{{route('p3srs-laporan.dokumentasiViewFile', [$p3srs_kegiatan_dokumentasi->id, $p3srs_kegiatan_dokumentasi->filename])}}" class="img-thumbnail" style="width:10%;" />
+                                        </a>
+                                        @break
+                                
+                                    @case(2)
+                                        Second case...
+                                        @break
+                                
+                                    @default
+                                        Default case...
+                                @endswitch
+                            @endforeach
+                        @endif
+                    </div>
+                    <div class="timeline-footer">
+                        <a href="{{route('p3srs-laporan.edit', $p3srs_kegiatan_laporan->id)}}" class="btn btn-info btn-sm">Edit</a>
+                        <button type="button" class="btn btn-danger btn-sm btnDelete" value="{{$p3srs_kegiatan_laporan->id}}" id="{{route('p3srs-laporan.destroy', $p3srs_kegiatan_laporan->id)}}">Hapus</button>
+                    </div>
+                </div>
+            </div>
+            @endforeach
+
+            <div>
+                <i class="fas fa-clock bg-gray"></i>
+            </div>
+            <!-- <div>
+                <i class="fas fa-check bg-gray"></i>
+            </div> -->
+        </div>
+    </div>
+
+</x-adminlte-card>
+@stop
+
+@section('css')
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.3.0/ekko-lightbox.css" integrity="sha512-Velp0ebMKjcd9RiCoaHhLXkR1sFoCCWXNp6w4zj1hfMifYB5441C+sKeBl/T/Ka6NjBiRfBBQRaQq65ekYz3UQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+@stop
+
+@section('js')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.3.0/ekko-lightbox.js" integrity="sha512-YibiFIKqwi6sZFfPm5HNHQYemJwFbyyYHjrr3UT+VobMt/YBo1kBxgui5RWc4C3B4RJMYCdCAJkbXHt+irKfSA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+$(document).ready(function () {
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+        }
+    });
+
+    $(document).on('click', '[data-toggle="lightbox"]', function(event) {
+        event.preventDefault();
+        $(this).ekkoLightbox();
+    });
+
+    $('body').on('click', '.btnDelete', function (e) {
+        e.preventDefault();
+
+        const value = $(this).val();
+        const url = $(this).attr('id');
+
+        Swal.fire({
+            title: 'Apakah anda yakin?',
+            text: "Ingin menghapus data ini!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, hapus!',
+            cancelButtonText: 'Tidak',
+        }).then((result) => {
+            if (result.value) {
+                $.ajax({
+                    type: "DELETE",
+                    url: url,
+                    data: {
+                        id: value,
+                    },
+                    dataType: "json",
+                    success: function (response) {
+                        $('#timeline_' + value).remove();          
+    
+                        Swal.fire(
+                            'Deleted!',
+                            'Your file has been deleted.',
+                            'success'
+                        );
+
+                    },
+                    error: function (xhr) {
+                        const {responseJSON, status, statusText} = xhr;
+    
+                        switch (status) {
+                            case 500:
+                                Swal.fire({
+                                    title: 'Error',
+                                    text: statusText,
+                                });                 
+                                break;
+                            
+                            default:
+                                break;
+                        }
+                    }
+                });
+            }
+        });
+    });
+});
+</script>
+@stop

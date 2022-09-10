@@ -15,8 +15,8 @@ class CreateP3srsKegiatanKanidatsTable extends Migration
     {
         Schema::create('p3srs_kegiatan_kanidats', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('sebagai');
-            $table->foreignUuid('rusun_penghuni_id');
+            $table->foreignUuid('p3srs_jabatan_id');
+            $table->foreignUuid('rusun_pemilik_penghuni_id');
             $table->foreignUuid('p3srs_kegiatan_jadwal_id');
             $table->foreignUuid('p3srs_kegiatan_id');
             $table->foreignUuid('rusun_id');

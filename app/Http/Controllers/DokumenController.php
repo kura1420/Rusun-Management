@@ -29,6 +29,7 @@ class DokumenController extends Controller
             ->map(fn($row) => [
                 $row->code,
                 $row->nama,
+                $row->kepada_label,
                 '<nobr>' . 
                     '<a href="'.route(self::URL .'edit', $row->id).'" class="btn btn-info btn-sm" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a> ' .
                     '<button type="button" class="btn btn-danger btn-sm btnDelete" value="'.$row->id.'" id="'.route(self::URL . 'destroy', $row->id).'"><i class="fas fa-trash"></i> Hapus</button>' . 
@@ -38,13 +39,14 @@ class DokumenController extends Controller
         $heads = [
             'Kode',
             'Nama',
+            'Kepada',
             ['label' => 'Aksi', 'no-export' => true, 'width' => 5],
         ];
         
         $config = [
             'data' => $rows,
             'order' => [[1, 'asc']],
-            'columns' => [null, null, ['orderable' => false]],
+            'columns' => [null, null, null, ['orderable' => false]],
         ];
 
         return view(self::FOLDER_VIEW . 'index', compact('title', 'subTitle', 'heads', 'config'));

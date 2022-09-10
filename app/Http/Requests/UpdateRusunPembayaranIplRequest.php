@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateP3srsKegiatanDokumentasiRequest extends FormRequest
+class UpdateRusunPembayaranIplRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -13,7 +13,7 @@ class UpdateP3srsKegiatanDokumentasiRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return auth()->check();
     }
 
     /**
@@ -25,6 +25,19 @@ class UpdateP3srsKegiatanDokumentasiRequest extends FormRequest
     {
         return [
             //
+            'rusun_unit_detail_id' => 'required|string',
+        ];
+    }
+
+    /**
+     * Get custom attributes for validator errors.
+     *
+     * @return array
+     */
+    public function attributes()
+    {
+        return [
+            'rusun_unit_detail_id' => 'penghuni rusun',
         ];
     }
 }

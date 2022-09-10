@@ -14,6 +14,10 @@
         <div class="content-header">
             <div class="{{ config('adminlte.classes_content_header') ?: $def_container_class }}">
                 @yield('content_header')
+
+                <!-- <x-adminlte-alert title="Pengumuman" theme="info">
+                    Minimal example
+                </x-adminlte-alert> -->
             </div>
         </div>
     @endif

@@ -28,41 +28,39 @@ class RusunPemilikController extends Controller
                 'rusuns',
                 'rusun_details',
                 'rusun_unit_details',
+                'pemiliks',
             ])
-            ->orderBy('updated_at', 'desc')
+            ->orderBy('created_at')
             ->get()
             ->map(fn($row) => [
                 $row->rusuns->nama,
                 $row->rusun_details->nama_tower ?? NULL,
-                $row->nama,
-                $row->email,
-                $row->phone,
-                $row->identitas_tipe,
-                $row->identitas_nomor,
-                $row->updated_at,
+                $row->rusun_unit_details->ukuran ?? NULL,
+                $row->pemiliks->nama ?? NULL,
+                $row->pemiliks->telp ?? NULL,
+                $row->pemiliks->email ?? NULL,
+                '<nobr>' . 
+                    '<a href="'.route(self::URL .'show', $row->id).'" class="btn btn-success btn-sm" title="Detail"><i class="fas fa-folder"></i> Detail</a> ' .
+                '</nobr>',
             ]);
 
         $heads = [
             'Rusun',
             'Tower',
+            'Unit',
             'Nama',
+            'Telp',
             'Email',
-            'Phone',
-            'Identitas Tipe',
-            'Identitas Nomor',
+            ['label' => 'Aksi', 'no-export' => true, 'width' => 10],
         ];
         
         $config = [
             'data' => $rows,
             'order' => [[1, 'asc']],
-            'columns' => [null, null, null, null, null, null, null],
+            'columns' => [null, null, null, null, null, null, ['orderable' => false]],
         ];
 
-        $lastUpdate = collect($rows)
-            ->sortKeysDesc(5)
-            ->first();
-
-        return view(self::FOLDER_VIEW . 'index', compact('title', 'subTitle', 'heads', 'config', 'lastUpdate'));
+        return view(self::FOLDER_VIEW . 'index', compact('title', 'subTitle', 'heads', 'config'));
     }
 
     /**
@@ -73,6 +71,7 @@ class RusunPemilikController extends Controller
     public function create()
     {
         //
+        return abort(404);
     }
 
     /**
@@ -92,9 +91,23 @@ class RusunPemilikController extends Controller
      * @param  \App\Models\RusunPemilik  $rusunPemilik
      * @return \Illuminate\Http\Response
      */
-    public function show(RusunPemilik $rusunPemilik)
+    public function show($id)
     {
         //
+        $title = self::TITLE;
+        $subTitle = 'Detail Data';
+
+        $row = RusunPemilik::with([
+            'rusuns',
+            'rusun_details',
+            'rusun_unit_details',
+            'pemiliks',
+        ])
+        ->findOrFail($id);
+
+        // return $row;
+
+        return view(self::FOLDER_VIEW . 'show', compact('title', 'subTitle', 'row',));
     }
 
     /**
@@ -106,6 +119,7 @@ class RusunPemilikController extends Controller
     public function edit(RusunPemilik $rusunPemilik)
     {
         //
+        return abort(404);
     }
 
     /**
@@ -129,5 +143,6 @@ class RusunPemilikController extends Controller
     public function destroy(RusunPemilik $rusunPemilik)
     {
         //
+        return abort(404);
     }
 }

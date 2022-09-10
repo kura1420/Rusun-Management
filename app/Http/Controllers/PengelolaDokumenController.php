@@ -223,7 +223,13 @@ class PengelolaDokumenController extends Controller
     public function destroy($id)
     {
         //
-        PengelolaDokumen::findOrFail($id)->delete();
+        $row = PengelolaDokumen::findOrFail($id);
+        
+        if ($row->file) {
+            Storage::delete(self::FOLDER_FILE . '/' . $row->file);
+        }
+
+        $row->delete();
 
         return response()->json('Success');
     }

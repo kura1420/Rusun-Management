@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreP3srsKegiatanJadwalRequest;
 use App\Http\Requests\UpdateP3srsKegiatanJadwalRequest;
 use App\Models\P3srsKegiatanJadwal;
+use Carbon\Carbon;
 
 class P3srsKegiatanJadwalController extends Controller
 {
@@ -36,7 +37,7 @@ class P3srsKegiatanJadwalController extends Controller
                 $row->tanggal,
                 $row->lokasi,
                 '<nobr>' . 
-                    '<a href="'.route(self::URL .'show', $row->id).'" class="btn btn-success btn-sm" title="Detail"><i class="fas fa-eye"></i> Detail</a> ' .
+                    '<a href="'.route(self::URL .'show', $row->id).'" class="btn btn-success btn-sm" title="Detail"><i class="fas fa-folder"></i> Detail</a> ' .
                     '<a href="'.route(self::URL .'edit', $row->id).'" class="btn btn-info btn-sm" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a> ' .
                     '<button type="button" class="btn btn-danger btn-sm btnDelete" value="'.$row->id.'" id="'.route(self::URL . 'destroy', $row->id).'"><i class="fas fa-trash"></i> Hapus</button>' . 
                 '</nobr>',
@@ -136,6 +137,10 @@ class P3srsKegiatanJadwalController extends Controller
             'p3srs_kegiatans',
         ])->findOrFail($id);
 
+        if ($row->tanggal < Carbon::today()) {
+            return abort(403, 'Tanggal kegiatan sudah kedaluwarsa.');
+        }
+
         return view(self::FOLDER_VIEW . 'edit', compact('title', 'subTitle', 'row', 'rusuns', 'kegiatans'));
     }
 
@@ -177,8 +182,14 @@ class P3srsKegiatanJadwalController extends Controller
     public function destroy($id)
     {
         //
-        P3srsKegiatanJadwal::findOrFail($id)->delete();
+        $p3srsKegiatanJadwal = P3srsKegiatanJadwal::findOrFail($id);
+        
+        if ($p3srsKegiatanJadwal->tanggal < Carbon::today()) {
+            return abort(403, 'Tanggal kegiatan sudah kedaluwarsa.');
+        } else {
+            $p3srsKegiatanJadwal->delete();
 
-        return response()->json('Success');
+            return response()->json('Success');
+        }
     }
 }

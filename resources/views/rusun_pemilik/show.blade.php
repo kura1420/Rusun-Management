@@ -1,0 +1,88 @@
+@extends('adminlte::page')
+
+@section('title', $subTitle)
+
+@section('content_header')
+    <h1>
+        {{$subTitle}}
+        <a href="{{route('rusun-pemilik.index')}}" class="btn btn-xs btn-dark"> <i class="fa fa-arrow-left"></i> Kembali </a>
+    </h1>
+@stop
+
+@section('content')
+<x-adminlte-card theme="primary" theme-mode="outline">
+    <div class="row">
+        <div class="col-12 col-sm-4">
+            <h3 class="d-inline-block d-sm-none">{{$row->rusun_unit_details->ukuran}}</h3>
+            @if ($row->rusun_unit_details->foto) 
+            <div class="col-12">
+                <img src="{{$row->rusun_unit_details->foto}}" class="product-image">
+            </div>
+            @else 
+            <div class="col-12">
+                <img src="{{asset('images/no-image.jpg')}}" class="product-image" alt="No Image">
+            </div>
+            @endif
+        </div>
+        <div class="col-12 col-sm-8">
+            <h3 class="my-3">{{$row->rusun_unit_details->ukuran}}</h3>
+            <p>
+                <strong>Rusun:</strong> {{$row->rusuns->nama}} <br>
+                <strong>Tower:</strong> {{$row->rusun_details->nama_tower}} <br>
+                <strong>Jumlah:</strong> {{$row->rusun_unit_details->jumlah}}
+            </p>
+            <p>{{$row->keterangan}}</p>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <nav class="w-100">
+                <div class="nav nav-tabs" id="product-tab" role="tablist">
+                    <a class="nav-item nav-link active" id="product-desc-tab" data-toggle="tab" href="#product-desc" role="tab" aria-controls="product-desc" aria-selected="true">Pemilik</a>
+                    <a class="nav-item nav-link" id="product-comments-tab" data-toggle="tab" href="#product-comments" role="tab" aria-controls="product-comments" aria-selected="false">Penghuni</a>
+                    <a class="nav-item nav-link" id="product-fasilitas-tab" data-toggle="tab" href="#product-fasilitas" role="tab" aria-controls="product-fasilitas" aria-selected="false">Dokumen</a>
+                </div>
+            </nav>
+            <div class="tab-content p-3" id="nav-tabContent">
+                <div class="tab-pane fade show active" id="product-desc" role="tabpanel" aria-labelledby="product-desc-tab">
+                    <div class="row">
+                        <x-adminlte-input name="nama" label="Nama" placeholder="Nama" fgroup-class="col-md-4" value="{{$row->pemiliks->nama}}" readonly />
+                        <x-adminlte-input type="email" name="email" label="Email" placeholder="Email" fgroup-class="col-md-4" value="{{$row->pemiliks->email}}" readonly />
+                        <x-adminlte-input name="phone" label="Phone" placeholder="Phone" fgroup-class="col-md-4" value="{{$row->pemiliks->phone}}" readonly />
+                        <x-adminlte-input name="identitas_nomor" label="Identitas Nomor" placeholder="Identitas Nomor" fgroup-class="col-md-4" value="{{$row->pemiliks->identitas_nomor}}" readonly />
+                        <x-adminlte-select name="identitas_tipe" label="Identitas Tipe" placeholder="Identitas Tipe" fgroup-class="col-md-4" readonly>
+                            <option value="KTP" {{$row->pemiliks->identitas_tipe == 'KTP' ? 'selected' : ''}}>KTP</option>
+                            <option value="PASSPORT" {{$row->pemiliks->identitas_tipe == 'PASSPORT' ? 'selected' : ''}}>PASSPORT</option>
+                        </x-adminlte-select>
+
+                        <div class="form-group col-md-4">
+                            <label for="identitas_file">
+                                Identitas File
+                            </label>
+
+                            <div class="input-group">
+                                <x-adminlte-button label="View" class="btn-sm" theme="primary" icon="fas fa-eye" />
+                            </div>
+                        </div>
+                    </div>                    
+                </div>
+                <div class="tab-pane fade" id="product-comments" role="tabpanel" aria-labelledby="product-comments-tab">
+                    
+                </div>
+                <div class="tab-pane fade" id="product-fasilitas" role="tabpanel" aria-labelledby="product-fasilitas-tab">
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</x-adminlte-card>
+@stop
+
+@section('css')
+
+@stop
+
+@section('js')
+
+@stop

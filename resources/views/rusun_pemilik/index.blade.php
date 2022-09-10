@@ -7,11 +7,13 @@
 @stop
 
 @section('content')
-<x-adminlte-card theme="primary" theme-mode="outline" title="{{$subTitle}}">  
-    <x-slot name="toolsSlot">
-        Last Update: {{$lastUpdate[5] ?? '-'}}
-    </x-slot>
+@if (session()->has('success'))
+<x-adminlte-alert theme="primary" title="Information" dismissable>
+    {{session()->get('success')}}
+</x-adminlte-alert>
+@endif
 
+<x-adminlte-card theme="primary" theme-mode="outline" title="{{$subTitle}}">    
     <x-adminlte-datatable id="table2" :heads="$heads" head-theme="dark" :config="$config" striped hoverable bordered beautify />
 </x-adminlte-card>
 @stop

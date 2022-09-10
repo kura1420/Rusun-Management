@@ -13,7 +13,7 @@ class UpdateRusunPemilikDokumenRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return auth()->check();
     }
 
     /**
@@ -25,6 +25,23 @@ class UpdateRusunPemilikDokumenRequest extends FormRequest
     {
         return [
             //
+            'file' => 'nullable|mimes:pdf|max:150000',
+            'keterangan' => 'nullable|string|max:255',
+            'dokumen_id' => 'required|string',
+            'rusun_unit_detail_id' => 'required|string',
+        ];
+    }
+
+    /**
+     * Get custom attributes for validator errors.
+     *
+     * @return array
+     */
+    public function attributes()
+    {
+        return [
+            'dokumen_id' => 'dokumen',
+            'rusun_unit_detail_id' => 'tower & unit',
         ];
     }
 }

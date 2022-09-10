@@ -222,7 +222,13 @@ class PengembangDokumenController extends Controller
     public function destroy($id)
     {
         //
-        PengembangDokumen::findOrFail($id)->delete();
+        $row = PengembangDokumen::findOrFail($id);
+
+        if ($row->file) {
+            Storage::delete(self::FOLDER_FILE . '/' . $row->file);
+        }
+
+        $row->delete();
 
         return response()->json('Success');
     }

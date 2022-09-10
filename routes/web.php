@@ -2,9 +2,14 @@
 
 use App\Http\Controllers\DokumenController;
 use App\Http\Controllers\FaqController;
+use App\Http\Controllers\InformasiHalamanController;
 use App\Http\Controllers\P3srsJabatanController;
+use App\Http\Controllers\P3srsKegiatanAnggotaController;
 use App\Http\Controllers\P3srsKegiatanController;
 use App\Http\Controllers\P3srsKegiatanJadwalController;
+use App\Http\Controllers\P3srsKegiatanKanidatController;
+use App\Http\Controllers\P3srsKegiatanLaporanController;
+use App\Http\Controllers\PemilikController;
 use App\Http\Controllers\PengelolaController;
 use App\Http\Controllers\PengelolaDokumenController;
 use App\Http\Controllers\PengelolaKontakController;
@@ -17,8 +22,11 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\RusunController;
 use App\Http\Controllers\RusunDetailController;
 use App\Http\Controllers\RusunFasilitasController;
+use App\Http\Controllers\RusunPembayaranIplController;
 use App\Http\Controllers\RusunPemilikController;
+use App\Http\Controllers\RusunPemilikDokumenController;
 use App\Http\Controllers\RusunPenghuniController;
+use App\Http\Controllers\RusunPenghuniDokumenController;
 use App\Http\Controllers\RusunUnitDetailController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -41,34 +49,62 @@ Auth::routes(['register' => false]);
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::middleware(['auth'])->group(function () {
+    // setting
+    Route::resources([
+        'user' => UserController::class,
+        'role' => RoleController::class,
+        'permission' => PermissionController::class,
+    ]);
 
-    Route::resource('user', UserController::class);
-    Route::resource('role', RoleController::class);
-    Route::resource('permission', PermissionController::class);
+    // master
+    Route::resources([
+        'faq' => FaqController::class,
+        'dokumen' => DokumenController::class,
+        'informasi-halaman' => InformasiHalamanController::class,
+    ]);
 
-    Route::resource('faq', FaqController::class);
-    Route::resource('dokumen', DokumenController::class);
+    // pengembang
+    Route::resources([
+        'pengembang' => PengembangController::class,
+        'pengembang-kontak' => PengembangKontakController::class,
+        'pengembang-dokumen' => PengembangDokumenController::class,
+    ]);
 
-    Route::resource('pengembang', PengembangController::class);
-    Route::resource('pengembang-kontak', PengembangKontakController::class);
-    Route::resource('pengembang-dokumen', PengembangDokumenController::class);
-    
-    Route::resource('pengelola', PengelolaController::class);
-    Route::resource('pengelola-kontak', PengelolaKontakController::class);
-    Route::resource('pengelola-dokumen', PengelolaDokumenController::class);
+    // pengelola
+    Route::resources([
+        'pengelola' => PengelolaController::class,
+        'pengelola-kontak' => PengelolaKontakController::class,
+        'pengelola-dokumen' => PengelolaDokumenController::class,
+    ]);
 
-    Route::resource('rusun', RusunController::class);
-    Route::resource('rusun-detail', RusunDetailController::class);
-    Route::resource('rusun-unit-detail', RusunUnitDetailController::class);
-    Route::resource('rusun-fasilitas', RusunFasilitasController::class);
-    Route::resource('rusun-pemilik', RusunPemilikController::class);
-    Route::resource('rusun-penghuni', RusunPenghuniController::class);
+    // rusun
+    Route::resources([
+        'rusun' => RusunController::class,
+        'rusun-detail' => RusunDetailController::class,
+        'rusun-unit-detail' => RusunUnitDetailController::class,
+        'rusun-fasilitas' => RusunFasilitasController::class,
+        'rusun-pembayaran-ipl' => RusunPembayaranIplController::class,
+        
+        'pemilik' => PemilikController::class,
+        'rusun-pemilik' => RusunPemilikController::class,
+        'rusun-pemilik-dokumen' => RusunPemilikDokumenController::class,
 
-    Route::resource('p3srs-jabatan', P3srsJabatanController::class);
-    Route::resource('p3srs-kegiatan', P3srsKegiatanController::class);
-    Route::resource('p3srs-jadwal', P3srsKegiatanJadwalController::class);
+        'rusun-penghuni' => RusunPenghuniController::class,
+        'rusun-penghuni-dokumen' => RusunPenghuniDokumenController::class,
+    ]);
+
+    // p3srs
+    Route::resources([
+        'p3srs-jabatan' => P3srsJabatanController::class,
+        'p3srs-kegiatan' => P3srsKegiatanController::class,
+        'p3srs-jadwal' => P3srsKegiatanJadwalController::class,
+        'p3srs-anggota' => P3srsKegiatanAnggotaController::class,
+        'p3srs-kanidat' => P3srsKegiatanKanidatController::class,
+        'p3srs-laporan' => P3srsKegiatanLaporanController::class,
+    ]);
 
 
+    // other CRUD
     Route::prefix('faq')->group(function () {
         Route::controller(FaqController::class)->group(function () {
             Route::get('helps/users', 'helps')->name('faq.helps');
@@ -110,6 +146,24 @@ Route::middleware(['auth'])->group(function () {
         Route::controller(RusunFasilitasController::class)->group(function () {
             Route::get('/{id}/view-file/{foto}', 'view_file')->name('rusun-fasilitas.view_file');
             Route::post('/{id}', 'updateAsStore')->name('rusun-fasilitas.updateAsStore');
+        });
+    });
+
+    Route::prefix('pemilik')->group(function () {
+        Route::controller(PemilikController::class)->group(function () {
+            Route::get('/{id}/view-file/{file}', 'view_file')->name('pemilik.view_file');
+        });
+    });
+
+    Route::prefix('rusun-penghuni')->group(function () {
+        Route::controller(RusunPenghuniController::class)->group(function () {
+            Route::get('/{id}/view-file/{file}', 'view_file')->name('rusun-penghuni.view_file');
+        });
+    });
+
+    Route::prefix('p3srs-laporan')->group(function () {
+        Route::controller(P3srsKegiatanLaporanController::class)->group(function () {
+            Route::get('view-file/{id}/{filename}', 'dokumentasiViewFile')->name('p3srs-laporan.dokumentasiViewFile');
         });
     });
 

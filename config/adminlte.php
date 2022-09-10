@@ -64,7 +64,7 @@ return [
     */
 
     'logo' => '<b>Rusun</b> KT',
-    'logo_img' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
+    'logo_img' => 'logo.png',
     'logo_img_class' => 'brand-image img-circle elevation-3',
     'logo_img_xl' => null,
     'logo_img_xl_class' => 'brand-image-xs',
@@ -84,9 +84,9 @@ return [
     */
 
     'auth_logo' => [
-        'enabled' => false,
+        'enabled' => true,
         'img' => [
-            'path' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
+            'path' => 'logo.png',
             'alt' => 'Auth Logo',
             'class' => '',
             'width' => 50,
@@ -109,7 +109,7 @@ return [
     'preloader' => [
         'enabled' => true,
         'img' => [
-            'path' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
+            'path' => 'logo.png',
             'alt' => 'AdminLTE Preloader Image',
             'effect' => 'animation__shake',
             'width' => 60,
@@ -351,7 +351,7 @@ return [
 
         [
             'text'    => 'Pengelola',
-            'icon'    => 'fas fa-fw fa-stream',
+            'icon'    => 'fas fa-fw fa-user-friends',
             'submenu' => [
                 [
                     'text' => 'List',
@@ -400,8 +400,14 @@ return [
         ],
 
         [
+            'text'    => 'Pemilik',
+            'icon'    => 'fas fa-fw fa-user-check',
+            'route'  => 'pemilik.index',
+        ],
+
+        [
             'text'    => 'P3SRS',
-            'icon'    => 'fas fa-fw fa-users',
+            'icon'    => 'fas fa-fw fa-sitemap',
             'submenu' => [                
                 [
                     'text'    => 'Kegiatan',
@@ -417,7 +423,7 @@ return [
                         ],
                         [
                             'text' => 'Laporan',
-                            'url'  => '#',
+                            'route'  => 'p3srs-laporan.index',
                         ],
                     ],
                 ],
@@ -460,6 +466,10 @@ return [
                 [
                     'text' => 'Dokumen',
                     'route'  => 'dokumen.index',
+                ],
+                [
+                    'text' => 'Informasi Halaman',
+                    'route'  => 'informasi-halaman.index',
                 ],
             ],
         ],
