@@ -126,7 +126,10 @@ class RusunPenghuniController extends Controller
             return $rusun_penghuni_dokumen;
         });
 
-        // TODO: check IPL
+        $row->rusun_pembayaran_ipls = \App\Models\RusunPembayaranIpl::where([
+            ['pemilik_id', $row->pemilik_id],
+            ['rusun_unit_detail_id', $row->rusun_unit_detail_id],
+        ])->first();
 
         return view(self::FOLDER_VIEW . 'show', compact('title', 'subTitle', 'row',));
     }

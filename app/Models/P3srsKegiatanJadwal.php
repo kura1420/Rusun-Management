@@ -24,6 +24,17 @@ class P3srsKegiatanJadwal extends Model
         return $this->belongsTo(Rusun::class, 'rusun_id');
     }
 
+    public function p3srs_kegiatan_kanidats()
+    {
+        return $this->hasMany(P3srsKegiatanKanidat::class)
+            ->orderBy('grup_nama', 'asc');
+    }
+
+    public function p3srs_kegiatan_anggotas()
+    {
+        return $this->hasMany(P3srsKegiatanAnggota::class);
+    }
+
     public function p3srs_kegiatan_laporans()
     {
         return $this->hasMany(P3srsKegiatanLaporan::class, 'p3srs_kegiatan_jadwal_id')

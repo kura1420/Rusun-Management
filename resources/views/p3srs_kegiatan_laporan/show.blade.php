@@ -15,9 +15,13 @@
 
 <x-adminlte-card theme="primary" theme-mode="outline" title="{{$row->rusuns->nama}}">
     <x-slot name="toolsSlot">
-        <x-adminlte-button type="button" label="Verifikasi" theme="primary" icon="fas fa-check" class="btn-sm" />
+        <x-adminlte-button type="button" label="Verifikasi" theme="success" icon="fas fa-check" class="btn-sm" />
 
-        <a href="{{route('p3srs-laporan.index')}}" class="btn btn-sm btn-dark">
+        <a href="{{route('p3srs-kegiatan-laporan.create')}}?p3srs_kegiatan_jadwal_id={{$row->id}}" class="btn btn-sm btn-primary">
+            <i class="fa fa-plus"></i> Buat Laporan
+        </a>
+
+        <a href="{{route('p3srs-kegiatan-laporan.index')}}" class="btn btn-sm btn-dark">
             <i class="fa fa-arrow-left"></i> Kembali
         </a>
     </x-slot>
@@ -55,13 +59,13 @@
                                     @case('jpg')
                                     @case('jpeg')
                                     @case('png')
-                                        <a href="{{route('p3srs-laporan.dokumentasiViewFile', [$p3srs_kegiatan_dokumentasi->id, $p3srs_kegiatan_dokumentasi->filename])}}" data-toggle="lightbox">
-                                            <img src="{{route('p3srs-laporan.dokumentasiViewFile', [$p3srs_kegiatan_dokumentasi->id, $p3srs_kegiatan_dokumentasi->filename])}}" class="img-thumbnail" style="width:10%;" />
+                                        <a href="{{route('p3srs-kegiatan-laporan.dokumentasiViewFile', [$p3srs_kegiatan_dokumentasi->id, $p3srs_kegiatan_dokumentasi->filename])}}" data-toggle="lightbox">
+                                            <img src="{{route('p3srs-kegiatan-laporan.dokumentasiViewFile', [$p3srs_kegiatan_dokumentasi->id, $p3srs_kegiatan_dokumentasi->filename])}}" class="img-thumbnail" style="width:10%;" />
                                         </a>
                                         @break
                                 
-                                    @case(2)
-                                        Second case...
+                                    @case('pdf')
+                                        <a href="{{route('p3srs-kegiatan-laporan.dokumentasiViewFile', [$p3srs_kegiatan_dokumentasi->id, $p3srs_kegiatan_dokumentasi->filename])}}" target="_blank"> {{$loop->iteration}}. View File PDF</a>
                                         @break
                                 
                                     @default
@@ -71,8 +75,8 @@
                         @endif
                     </div>
                     <div class="timeline-footer">
-                        <a href="{{route('p3srs-laporan.edit', $p3srs_kegiatan_laporan->id)}}" class="btn btn-info btn-sm">Edit</a>
-                        <button type="button" class="btn btn-danger btn-sm btnDelete" value="{{$p3srs_kegiatan_laporan->id}}" id="{{route('p3srs-laporan.destroy', $p3srs_kegiatan_laporan->id)}}">Hapus</button>
+                        <a href="{{route('p3srs-kegiatan-laporan.edit', $p3srs_kegiatan_laporan->id)}}" class="btn btn-info btn-sm">Edit</a>
+                        <button type="button" class="btn btn-danger btn-sm btnDelete" value="{{$p3srs_kegiatan_laporan->id}}" id="{{route('p3srs-kegiatan-laporan.destroy', $p3srs_kegiatan_laporan->id)}}">Hapus</button>
                     </div>
                 </div>
             </div>

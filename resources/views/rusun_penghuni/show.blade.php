@@ -39,6 +39,20 @@
                     <li class="list-group-item"><b>Tower</b> <a class="float-right">{{$row->rusun_details->nama_tower}}</a></li>
                     <li class="list-group-item"><b>Unit Ukuran</b> <a class="float-right">{{$row->rusun_unit_details->ukuran}}</a></li>
                     <li class="list-group-item"><b>Status</b> <a class="float-right">{{$row->status_label}}</a></li>
+                    
+                    <li class="list-group-item">
+                        <b>IPL Dibayar Oleh</b> 
+                        
+                        @if ($row->rusun_pembayaran_ipls)
+                                @if ($row->rusun_pembayaran_ipls->pemilik_bayar) 
+                                    <a class="float-right">Pemilik</a>
+                                @else 
+                                    <a class="float-right">Penghuni</a> 
+                                @endif
+                        @else
+                            -
+                        @endif
+                    </li>
                 </ul>
 
                 <div class="row">
@@ -62,9 +76,6 @@
                     <li class="nav-item">
                         <a class="nav-link active" id="custom-tabs-one-dokumen-tab" data-toggle="pill" href="#custom-tabs-one-dokumen" role="tab" aria-controls="custom-tabs-one-dokumen" aria-selected="false">Dokumen</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="custom-tabs-one-messages-tab" data-toggle="pill" href="#custom-tabs-one-messages" role="tab" aria-controls="custom-tabs-one-messages" aria-selected="false">Pembayaran IPL</a>
-                    </li>
                 </ul>
             </div>
             <div class="card-body">
@@ -86,15 +97,6 @@
                                 </td>
                             </tr>
                             @endforeach                            
-                        </x-adminlte-datatable>
-                    </div>
-                    <div class="tab-pane fade" id="custom-tabs-one-messages" role="tabpanel" aria-labelledby="custom-tabs-one-messages-tab">
-                        <x-adminlte-datatable id="tablePembayaranIPL" :heads="[
-                                'Nama',
-                                'Phone',
-                                ['label' => 'Aksi', 'no-export' => true, 'width' => 20],
-                            ]">
-
                         </x-adminlte-datatable>
                     </div>
                 </div>

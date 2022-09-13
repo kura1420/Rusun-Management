@@ -7,12 +7,12 @@
 @stop
 
 @section('content')
-<form action="{{route('p3srs-laporan.update', $row->id)}}?p3srs_kegiatan_jadwal_id={{$row->p3srs_kegiatan_jadwal_id}}" method="post" enctype="multipart/form-data">
+<form action="{{route('p3srs-kegiatan-laporan.update', $row->id)}}?p3srs_kegiatan_jadwal_id={{$row->p3srs_kegiatan_jadwal_id}}" method="post" enctype="multipart/form-data">
     @csrf
     @method('PUT')
     <x-adminlte-card theme="primary" theme-mode="outline" title="{{$subTitle}}">
         <x-slot name="toolsSlot">
-            <a href="{{route('p3srs-laporan.show', $row->p3srs_kegiatan_jadwal_id)}}" class="btn btn-sm btn-dark">
+            <a href="{{route('p3srs-kegiatan-laporan.show', $row->p3srs_kegiatan_jadwal_id)}}" class="btn btn-sm btn-dark">
                 <i class="fa fa-arrow-left"></i> Kembali
             </a>
         </x-slot>
@@ -44,7 +44,7 @@
                 <ul>
                     @foreach ($row->p3srs_kegiatan_dokumentasis as $key => $p3srs_kegiatan_dokumentasi) 
                     <li>
-                        <a href="{{route('p3srs-laporan.dokumentasiViewFile', [$p3srs_kegiatan_dokumentasi->id, $p3srs_kegiatan_dokumentasi->filename])}}" target="_blank">View {{ $loop->iteration }}</a>
+                        <a href="{{route('p3srs-kegiatan-laporan.dokumentasiViewFile', [$p3srs_kegiatan_dokumentasi->id, $p3srs_kegiatan_dokumentasi->filename])}}" target="_blank">View {{ $loop->iteration }}</a>
                     </li>
                     @endforeach
                 </ul>

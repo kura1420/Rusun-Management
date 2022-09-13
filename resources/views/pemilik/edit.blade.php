@@ -19,16 +19,16 @@
         </x-slot>
         
         <div class="row">
-            <x-adminlte-input name="nama" label="Nama" placeholder="Nama" fgroup-class="col-md-6" value="{{$row->nama}}" />
-            <x-adminlte-input type="email" name="email" label="Email" placeholder="Email" fgroup-class="col-md-6" value="{{$row->email}}" />
-            <x-adminlte-input name="phone" label="Phone" placeholder="Phone" fgroup-class="col-md-6" value="{{$row->phone}}" />
-            <x-adminlte-input name="identitas_nomor" label="Identitas Nomor" placeholder="Identitas Nomor" fgroup-class="col-md-2" value="{{$row->identitas_nomor}}" />
-            <x-adminlte-select name="identitas_tipe" label="Identitas Tipe" placeholder="Identitas Tipe" fgroup-class="col-md-2">
+            <x-adminlte-input name="nama" label="Nama" placeholder="Nama" fgroup-class="col-md-4" value="{{$row->nama}}" />
+            <x-adminlte-input type="email" name="email" label="Email" placeholder="Email" fgroup-class="col-md-4" value="{{$row->email}}" />
+            <x-adminlte-input name="phone" label="Phone" placeholder="Phone" fgroup-class="col-md-4" value="{{$row->phone}}" />
+            <x-adminlte-input name="identitas_nomor" label="Identitas Nomor" placeholder="Identitas Nomor" fgroup-class="col-md-4" value="{{$row->identitas_nomor}}" />
+            <x-adminlte-select name="identitas_tipe" label="Identitas Tipe" placeholder="Identitas Tipe" fgroup-class="col-md-4">
                 <option value="KTP" {{$row->identitas_tipe == 'KTP' ? 'selected' : ''}}>KTP</option>
                 <option value="PASSPORT" {{$row->identitas_tipe == 'PASSPORT' ? 'selected' : ''}}>PASSPORT</option>
             </x-adminlte-select>
 
-            <x-adminlte-input type="file" name="identitas_file" label="Identitas File" placeholder="Identitas File" fgroup-class="col-md-2" >
+            <x-adminlte-input type="file" name="identitas_file" label="Identitas File" placeholder="Identitas File" fgroup-class="col-md-4" >
                 <x-slot name="bottomSlot">
                     <small class="text-lightblue">*Maksimal <strong>5MB</strong></small>
                 </x-slot>

@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreP3srsKegiatanLaporanRequest extends FormRequest
+class UpdateP3srsKegiatanKanidatRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,11 +25,9 @@ class StoreP3srsKegiatanLaporanRequest extends FormRequest
     {
         return [
             //
-            'tanggal' => 'required|date',
-            'judul' => 'required|string|max:255',
-            'penjelasan' => 'required|string',
+            'grup_nama' => 'required|string|max:255',
+            'wargas' => 'required|string',
             'p3srs_kegiatan_jadwal_id' => 'required|string',
-            'dokumentasis' => 'nullable|array|max:5',
         ];
     }
 }

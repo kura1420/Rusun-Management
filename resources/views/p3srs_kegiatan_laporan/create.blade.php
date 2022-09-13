@@ -7,11 +7,11 @@
 @stop
 
 @section('content')
-<form action="{{route('p3srs-laporan.store')}}?p3srs_kegiatan_jadwal_id={{$p3srs_kegiatan_jadwal->id}}" method="post" enctype="multipart/form-data">
+<form action="{{route('p3srs-kegiatan-laporan.store')}}?p3srs_kegiatan_jadwal_id={{$p3srs_kegiatan_jadwal->id}}" method="post" enctype="multipart/form-data">
     @csrf
     <x-adminlte-card theme="primary" theme-mode="outline" title="{{$subTitle}}">
         <x-slot name="toolsSlot">
-            <a href="{{route('p3srs-laporan.index')}}" class="btn btn-sm btn-dark">
+            <a href="{{route('p3srs-kegiatan-laporan.index')}}" class="btn btn-sm btn-dark">
                 <i class="fa fa-arrow-left"></i> Kembali
             </a>
         </x-slot>
@@ -27,7 +27,7 @@
             <x-adminlte-text-editor name="penjelasan" id="penjelasan" label="Penjelasan" fgroup-class="col-md-12" :config="[
                 'height' => '300',
             ]">
-                {{old('penjelasan')}}
+                @php echo old('penjelasan'); @endphp
             </x-adminlte-text-editor>
 
             <div class="form-group col-md-12">

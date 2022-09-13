@@ -75,7 +75,7 @@ class PengelolaDokumenController extends Controller
         $subTitle = 'Tambah Data';
 
         $rusuns = \App\Models\Rusun::orderBy('nama', 'asc')->get();
-        $dokumens = \App\Models\Dokumen::orderBy('nama', 'asc')->get();
+        $dokumens = \App\Models\Dokumen::where('kepada', 'pengelola')->orderBy('nama', 'asc')->get();
         $pengelolas = \App\Models\Pengelola::orderBy('nama', 'asc')->get();
         $pengelola_id = $request->pengelola_id ?? NULL;
 
@@ -157,7 +157,7 @@ class PengelolaDokumenController extends Controller
         $subTitle = 'Edit Data';
 
         $rusuns = \App\Models\Rusun::orderBy('nama', 'asc')->get();
-        $dokumens = \App\Models\Dokumen::orderBy('nama', 'asc')->get();
+        $dokumens = \App\Models\Dokumen::where('kepada', 'pengelola')->orderBy('nama', 'asc')->get();
         $pengelolas = \App\Models\Pengelola::orderBy('nama', 'asc')->get();
         $pengelola_id = $request->pengelola_id ?? NULL;
 

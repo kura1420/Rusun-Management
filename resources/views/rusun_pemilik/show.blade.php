@@ -46,6 +46,7 @@
             </nav>
             <div class="tab-content p-3" id="nav-tabContent">
                 <div class="tab-pane fade show active" id="product-desc" role="tabpanel" aria-labelledby="product-desc-tab">
+                    @if (isset($row->pemiliks))
                     <div class="row">
                         <x-adminlte-input name="nama" label="Nama" placeholder="Nama" fgroup-class="col-md-4" value="{{$row->pemiliks->nama}}" readonly />
                         <x-adminlte-input type="email" name="email" label="Email" placeholder="Email" fgroup-class="col-md-4" value="{{$row->pemiliks->email}}" readonly />
@@ -62,27 +63,133 @@
                             </label>
 
                             <div class="input-group">
-                                <x-adminlte-button label="View" class="btn-sm" theme="primary" icon="fas fa-eye" />
+                                @if ($row->pemiliks->identitas_file)
+                                <a href="{{route('pemilik.view_file', [$row->pemiliks->id, $row->pemiliks->identitas_file])}}" class="btn btn-danger btn-block" data-toggle="lightbox">
+                                    <b><i class="fa fa-eye"></i> Lihat</b>
+                                </a>
+                                @else
+                                    Tidak Tersedia
+                                @endif
                             </div>
                         </div>
-                    </div>                    
+                    </div>  
+                    @else
+                        Tidak Tersedia
+                    @endif                  
                 </div>
                 <div class="tab-pane fade" id="product-comments" role="tabpanel" aria-labelledby="product-comments-tab">
-                    
+                    @if (isset($row->penghunis))
+                    <div class="row">
+                        <x-adminlte-input name="nama" label="Nama" placeholder="Nama" fgroup-class="col-md-6" value="{{$row->penghunis->nama}}" readonly />
+                        <x-adminlte-input type="email" name="email" label="Email" placeholder="Email" fgroup-class="col-md-3" value="{{$row->penghunis->email}}" readonly />
+                        <x-adminlte-input name="phone" label="Phone" placeholder="Phone" fgroup-class="col-md-3" value="{{$row->penghunis->phone}}" readonly />
+                        <x-adminlte-select name="status" label="Status" placeholder="Status" fgroup-class="col-md-2" readonly>
+                            <option value="SW" {{$row->penghunis->status == 'SW' ? 'selected' : ''}}>Sewa</option>
+                            <option value="TSW" {{$row->penghunis->status == 'TSW' ? 'selected' : ''}}>Tidak Sewa</option>
+                            <option value="KS" {{$row->penghunis->status == 'KS' ? 'selected' : ''}}>Kosong</option>
+                        </x-adminlte-select>
+                        <x-adminlte-input name="identitas_nomor" label="Identitas Nomor" placeholder="Identitas Nomor" fgroup-class="col-md-2" value="{{$row->penghunis->identitas_nomor}}" readonly />
+                        <x-adminlte-select name="identitas_tipe" label="Identitas Tipe" placeholder="Identitas Tipe" fgroup-class="col-md-2" readonly>
+                            <option value="KTP" {{$row->penghunis->identitas_tipe == 'KTP' ? 'selected' : ''}}>KTP</option>
+                            <option value="PASSPORT" {{$row->penghunis->identitas_tipe == 'PASSPORT' ? 'selected' : ''}}>PASSPORT</option>
+                        </x-adminlte-select>
+                        <x-adminlte-input-date name="tanggal_masuk" id="tanggal_masuk" label="Tanggal Masuk" placeholder="Tanggal Masuk" fgroup-class="col-md-2" :config="['format' => 'YYYY-MM-DD']" value="{{$row->penghunis->tanggal_masuk}}" disabled />
+                        <x-adminlte-input-date name="tanggal_keluar" id="tanggal_keluar" label="Tanggal Keluar" placeholder="Tanggal Keluar" fgroup-class="col-md-2" :config="['format' => 'YYYY-MM-DD']" value="{{$row->penghunis->tanggal_keluar}}" disabled />
+
+                        <div class="form-group col-md-2">
+                            <label for="identitas_file">
+                                Identitas File
+                            </label>
+
+                            <div class="input-group">
+                                @if ($row->penghunis->identitas_file)
+                                <a href="{{route('rusun-penghuni.view_file', [$row->penghunis->id, $row->penghunis->identitas_file])}}" class="btn btn-danger btn-block" data-toggle="lightbox">
+                                    <b><i class="fa fa-file-alt"></i> ID File</b>
+                                </a>
+                                @else
+                                    Tidak Tersedia
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                    @else
+                        Tidak Tersedia
+                    @endif
                 </div>
                 <div class="tab-pane fade" id="product-fasilitas" role="tabpanel" aria-labelledby="product-fasilitas-tab">
-                    
+                    <x-adminlte-datatable id="tableDokumen" :heads="[
+                            'Rusun',
+                            'Tower',
+                            'Unit Ukuran',
+                            'Dokumen',
+                            'Keterangan',
+                            ['label' => 'Aksi', 'no-export' => true, 'width' => 20],
+                        ]">
+                        @foreach ($row->rusun_pemilik_dokumens as $rusun_pemilik_dokumen)
+                        <tr>
+                            <td>{{$rusun_pemilik_dokumen->rusuns->nama}}</td>
+                            <td>{{$rusun_pemilik_dokumen->rusun_details->nama_tower}}</td>
+                            <td>{{$rusun_pemilik_dokumen->rusun_unit_details->ukuran}}</td>
+                            <td>{{$rusun_pemilik_dokumen->dokumens->nama}}</td>
+                            <td>{{$rusun_pemilik_dokumen->keterangan}}</td>
+                            <td>
+                                <button type="button" id="{{route('rusun-pemilik-dokumen.show', $rusun_pemilik_dokumen->id)}}" class="btn btn-success btn-xs btnDokumenView"><i class="fas fa-eye"></i> View</button>
+                            </td>
+                        </tr>
+                        @endforeach                     
+                    </x-adminlte-datatable>
                 </div>
             </div>
         </div>
     </div>
 </x-adminlte-card>
+
+<x-adminlte-modal id="modalDokumen" title="Dokumen Pemilik" theme="purple" icon="fas fa-file-alt" size='lg' v-centered static-backdrop scrollable>
+    <embed type="application/pdf" id="modalViewDokumen" width="100%" height="500"></embed>
+
+    <x-slot name="footerSlot">
+        <x-adminlte-button type="button" theme="danger" id="btnModalViewOnTap" label="View On Tap"/>
+    </x-slot>
+</x-adminlte-modal>
 @stop
 
 @section('css')
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.3.0/ekko-lightbox.css" integrity="sha512-Velp0ebMKjcd9RiCoaHhLXkR1sFoCCWXNp6w4zj1hfMifYB5441C+sKeBl/T/Ka6NjBiRfBBQRaQq65ekYz3UQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 @stop
 
 @section('js')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.3.0/ekko-lightbox.js" integrity="sha512-YibiFIKqwi6sZFfPm5HNHQYemJwFbyyYHjrr3UT+VobMt/YBo1kBxgui5RWc4C3B4RJMYCdCAJkbXHt+irKfSA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+$(document).ready(function () {
+    $(document).on('click', '[data-toggle="lightbox"]', function(event) {
+        event.preventDefault();
+        $(this).ekkoLightbox();
+    });
 
+    $('body').on('click', '.btnDokumenView', function (e) {
+        e.preventDefault();
+
+        const value = $(this).val();
+        const url = $(this).attr('id');
+
+        console.log(value, url);
+        
+        $('#btnModalViewOnTap').val(url);
+        $('#modalViewDokumen').attr('src', url);
+        $('#modalDokumen').modal('show');
+    });
+
+    $('#modalDokumen').on('hidden.bs.modal', function () {
+        $('#btnModalViewOnTap').val('');
+    });
+
+    $('#btnModalViewOnTap').click(function (e) { 
+        e.preventDefault();
+        
+        const url_file = $(this).val();
+
+        window.open(url_file, '_blank');
+    });
+});
+</script>
 @stop

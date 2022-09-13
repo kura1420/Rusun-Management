@@ -6,6 +6,7 @@ use App\Http\Requests\StoreP3srsKegiatanJadwalRequest;
 use App\Http\Requests\UpdateP3srsKegiatanJadwalRequest;
 use App\Models\P3srsKegiatanJadwal;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class P3srsKegiatanJadwalController extends Controller
 {
@@ -111,10 +112,97 @@ class P3srsKegiatanJadwalController extends Controller
      * @param  \App\Models\P3srsKegiatanJadwal  $p3srsKegiatanJadwal
      * @return \Illuminate\Http\Response
      */
-    public function show(P3srsKegiatanJadwal $p3srsKegiatanJadwal)
+    public function show($id)
     {
         //
-        return $p3srsKegiatanJadwal;
+        $title = self::TITLE;
+        $subTitle = 'Detail Data';
+
+        $row = P3srsKegiatanJadwal::with([
+            'rusuns',
+            'p3srs_kegiatans',
+            'p3srs_kegiatan_kanidats',
+            'p3srs_kegiatan_anggotas',
+        ])->findOrFail($id);
+
+        $row->p3srs_kegiatan_kanidats = $row->p3srs_kegiatan_kanidats->map(function ($p3srs_kegiatan_kanidat) {
+            if ($p3srs_kegiatan_kanidat->apakah_pemilik) {
+                $p3srs_kegiatan_kanidat->profile = DB::table('rusun_pemiliks')->join('pemiliks', 'rusun_pemiliks.pemilik_id', '=', 'pemiliks.id')
+                    ->join('rusun_details', 'rusun_pemiliks.rusun_id', '=', 'rusun_details.rusun_id')
+                    ->join('rusun_unit_details', 'rusun_pemiliks.rusun_id', '=', 'rusun_unit_details.rusun_id')
+                    ->where('rusun_pemiliks.id', $p3srs_kegiatan_kanidat->pemilik_penghuni_id)
+                    ->select([
+                        'rusun_pemiliks.id',
+                            'pemiliks.nama',
+                                'rusun_details.nama_tower',
+                                    'rusun_unit_details.ukuran'
+                    ])
+                    ->first();
+            } else {
+                $p3srs_kegiatan_kanidat->profile = \App\Models\RusunPenghuni::join('rusun_details', 'rusun_penghunis.rusun_id', '=', 'rusun_details.rusun_id')
+                    ->join('rusun_unit_details', 'rusun_penghunis.rusun_id', '=', 'rusun_unit_details.rusun_id')
+                    ->where('rusun_penghunis.id', $p3srs_kegiatan_kanidat->pemilik_penghuni_id)
+                    ->select([
+                        'rusun_penghunis.id',
+                            'rusun_penghunis.nama',
+                                'rusun_details.nama_tower',
+                                    'rusun_unit_details.ukuran'
+                    ])
+                    ->first();
+            }
+            
+            return $p3srs_kegiatan_kanidat;
+        });
+
+        $row->p3srs_kegiatan_anggotas = $row->p3srs_kegiatan_anggotas->map(function ($p3srs_kegiatan_anggota) {
+            if ($p3srs_kegiatan_anggota->apakah_pemilik) {
+                $p3srs_kegiatan_anggota->profile = DB::table('rusun_pemiliks')->join('pemiliks', 'rusun_pemiliks.pemilik_id', '=', 'pemiliks.id')
+                    ->join('rusun_details', 'rusun_pemiliks.rusun_id', '=', 'rusun_details.rusun_id')
+                    ->join('rusun_unit_details', 'rusun_pemiliks.rusun_id', '=', 'rusun_unit_details.rusun_id')
+                    ->where('rusun_pemiliks.id', $p3srs_kegiatan_anggota->pemilik_penghuni_id)
+                    ->select([
+                        'rusun_pemiliks.id',
+                            'pemiliks.nama',
+                                'rusun_details.nama_tower',
+                                    'rusun_unit_details.ukuran'
+                    ])
+                    ->first();
+            } else {
+                $p3srs_kegiatan_anggota->profile = \App\Models\RusunPenghuni::join('rusun_details', 'rusun_penghunis.rusun_id', '=', 'rusun_details.rusun_id')
+                    ->join('rusun_unit_details', 'rusun_penghunis.rusun_id', '=', 'rusun_unit_details.rusun_id')
+                    ->where('rusun_penghunis.id', $p3srs_kegiatan_anggota->pemilik_penghuni_id)
+                    ->select([
+                        'rusun_penghunis.id',
+                            'rusun_penghunis.nama',
+                                'rusun_details.nama_tower',
+                                    'rusun_unit_details.ukuran'
+                    ])
+                    ->first();
+            }
+
+            return $p3srs_kegiatan_anggota;
+        });
+
+        $collects = collect($row->p3srs_kegiatan_kanidats)
+            ->groupBy('grup_id')
+            ->sort();
+
+        $groupBys = [];
+        if (count($collects)>0) {
+            foreach ($collects as $key => $collect) {
+                $groupBys[] = [
+                    'id' => $key,
+                    'text' => collect($collect)
+                        ->unique('unique')
+                        ->map(function ($item, $key) {
+                            return $item->grup_nama;
+                        })[0],
+                    'childrens' => $collect,
+                ];
+            }
+        }
+
+        return view(self::FOLDER_VIEW . 'show', compact('title', 'subTitle', 'row', 'groupBys'));
     }
 
     /**
@@ -137,9 +225,9 @@ class P3srsKegiatanJadwalController extends Controller
             'p3srs_kegiatans',
         ])->findOrFail($id);
 
-        if ($row->tanggal < Carbon::today()) {
-            return abort(403, 'Tanggal kegiatan sudah kedaluwarsa.');
-        }
+        // if ($row->tanggal < Carbon::today()) {
+        //     return abort(403, 'Tanggal kegiatan sudah kedaluwarsa.');
+        // }
 
         return view(self::FOLDER_VIEW . 'edit', compact('title', 'subTitle', 'row', 'rusuns', 'kegiatans'));
     }
@@ -184,12 +272,12 @@ class P3srsKegiatanJadwalController extends Controller
         //
         $p3srsKegiatanJadwal = P3srsKegiatanJadwal::findOrFail($id);
         
-        if ($p3srsKegiatanJadwal->tanggal < Carbon::today()) {
-            return abort(403, 'Tanggal kegiatan sudah kedaluwarsa.');
-        } else {
+        // if ($p3srsKegiatanJadwal->tanggal < Carbon::today()) {
+        //     return abort(403, 'Tanggal kegiatan sudah kedaluwarsa.');
+        // } else {
             $p3srsKegiatanJadwal->delete();
 
             return response()->json('Success');
-        }
+        // }
     }
 }

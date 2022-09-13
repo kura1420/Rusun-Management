@@ -98,9 +98,9 @@ Route::middleware(['auth'])->group(function () {
         'p3srs-jabatan' => P3srsJabatanController::class,
         'p3srs-kegiatan' => P3srsKegiatanController::class,
         'p3srs-jadwal' => P3srsKegiatanJadwalController::class,
-        'p3srs-anggota' => P3srsKegiatanAnggotaController::class,
-        'p3srs-kanidat' => P3srsKegiatanKanidatController::class,
-        'p3srs-laporan' => P3srsKegiatanLaporanController::class,
+        'p3srs-kegiatan-kanidat' => P3srsKegiatanKanidatController::class,
+        'p3srs-kegiatan-anggota' => P3srsKegiatanAnggotaController::class,
+        'p3srs-kegiatan-laporan' => P3srsKegiatanLaporanController::class,
     ]);
 
 
@@ -161,9 +161,15 @@ Route::middleware(['auth'])->group(function () {
         });
     });
 
-    Route::prefix('p3srs-laporan')->group(function () {
+    Route::prefix('p3srs-kegiatan-laporan')->group(function () {
         Route::controller(P3srsKegiatanLaporanController::class)->group(function () {
-            Route::get('view-file/{id}/{filename}', 'dokumentasiViewFile')->name('p3srs-laporan.dokumentasiViewFile');
+            Route::get('view-file/{id}/{filename}', 'dokumentasiViewFile')->name('p3srs-kegiatan-laporan.dokumentasiViewFile');
+        });
+    });
+
+    Route::prefix('p3srs-kegiatan-kanidat')->group(function () {
+        Route::controller(P3srsKegiatanKanidatController::class)->group(function () {
+            Route::delete('grup-delete/{groupId}', 'destroyGroup')->name('p3srs-kegiatan-kanidat.destroyGroup');
         });
     });
 

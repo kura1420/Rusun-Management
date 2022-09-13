@@ -423,7 +423,7 @@ return [
                         ],
                         [
                             'text' => 'Laporan',
-                            'route'  => 'p3srs-laporan.index',
+                            'route'  => 'p3srs-kegiatan-laporan.index',
                         ],
                     ],
                 ],

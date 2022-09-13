@@ -75,7 +75,7 @@ class PengembangDokumenController extends Controller
         $subTitle = 'Tambah Data';
 
         $rusuns = \App\Models\Rusun::orderBy('nama', 'asc')->get();
-        $dokumens = \App\Models\Dokumen::orderBy('nama', 'asc')->get();
+        $dokumens = \App\Models\Dokumen::where('kepada', 'pengembang')->orderBy('nama', 'asc')->get();
         $pengembangs = \App\Models\Pengembang::orderBy('nama', 'asc')->get();
         $pengembang_id = $request->pengembang_id ?? NULL;
 
@@ -157,7 +157,7 @@ class PengembangDokumenController extends Controller
         $subTitle = 'Edit Data';
 
         $rusuns = \App\Models\Rusun::orderBy('nama', 'asc')->get();
-        $dokumens = \App\Models\Dokumen::orderBy('nama', 'asc')->get();
+        $dokumens = \App\Models\Dokumen::where('kepada', 'pengembang')->orderBy('nama', 'asc')->get();
         $pengembangs = \App\Models\Pengembang::orderBy('nama', 'asc')->get();
         $pengembang_id = $request->pengembang_id ?? NULL;
         $row = PengembangDokumen::findOrFail($id);

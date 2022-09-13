@@ -25,7 +25,8 @@ class StoreP3srsKegiatanAnggotaRequest extends FormRequest
     {
         return [
             //
-            'rusun_pemilik_penghunis' => 'required|array',
+            'wargas' => 'required|string',
+            'p3srs_kegiatan_jadwal_id' => 'required|string',
         ];
     }
 }

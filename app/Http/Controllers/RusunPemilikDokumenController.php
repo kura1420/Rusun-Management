@@ -55,7 +55,7 @@ class RusunPemilikDokumenController extends Controller
 
         $pemilik->rusun_pemilik_groups = $this->rusunPemilikList($pemilik->rusun_pemiliks);
 
-        $dokumens = \App\Models\Dokumen::orderBy('nama')->get();
+        $dokumens = \App\Models\Dokumen::where('kepada', 'pemilik')->orderBy('nama')->get();
 
         return view(self::FOLDER_VIEW . 'create', compact('title', 'subTitle', 'pemilik', 'dokumens'));
     }
@@ -136,7 +136,7 @@ class RusunPemilikDokumenController extends Controller
         
         $pemilik->rusun_pemilik_groups = $this->rusunPemilikList($pemilik->rusun_pemiliks);
 
-        $dokumens = \App\Models\Dokumen::orderBy('nama')->get();
+        $dokumens = \App\Models\Dokumen::where('kepada', 'pemilik')->orderBy('nama')->get();
 
         return view(self::FOLDER_VIEW . 'edit', compact('title', 'subTitle', 'row', 'dokumens', 'pemilik'));
     }

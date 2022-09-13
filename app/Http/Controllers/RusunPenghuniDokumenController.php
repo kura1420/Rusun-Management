@@ -46,7 +46,7 @@ class RusunPenghuniDokumenController extends Controller
         ->where('id', $rusun_penghuni_id)
         ->firstOrFail();
 
-        $dokumens = \App\Models\Dokumen::orderBy('nama')->get();
+        $dokumens = \App\Models\Dokumen::where('kepada', 'penghuni')->orderBy('nama')->get();
 
         return view(self::FOLDER_VIEW . 'create', compact('title', 'subTitle', 'rusunPenghuni', 'dokumens'));
     }
@@ -118,7 +118,7 @@ class RusunPenghuniDokumenController extends Controller
         
         $row = RusunPenghuniDokumen::findOrFail($id);
 
-        $dokumens = \App\Models\Dokumen::orderBy('nama')->get();
+        $dokumens = \App\Models\Dokumen::where('kepada', 'penghuni')->orderBy('nama')->get();
 
         return view(self::FOLDER_VIEW . 'edit', compact('title', 'subTitle', 'row', 'dokumens',));
     }

@@ -82,6 +82,7 @@ $(function () {
 
                         switch (status) {
                             case 500:
+                            case 403:
                                 Swal.fire({
                                     title: 'Error',
                                     text: statusText,

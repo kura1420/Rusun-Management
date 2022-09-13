@@ -13,9 +13,9 @@ class P3srsKegiatanLaporanController extends Controller
 {
 
     const TITLE = 'P3SRS - Laporan';
-    const FOLDER_VIEW = 'p3srs_laporan.';
-    const FOLDER_DOCUMENT = 'p3srs_dokumen/';
-    const URL = 'p3srs-laporan.';
+    const FOLDER_VIEW = 'p3srs_kegiatan_laporan.';
+    const FOLDER_DOCUMENT = 'p3srs_kegiatan_dokumen/';
+    const URL = 'p3srs-kegiatan-laporan.';
 
     /**
      * Display a listing of the resource.
@@ -78,9 +78,9 @@ class P3srsKegiatanLaporanController extends Controller
         ->where('id', $p3srs_kegiatan_jadwal_id)
         ->firstOrFail();
 
-        if ($p3srs_kegiatan_jadwal->tanggal < Carbon::today()) {
-            return abort(403, 'Tanggal kegiatan sudah kedaluwarsa.');
-        }
+        // if ($p3srs_kegiatan_jadwal->tanggal < Carbon::today()) {
+        //     return abort(403, 'Tanggal kegiatan sudah kedaluwarsa.');
+        // }
 
         $title = self::TITLE;
         $subTitle = 'Laporan ' . $p3srs_kegiatan_jadwal->p3srs_kegiatans->nama;
@@ -189,9 +189,9 @@ class P3srsKegiatanLaporanController extends Controller
         $title = self::TITLE;
         $subTitle = 'Laporan ' . $row->p3srs_kegiatans->nama;
 
-        if ($row->p3srs_kegiatan_jadwals->tanggal < Carbon::today()) {
-            return abort(403, 'Tanggal kegiatan sudah kedaluwarsa.');
-        }
+        // if ($row->p3srs_kegiatan_jadwals->tanggal < Carbon::today()) {
+        //     return abort(403, 'Tanggal kegiatan sudah kedaluwarsa.');
+        // }
 
         return view(self::FOLDER_VIEW . 'edit', compact('title', 'subTitle', 'row',));
     }

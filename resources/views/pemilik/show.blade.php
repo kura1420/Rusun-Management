@@ -40,7 +40,9 @@
                 <div class="row">
                     <div class="col-md-6">
                         @if ($row->identitas_file)
-                        <a href="{{route('pemilik.view_file', [$row->id, $row->identitas_file])}}" class="btn btn-danger btn-block" data-toggle="lightbox"><b><i class="fa fa-file-alt"></i> ID File</b></a>
+                        <a href="{{route('pemilik.view_file', [$row->id, $row->identitas_file])}}" class="btn btn-danger btn-block" data-toggle="lightbox">
+                            <b><i class="fa fa-file-alt"></i> ID File</b>
+                        </a>
                         @endif
                     </div>
                     <div class="col-md-6">

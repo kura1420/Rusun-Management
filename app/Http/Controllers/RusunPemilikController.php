@@ -105,7 +105,23 @@ class RusunPemilikController extends Controller
         ])
         ->findOrFail($id);
 
-        // return $row;
+        $row->penghunis = $row->pemiliks
+            ->rusun_penghunis()
+            ->where('rusun_unit_detail_id', $row->rusun_unit_detail_id)
+            ->first();
+
+        $row->rusun_pemilik_dokumens = $row->pemiliks
+            ->rusun_pemilik_dokumens()
+            ->where('rusun_unit_detail_id', $row->rusun_unit_detail_id)
+            ->get()
+            ->map(function ($rusun_pemilik_dokumen) {
+                $rusun_pemilik_dokumen->dokumens = $rusun_pemilik_dokumen->dokumens()->first();
+                $rusun_pemilik_dokumen->rusuns = $rusun_pemilik_dokumen->rusuns()->first();
+                $rusun_pemilik_dokumen->rusun_details = $rusun_pemilik_dokumen->rusun_details()->first();
+                $rusun_pemilik_dokumen->rusun_unit_details = $rusun_pemilik_dokumen->rusun_unit_details()->first();
+    
+                return $rusun_pemilik_dokumen;
+            });
 
         return view(self::FOLDER_VIEW . 'show', compact('title', 'subTitle', 'row',));
     }
