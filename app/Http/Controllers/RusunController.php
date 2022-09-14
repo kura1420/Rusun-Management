@@ -163,6 +163,22 @@ class RusunController extends Controller
         }
 
         $return = DB::transaction(function () use ($input, $insertPengembangs, $insertPengelolas) {
+            $username = $input['endpoint_username'];
+            $password = $input['endpoint_password'];
+            $tarif = $input['endpoint_tarif'];
+            $outstanding = $input['endpoint_outstanding'];
+            $pemilik = $input['endpoint_pemilik'];
+            $penghuni = $input['endpoint_penghuni'];
+
+            unset(
+                $input['endpoint_username'],
+                $input['endpoint_password'],
+                $input['endpoint_tarif'],
+                $input['endpoint_outstanding'],
+                $input['endpoint_pemilik'],
+                $input['endpoint_penghuni'],
+            );
+
             $row = Rusun::create($input);
             
             if (count($insertPengembangs)>0) {
@@ -171,6 +187,70 @@ class RusunController extends Controller
 
             if (count($insertPengelolas)>0) {
                 $row->rusun_pengelolas()->createMany($insertPengelolas);
+            }
+
+            if (isset($username) && isset($password)) {
+                $keterangan = $row->nama . ' - ';
+
+                if ($tarif) {
+                    \App\Models\ApiManagement::updateOrCreate(
+                        [
+                            'table' => 'rusun_tarifs',
+                            'reff_id' => $row->id,
+                        ],                       
+                        [
+                            'keterangan' => $keterangan . ' Tarif',
+                            'username' => $username,
+                            'password' => $password,
+                            'endpoint' => $tarif,
+                        ]
+                    );
+                }
+
+                if ($outstanding) {
+                    \App\Models\ApiManagement::updateOrCreate(
+                        [
+                            'table' => 'rusun_outstanding_penghunis',
+                            'reff_id' => $row->id,
+                        ],                       
+                        [
+                            'keterangan' => $keterangan . ' Outstanding',
+                            'username' => $username,
+                            'password' => $password,
+                            'endpoint' => $outstanding,
+                        ]
+                    );
+                }
+
+                if ($pemilik) {
+                    \App\Models\ApiManagement::updateOrCreate(
+                        [
+                            'table' => 'rusun_pemiliks',
+                            'reff_id' => $row->id,
+                        ],                       
+                        [
+                            'keterangan' => $keterangan . ' Pemilik',
+                            'username' => $username,
+                            'password' => $password,
+                            'endpoint' => $pemilik,
+                        ]
+                    );
+                }
+
+                if ($penghuni) {
+                    \App\Models\ApiManagement::updateOrCreate(
+                        [
+                            'table' => 'rusun_penghunis',
+                            'reff_id' => $row->id,
+                        ],                       
+                        [
+                            'keterangan' => $keterangan . ' Penghuni',
+                            'username' => $username,
+                            'password' => $password,
+                            'endpoint' => $penghuni,
+                        ]
+                    );
+                }
             }
 
             return $row;
@@ -201,6 +281,8 @@ class RusunController extends Controller
             'rusun_fasilitas',
             'rusun_pengelolas',
             'rusun_pengembangs',
+            'rusun_tarifs',
+            'rusun_outstanding_penghunis',
         ])
         ->findOrFail($id);
 
@@ -282,7 +364,50 @@ class RusunController extends Controller
             return $rusun_pengembang;
         });
 
-        return view(self::FOLDER_VIEW . 'edit', compact('title', 'subTitle', 'row'));
+        $username = NULL;
+        $password = NULL;
+        
+        $tarif = \App\Models\ApiManagement::where([
+            ['table', 'rusun_tarifs'],
+            ['reff_id', $row->id],
+        ])->first();
+
+        if ($tarif) {
+            $username = $tarif->username;
+            $password = $tarif->password;
+        }
+
+        $outstanding = \App\Models\ApiManagement::where([
+            ['table', 'rusun_outstanding_penghunis'],
+            ['reff_id', $row->id],
+        ])->first();
+
+        if ($outstanding) {
+            $username = $outstanding->username;
+            $password = $outstanding->password;
+        }
+
+        $pemilik = \App\Models\ApiManagement::where([
+            ['table', 'rusun_pemiliks'],
+            ['reff_id', $row->id],
+        ])->first();
+
+        if ($pemilik) {
+            $username = $pemilik->username;
+            $password = $pemilik->password;
+        }
+
+        $penghuni = \App\Models\ApiManagement::where([
+            ['table', 'rusun_penghunis'],
+            ['reff_id', $row->id],
+        ])->first();
+
+        if ($penghuni) {
+            $username = $penghuni->username;
+            $password = $penghuni->password;
+        }
+
+        return view(self::FOLDER_VIEW . 'edit', compact('title', 'subTitle', 'row', 'tarif', 'outstanding', 'pemilik', 'penghuni', 'username', 'password'));
     }
 
     /**
@@ -364,6 +489,22 @@ class RusunController extends Controller
         $input['foto_3'] = $foto_3;
 
         DB::transaction(function () use ($rusun, $pengembangs, $pengelolas, $input) {
+            $username = $input['endpoint_username'];
+            $password = $input['endpoint_password'];
+            $tarif = $input['endpoint_tarif'];
+            $outstanding = $input['endpoint_outstanding'];
+            $pemilik = $input['endpoint_pemilik'];
+            $penghuni = $input['endpoint_penghuni'];
+
+            unset(
+                $input['endpoint_username'],
+                $input['endpoint_password'],
+                $input['endpoint_tarif'],
+                $input['endpoint_outstanding'],
+                $input['endpoint_pemilik'],
+                $input['endpoint_penghuni'],
+            );
+
             if (count($pengembangs)>0) {
                 for ($i=0; $i < count($pengembangs); $i++) { 
                     \App\Models\RusunPengembang::updateOrCreate(
@@ -387,6 +528,70 @@ class RusunController extends Controller
                         ],
                         [
                             'keterangan' => $pengelolas[$i][4],
+                        ]
+                    );
+                }
+            }
+
+            if (isset($username) && isset($password)) {
+                $keterangan = $rusun->nama . ' - ';
+
+                if ($tarif) {
+                    \App\Models\ApiManagement::updateOrCreate(
+                        [
+                            'table' => 'rusun_tarifs',
+                            'reff_id' => $rusun->id,
+                        ],                       
+                        [
+                            'keterangan' => $keterangan . ' Tarif',
+                            'username' => $username,
+                            'password' => $password,
+                            'endpoint' => $tarif,
+                        ]
+                    );
+                }
+
+                if ($outstanding) {
+                    \App\Models\ApiManagement::updateOrCreate(
+                        [
+                            'table' => 'rusun_outstanding_penghunis',
+                            'reff_id' => $rusun->id,
+                        ],                       
+                        [
+                            'keterangan' => $keterangan . ' Outstanding',
+                            'username' => $username,
+                            'password' => $password,
+                            'endpoint' => $outstanding,
+                        ]
+                    );
+                }
+
+                if ($pemilik) {
+                    \App\Models\ApiManagement::updateOrCreate(
+                        [
+                            'table' => 'rusun_pemiliks',
+                            'reff_id' => $rusun->id,
+                        ],                       
+                        [
+                            'keterangan' => $keterangan . ' Pemilik',
+                            'username' => $username,
+                            'password' => $password,
+                            'endpoint' => $pemilik,
+                        ]
+                    );
+                }
+
+                if ($penghuni) {
+                    \App\Models\ApiManagement::updateOrCreate(
+                        [
+                            'table' => 'rusun_penghunis',
+                            'reff_id' => $rusun->id,
+                        ],                       
+                        [
+                            'keterangan' => $keterangan . ' Penghuni',
+                            'username' => $username,
+                            'password' => $password,
+                            'endpoint' => $penghuni,
                         ]
                     );
                 }

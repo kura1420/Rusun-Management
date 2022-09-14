@@ -45,6 +45,13 @@ class StoreRusunRequest extends FormRequest
             'regencie_id' => 'required|string',
             'district_id' => 'required|string',
             'village_id' => 'required|string',
+
+            'endpoint_username' => 'nullable|string|max:255',
+            'endpoint_password' => 'nullable|string|max:255',
+            'endpoint_tarif' => 'nullable|string|url|max:255',
+            'endpoint_outstanding' => 'nullable|string|url|max:255',
+            'endpoint_pemilik' => 'nullable|string|url|max:255',
+            'endpoint_penghuni' => 'nullable|string|url|max:255',
         ];
     }
 

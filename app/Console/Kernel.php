@@ -34,6 +34,7 @@ class Kernel extends ConsoleKernel
 
     public function _daily(Schedule $schedule)
     {
-        $schedule->command('rusun:penghuni')->daily();
+        $schedule->command('rusun:tarifSync')->daily();
+        $schedule->command('rusun:outstandingSync')->daily();
     }
 }

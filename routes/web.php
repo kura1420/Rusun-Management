@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ApiManagementController;
 use App\Http\Controllers\DokumenController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\InformasiHalamanController;
@@ -54,6 +55,7 @@ Route::middleware(['auth'])->group(function () {
         'user' => UserController::class,
         'role' => RoleController::class,
         'permission' => PermissionController::class,
+        'api-manage' => ApiManagementController::class,
     ]);
 
     // master
@@ -115,6 +117,12 @@ Route::middleware(['auth'])->group(function () {
         Route::controller(InformasiHalamanController::class)->group(function () {
             Route::get('{id}/copy', 'copy')->name('informasi-halaman.copy');
             Route::get('/{id}/view-file/{file}', 'view_file')->name('informasi-halaman.view_file');
+        });
+    });
+
+    Route::prefix('api-manage')->group(function () {
+        Route::controller(ApiManagementController::class)->group(function () {
+            Route::get('{id}/test-endpoint', 'testEndpoint')->name('api-manage.testEndpoint');
         });
     });
     

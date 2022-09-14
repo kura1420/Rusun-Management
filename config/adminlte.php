@@ -492,30 +492,10 @@ return [
                 ],
                 [
                     'text' => 'API Manage',
-                    'url'  => '#',
+                    'route'  => 'api-manage.index',
                 ],
-                // [
-                //     'text' => 'level_one',
-                //     'url'  => '#',
-                // ],
             ],
         ],
-        // ['header' => 'labels'],
-        // [
-        //     'text'       => 'important',
-        //     'icon_color' => 'red',
-        //     'url'        => '#',
-        // ],
-        // [
-        //     'text'       => 'warning',
-        //     'icon_color' => 'yellow',
-        //     'url'        => '#',
-        // ],
-        // [
-        //     'text'       => 'information',
-        //     'icon_color' => 'cyan',
-        //     'url'        => '#',
-        // ],
     ],
 
     /*

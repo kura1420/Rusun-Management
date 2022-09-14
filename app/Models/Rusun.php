@@ -58,4 +58,19 @@ class Rusun extends Model
     {
         return $this->hasMany(RusunPengembang::class);
     }
+
+    public function rusun_tarifs()
+    {
+        return $this->hasMany(RusunTarif::class);
+    }
+
+    public function rusun_outstanding_penghunis()
+    {
+        return $this->hasMany(RusunOutstandingPenghuni::class);
+    }
+
+    public function rusun_outstanding_details()
+    {
+        return $this->hasMany(RusunOutstandingDetail::class);
+    }
 }

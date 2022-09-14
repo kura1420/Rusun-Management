@@ -13,7 +13,7 @@ class UpdateApiManagementRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return auth()->check();
     }
 
     /**
@@ -23,8 +23,13 @@ class UpdateApiManagementRequest extends FormRequest
      */
     public function rules()
     {
+        $id = request()->segment(2);
+
         return [
             //
+            'username' => 'required|string|max:255',
+            'password' => 'required|string|max:255',
+            'endpoint' => 'required|string|url|max:255',
         ];
     }
 }

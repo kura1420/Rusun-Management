@@ -60,8 +60,28 @@
         <x-adminlte-input-file name="foto_1" id="foto_1" label="Foto 1" fgroup-class="col-md-6" />
         <x-adminlte-input-file name="foto_2" id="foto_2" label="Foto 2" fgroup-class="col-md-6" />
         <x-adminlte-input-file name="foto_3" id="foto_3" label="Foto 3" fgroup-class="col-md-6" />
+    </div>
 
-        <x-adminlte-input name="endpoint" id="endpoint" label="Endpoint" placeholder="Endpoint" fgroup-class="col-md-12" value="{{$row->endpoint}}" />
+    <div class="row">
+        <div class="col-md-12">
+            <div class="progress progress-xxs">
+                <div class="progress-bar progress-bar-danger progress-bar-striped" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%;"></div>
+            </div>
+
+            <div class="row">
+                <x-adminlte-input name="endpoint_username" id="endpoint_username" label="Username Endpoint" placeholder="Username Endpoint" fgroup-class="col-md-6" value="{{$username}}" />
+                <x-adminlte-input name="endpoint_password" id="endpoint_password" label="Password Endpoint" placeholder="Password Endpoint" fgroup-class="col-md-6" value="{{$password}}" />
+
+                <x-adminlte-input name="endpoint_tarif" id="endpoint_tarif" label="Endpoint Tarif" placeholder="Endpoint Tarif" fgroup-class="col-md-6" value="{{$tarif->endpoint ?? NULL}}" />
+                <x-adminlte-input name="endpoint_outstanding" id="endpoint_outstanding" label="Endpoint Outstanding" placeholder="Endpoint Outstanding" fgroup-class="col-md-6" value="{{$outstanding->endpoint ?? NULL}}" />
+                <x-adminlte-input name="endpoint_pemilik" id="endpoint_pemilik" label="Endpoint Pemilik" placeholder="Endpoint Pemilik" fgroup-class="col-md-6" value="{{$pemilik->endpoint ?? NULL}}" />
+                <x-adminlte-input name="endpoint_penghuni" id="endpoint_penghuni" label="Endpoint Penghuni" placeholder="Endpoint Penghuni" fgroup-class="col-md-6" value="{{$penghuni->endpoint ?? NULL}}" />
+            </div>
+
+            <div class="progress progress-xxs">
+                <div class="progress-bar progress-bar-danger progress-bar-striped" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%;"></div>
+            </div>
+        </div>
     </div>
 
     <div class="row mt-4">
@@ -636,7 +656,6 @@ $(function () {
         formData.append('instgram', $('#instgram').val());
         formData.append('email', $('#email').val());
         formData.append('telp', $('#telp').val());
-        formData.append('endpoint', $('#endpoint').val());
 
         formData.append('foto_1', $('#foto_1')[0].files[0] ?? '');
         formData.append('foto_2', $('#foto_2')[0].files[0] ?? '');
@@ -646,6 +665,13 @@ $(function () {
         formData.append('regencie_id', $('#regencie_id').val());
         formData.append('district_id', $('#district_id').val());
         formData.append('village_id', $('#village_id').val());
+
+        formData.append('endpoint_username', $('#endpoint_username').val());
+        formData.append('endpoint_password', $('#endpoint_password').val());
+        formData.append('endpoint_tarif', $('#endpoint_tarif').val());
+        formData.append('endpoint_outstanding', $('#endpoint_outstanding').val());
+        formData.append('endpoint_pemilik', $('#endpoint_pemilik').val());
+        formData.append('endpoint_penghuni', $('#endpoint_penghuni').val());
 
         formData.append('pengembangs', JSON.stringify(tablePengembang.rows().data().toArray()));
         formData.append('pengelolas', JSON.stringify(tablePengelola.rows().data().toArray()));

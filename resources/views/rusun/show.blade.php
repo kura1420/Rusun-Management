@@ -114,6 +114,8 @@
                     <a class="nav-item nav-link" id="product-fasilitas-tab" data-toggle="tab" href="#product-fasilitas" role="tab" aria-controls="product-fasilitas" aria-selected="false">Fasilitas</a>
                     <a class="nav-item nav-link" id="pengembang-tab" data-toggle="tab" href="#pengembang" role="tab" aria-controls="pengembang" aria-selected="false">Pengembang</a>
                     <a class="nav-item nav-link" id="pengelola-tab" data-toggle="tab" href="#pengelola" role="tab" aria-controls="pengelola" aria-selected="false">Pengelola</a>
+                    <a class="nav-item nav-link" id="tarif-tab" data-toggle="tab" href="#tarif" role="tab" aria-controls="tarif" aria-selected="false">Tarif</a>
+                    <a class="nav-item nav-link" id="outstanding-tab" data-toggle="tab" href="#outstanding" role="tab" aria-controls="outstanding" aria-selected="false">Outstanding Pemilik/Penghuni</a>
                 </div>
             </nav>
             <div class="tab-content p-3" id="nav-tabContent">
@@ -220,6 +222,36 @@
                                     <td>{{$rusun_pengelola->email}}</td>
                                     <td>{{$rusun_pengelola->keterangan}}</td>
                                     <td>@php echo $rusun_pengelola->aksi; @endphp</td>
+                                </tr>
+                            @endforeach
+                    </x-adminlte-datatable>
+                </div>
+                <div class="tab-pane fade" id="tarif" role="tabpanel" aria-labelledby="tarif-tab">
+                    <x-adminlte-datatable id="tableTarif" :heads="[
+                            'Item',
+                            'Tarif',
+                        ]">
+                            @foreach($row->rusun_tarifs as $rusun_tarif)
+                                <tr>
+                                    <td>{{$rusun_tarif->item}}</td>
+                                    <td>{{$rusun_tarif->tarif_format}}</td>
+                                </tr>
+                            @endforeach
+                    </x-adminlte-datatable>
+                </div>
+                <div class="tab-pane fade" id="outstanding" role="tabpanel" aria-labelledby="outstanding-tab">
+                    <x-adminlte-datatable id="tableOutstanding" :heads="[
+                            'Penghuni',
+                            'Tower',
+                            'Unit',
+                            'Total',
+                        ]">
+                            @foreach($row->rusun_outstanding_penghunis as $rusun_outstanding_penghuni)
+                                <tr>
+                                    <td>{{$rusun_outstanding_penghuni->pemilik_penghuni_id}}</td>
+                                    <td>{{$rusun_outstanding_penghuni->rusun_detail_id}}</td>
+                                    <td>{{$rusun_outstanding_penghuni->rusun_unit_detail_id}}</td>
+                                    <td>{{$rusun_outstanding_penghuni->total_format}}</td>
                                 </tr>
                             @endforeach
                     </x-adminlte-datatable>

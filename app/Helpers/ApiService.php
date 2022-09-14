@@ -8,24 +8,24 @@ class ApiService
 {    
     protected $api = NULL;
 
-    public function __construct()
+    public function __construct($username, $password)
     {
-        $this->api = Http::baseUrl(config('api.host'));
+        $this->api = Http::withBasicAuth($username, $password);
     }
 
-    public static function run($endpoint, $method, $params)
+    public static function run($apiConfig, $method, $params)
     {
-        $class = new ApiService();
+        $class = new ApiService($apiConfig->username, $apiConfig->password);
 
         switch ($method) {
             case 'get':
             case 'GET':
-                return $class->_get($endpoint, $params);
+                return $class->_get($apiConfig->endpoint, $params);
                 break;
 
             case 'post':
             case 'POST':
-                return $class->_post($endpoint, $params);
+                return $class->_post($apiConfig->endpoint, $params);
                 break;
             
             default:
