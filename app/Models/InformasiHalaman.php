@@ -13,4 +13,14 @@ class InformasiHalaman extends Model
     public $incrementing = false;
 
     protected $guarded = [];
+
+    public function getHalamanNamaFormatAttribute()
+    {
+        return ucfirst($this->halaman_nama);
+    }
+
+    public function getHalamanAksiFormatAttribute()
+    {
+        return ucfirst($this->halaman_aksi);
+    }
 }

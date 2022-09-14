@@ -3,7 +3,7 @@
 namespace App\Helpers;
 
 use App\Models\InformasiHalaman;
-use Illuminate\Routing\Route;
+use Illuminate\Support\Facades\Route;
 
 class PageAction {
 
@@ -15,8 +15,15 @@ class PageAction {
 
         $informasiHalaman = InformasiHalaman::where([
             ['halaman_nama', $routeActionArray[0] ?? NULL],
-            ['halaman_aksi', $routeActionArray[1] ?? NULL],
+            ['halaman_aksi', 'full'],
         ])->first();
+
+        if (!$informasiHalaman) {
+            $informasiHalaman = InformasiHalaman::where([
+                ['halaman_nama', $routeActionArray[0] ?? NULL],
+                ['halaman_aksi', $routeActionArray[1] ?? NULL],
+            ])->first();
+        }
 
         return $informasiHalaman;
     }

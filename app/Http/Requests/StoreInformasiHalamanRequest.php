@@ -13,7 +13,7 @@ class StoreInformasiHalamanRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return auth()->check();
     }
 
     /**
@@ -23,8 +23,41 @@ class StoreInformasiHalamanRequest extends FormRequest
      */
     public function rules()
     {
+        $halamanNama = request('halaman_nama');
+
         return [
             //
+            'halaman_nama' => 'required|string',
+            'halaman_aksi' => [
+                'required',
+                'string',
+                function ($attr, $value, $fail) use ($halamanNama) {
+                    $check = \App\Models\InformasiHalaman::where([
+                        ['halaman_nama', $halamanNama],
+                        ['halaman_aksi', $value]
+                    ])->count();
+
+                    if ($check != 0) {
+                        $fail("Data {$attr} sudah tersedia");
+                    }
+                }
+            ],
+            'judul' => 'required|string|max:255',
+            'penjelasan' => 'required|string',
+            'file' => 'nullable|file',
+        ];
+    }
+
+    /**
+     * Get custom attributes for validator errors.
+     *
+     * @return array
+     */
+    public function attributes()
+    {
+        return [
+            'halaman_nama' => 'halaman',
+            'halaman_aksi' => 'aksi',
         ];
     }
 }

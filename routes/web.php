@@ -110,6 +110,13 @@ Route::middleware(['auth'])->group(function () {
             Route::get('helps/users', 'helps')->name('faq.helps');
         });
     });
+
+    Route::prefix('informasi-halaman')->group(function () {
+        Route::controller(InformasiHalamanController::class)->group(function () {
+            Route::get('{id}/copy', 'copy')->name('informasi-halaman.copy');
+            Route::get('/{id}/view-file/{file}', 'view_file')->name('informasi-halaman.view_file');
+        });
+    });
     
     Route::prefix('pengelola-dokumen')->group(function () {
         Route::controller(PengelolaDokumenController::class)->group(function () {
