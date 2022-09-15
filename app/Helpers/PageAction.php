@@ -10,22 +10,25 @@ class PageAction {
     public static function getInformationPage()
     {
         $route = Route::current();
-        $routeAction = $route->action['as'];
-        $routeActionArray = explode('.', $routeAction);
 
-        $informasiHalaman = InformasiHalaman::where([
-            ['halaman_nama', $routeActionArray[0] ?? NULL],
-            ['halaman_aksi', 'full'],
-        ])->first();
+        if (isset($route->action['as'])) {
+            $routeAction = $route->action['as'];
+            $routeActionArray = explode('.', $routeAction);
 
-        if (!$informasiHalaman) {
             $informasiHalaman = InformasiHalaman::where([
                 ['halaman_nama', $routeActionArray[0] ?? NULL],
-                ['halaman_aksi', $routeActionArray[1] ?? NULL],
+                ['halaman_aksi', 'full'],
             ])->first();
-        }
 
-        return $informasiHalaman;
+            if (!$informasiHalaman) {
+                $informasiHalaman = InformasiHalaman::where([
+                    ['halaman_nama', $routeActionArray[0] ?? NULL],
+                    ['halaman_aksi', $routeActionArray[1] ?? NULL],
+                ])->first();
+            }
+
+            return $informasiHalaman;
+        }
     }
 
 }

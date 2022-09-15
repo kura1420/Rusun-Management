@@ -83,7 +83,7 @@ class InformasiHalamanController extends Controller
         $input = $request->all();
 
         $file = NULL;
-        if ($input['copy']) {
+        if (isset($input['copy'])) {
             $row = InformasiHalaman::where('id', $input['copy'])->firstOrFail();
 
             $file = $row->file;
