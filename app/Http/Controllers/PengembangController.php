@@ -33,7 +33,7 @@ class PengembangController extends Controller
                 '<nobr>' .
                     '<a href="'.route(self::URL .'show', $row->id).'" class="btn btn-success btn-sm" title="Show"><i class="fas fa-folder"></i> Detail</a> ' . 
                     '<a href="'.route(self::URL .'edit', $row->id).'" class="btn btn-info btn-sm" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a> ' . 
-                    '<button type="button" class="btn btn-danger btn-sm btnDelete" value="'.$row->id.'" id="'.route(self::URL . 'destroy', $row->id).'"><i class="fas fa-trash"></i> Hapus</button>' .
+                    // '<button type="button" class="btn btn-danger btn-sm btnDelete" value="'.$row->id.'" id="'.route(self::URL . 'destroy', $row->id).'"><i class="fas fa-trash"></i> Hapus</button>' .
                 '</nobr>',
             ]);
 
@@ -93,14 +93,7 @@ class PengembangController extends Controller
         $title = self::TITLE;
         $subTitle = 'Detail Data';
 
-        $row = Pengembang::with([
-            'provinces',
-            'kotas',
-            'kecamatans',
-            'desas',
-            'pengembang_kontaks',
-            'pengembang_dokumens',
-        ])->findOrFail($id);
+        $row = Pengembang::findOrFail($id);
 
         $row->pengembang_dokumens = $row->pengembang_dokumens->map(function ($pengembang_dokumen) {
             $pengembang_dokumen->dokumen = $pengembang_dokumen->dokumens()->first();
@@ -124,12 +117,7 @@ class PengembangController extends Controller
         $title = self::TITLE;
         $subTitle = 'Edit Data';
 
-        $row = Pengembang::with([
-            'provinces',
-            'kotas',
-            'kecamatans',
-            'desas',
-        ])->findOrFail($id);
+        $row = Pengembang::findOrFail($id);
 
         return view(self::FOLDER_VIEW . 'edit', compact('title', 'subTitle', 'row'));
     }

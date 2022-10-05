@@ -23,7 +23,7 @@ class UpdatePengembangKontakRequest extends FormRequest
      */
     public function rules()
     {
-        $id = request()->route('pengembang-kontak');
+        $id = request()->segment(2);
 
         return [
             //

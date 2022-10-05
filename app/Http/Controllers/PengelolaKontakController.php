@@ -25,8 +25,7 @@ class PengelolaKontakController extends Controller
         $title = self::TITLE;
         $subTitle = 'List Data';
 
-        $rows = PengelolaKontak::with(['pengelolas'])
-            ->orderBy('created_at')
+        $rows = PengelolaKontak::orderBy('created_at')
             ->get()
             ->map(fn($row) => [
                 $row->pengelolas->nama,
@@ -36,7 +35,7 @@ class PengelolaKontakController extends Controller
                 $row->posisi,
                 '<nobr>' .
                     '<a href="'.route(self::URL .'edit', $row->id).'" class="btn btn-info btn-sm" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a> ' . 
-                    '<button type="button" class="btn btn-danger btn-sm btnDelete" value="'.$row->id.'" id="'.route(self::URL . 'destroy', $row->id).'"><i class="fas fa-trash"></i> Hapus</button>' .
+                    // '<button type="button" class="btn btn-danger btn-sm btnDelete" value="'.$row->id.'" id="'.route(self::URL . 'destroy', $row->id).'"><i class="fas fa-trash"></i> Hapus</button>' .
                 '</nobr>',
             ]);
 
@@ -69,9 +68,14 @@ class PengelolaKontakController extends Controller
         $title = self::TITLE;
         $subTitle = 'Tambah Data';
 
+        $pengelola_id = $request->pengelola_id ?? NULL;
+
+        if (!$pengelola_id) {
+            return abort(404);
+        }
+
         $posisis = PengelolaKontak::select('posisi')->distinct()->get();
         $pengelolas = \App\Models\Pengelola::orderBy('nama', 'asc')->get();
-        $pengelola_id = $request->pengelola_id ?? NULL;
 
         return view(self::FOLDER_VIEW . 'create', compact('title', 'subTitle', 'posisis', 'pengelolas', 'pengelola_id'));
     }
@@ -125,9 +129,9 @@ class PengelolaKontakController extends Controller
         $title = self::TITLE;
         $subTitle = 'Edit Data';
 
+        $pengelola_id = $request->pengelola_id ?? NULL;
         $posisis = PengelolaKontak::select('posisi')->distinct()->get();
         $pengelolas = \App\Models\Pengelola::orderBy('nama', 'asc')->get();
-        $pengelola_id = $request->pengelola_id ?? NULL;
 
         $row = $pengelolaKontak;
 

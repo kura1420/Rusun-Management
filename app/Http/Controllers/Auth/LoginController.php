@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
+use Carbon\Carbon;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -56,6 +57,14 @@ class LoginController extends Controller
             'password' => $input['password'], 
             'active' => 1,
         ])) {
+            $row = \App\Models\User::where('email', $request->username)
+                ->orWhere('username', $request->username)
+                ->first();
+
+            $row->update([
+                'last_login' => Carbon::now(),
+            ]);
+
             return redirect()
                 ->route('home');
         } else {

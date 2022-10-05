@@ -20,8 +20,13 @@
 
             <br>
 
-            <strong><i class="fas fa-book mr-1"></i> Dokumen Detail</strong>
+            <strong><i class="fas fa-book mr-1"></i>Detail</strong>
             <p class="text-muted">{{$row->keterangan ?? '-'}}</p>
+
+            <br>
+
+            <strong><i class="fas fa-info mr-1"></i>Status</strong>
+            <p class="text-muted">{{$row->status_text}}</p>
 
         </x-adminlte-card>
     </div>

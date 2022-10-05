@@ -26,10 +26,7 @@ class RusunDetailController extends Controller
         $title = self::TITLE;
         $subTitle = 'List Data';
 
-        $rows = RusunDetail::with([
-                'rusuns',
-            ])
-            ->orderBy('created_at')
+        $rows = RusunDetail::orderBy('created_at')
             ->get()
             ->map(fn($row) => [
                 $row->rusuns->nama,
@@ -40,7 +37,7 @@ class RusunDetailController extends Controller
                 '<nobr>' . 
                     '<a href="'.route(self::URL .'show', $row->id).'" class="btn btn-success btn-sm" title="Detail"><i class="fas fa-folder"></i> Detail</a> ' .
                     '<a href="'.route(self::URL .'edit', $row->id).'" class="btn btn-info btn-sm" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a> ' .
-                    '<button type="button" class="btn btn-danger btn-sm btnDelete" value="'.$row->id.'" id="'.route(self::URL . 'destroy', $row->id).'"><i class="fas fa-trash"></i> Hapus</button>' . 
+                    // '<button type="button" class="btn btn-danger btn-sm btnDelete" value="'.$row->id.'" id="'.route(self::URL . 'destroy', $row->id).'"><i class="fas fa-trash"></i> Hapus</button>' . 
                 '</nobr>',
             ]);
 
@@ -123,11 +120,7 @@ class RusunDetailController extends Controller
         $title = self::TITLE;
         $subTitle = 'Detail Data';
 
-        $row = RusunDetail::with([
-                'rusuns',
-                'rusun_unit_details',
-            ])
-            ->findOrFail($id);
+        $row = RusunDetail::findOrFail($id);
 
         $row->foto = $row->foto ? asset('storage/' . self::FOLDER_FOTO . '/' . $row->foto) : NULL;
 
@@ -148,10 +141,7 @@ class RusunDetailController extends Controller
 
         $rusuns = \App\Models\Rusun::orderBy('nama', 'asc')->get();
 
-        $row = RusunDetail::with([
-                'rusuns',
-            ])
-            ->findOrFail($id);
+        $row = RusunDetail::findOrFail($id);
 
         return view(self::FOLDER_VIEW . 'edit', compact('title', 'subTitle', 'row', 'rusuns'));
     }

@@ -28,13 +28,7 @@ class RusunController extends Controller
         $title = self::TITLE;
         $subTitle = 'List Data';
 
-        $rows = Rusun::with([
-            'provinces',
-            'kotas',
-            'kecamatans',
-            'desas',
-        ])
-            ->orderBy('created_at')
+        $rows = Rusun::orderBy('created_at')
             ->get()
             ->map(fn($row) => [
                 $row->nama,
@@ -46,7 +40,7 @@ class RusunController extends Controller
                 '<nobr>' . 
                     '<a href="'.route(self::URL .'show', $row->id).'" class="btn btn-success btn-sm" title="Detail"><i class="fas fa-folder"></i> Detail</a> ' .
                     '<a href="'.route(self::URL .'edit', $row->id).'" class="btn btn-info btn-sm" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a> ' .
-                    '<button type="button" class="btn btn-danger btn-sm btnDelete" value="'.$row->id.'" id="'.route(self::URL . 'destroy', $row->id).'"><i class="fas fa-trash"></i> Hapus</button>' . 
+                    // '<button type="button" class="btn btn-danger btn-sm btnDelete" value="'.$row->id.'" id="'.route(self::URL . 'destroy', $row->id).'"><i class="fas fa-trash"></i> Hapus</button>' . 
                 '</nobr>',
             ]);
 
@@ -163,21 +157,21 @@ class RusunController extends Controller
         }
 
         $return = DB::transaction(function () use ($input, $insertPengembangs, $insertPengelolas) {
-            $username = $input['endpoint_username'];
-            $password = $input['endpoint_password'];
-            $tarif = $input['endpoint_tarif'];
-            $outstanding = $input['endpoint_outstanding'];
-            $pemilik = $input['endpoint_pemilik'];
-            $penghuni = $input['endpoint_penghuni'];
+            // $username = $input['endpoint_username'];
+            // $password = $input['endpoint_password'];
+            // $tarif = $input['endpoint_tarif'];
+            // $outstanding = $input['endpoint_outstanding'];
+            // $pemilik = $input['endpoint_pemilik'];
+            // $penghuni = $input['endpoint_penghuni'];
 
-            unset(
-                $input['endpoint_username'],
-                $input['endpoint_password'],
-                $input['endpoint_tarif'],
-                $input['endpoint_outstanding'],
-                $input['endpoint_pemilik'],
-                $input['endpoint_penghuni'],
-            );
+            // unset(
+            //     $input['endpoint_username'],
+            //     $input['endpoint_password'],
+            //     $input['endpoint_tarif'],
+            //     $input['endpoint_outstanding'],
+            //     $input['endpoint_pemilik'],
+            //     $input['endpoint_penghuni'],
+            // );
 
             $row = Rusun::create($input);
             
@@ -189,69 +183,69 @@ class RusunController extends Controller
                 $row->rusun_pengelolas()->createMany($insertPengelolas);
             }
 
-            if (isset($username) && isset($password)) {
-                $keterangan = $row->nama . ' - ';
+            // if (isset($username) && isset($password)) {
+            //     $keterangan = $row->nama . ' - ';
 
-                if ($tarif) {
-                    \App\Models\ApiManagement::updateOrCreate(
-                        [
-                            'table' => 'rusun_tarifs',
-                            'reff_id' => $row->id,
-                        ],                       
-                        [
-                            'keterangan' => $keterangan . ' Tarif',
-                            'username' => $username,
-                            'password' => $password,
-                            'endpoint' => $tarif,
-                        ]
-                    );
-                }
+            //     if ($tarif) {
+            //         \App\Models\ApiManagement::updateOrCreate(
+            //             [
+            //                 'table' => 'rusun_tarifs',
+            //                 'reff_id' => $row->id,
+            //             ],                       
+            //             [
+            //                 'keterangan' => $keterangan . ' Tarif',
+            //                 'username' => $username,
+            //                 'password' => $password,
+            //                 'endpoint' => $tarif,
+            //             ]
+            //         );
+            //     }
 
-                if ($outstanding) {
-                    \App\Models\ApiManagement::updateOrCreate(
-                        [
-                            'table' => 'rusun_outstanding_penghunis',
-                            'reff_id' => $row->id,
-                        ],                       
-                        [
-                            'keterangan' => $keterangan . ' Outstanding',
-                            'username' => $username,
-                            'password' => $password,
-                            'endpoint' => $outstanding,
-                        ]
-                    );
-                }
+            //     if ($outstanding) {
+            //         \App\Models\ApiManagement::updateOrCreate(
+            //             [
+            //                 'table' => 'rusun_outstanding_penghunis',
+            //                 'reff_id' => $row->id,
+            //             ],                       
+            //             [
+            //                 'keterangan' => $keterangan . ' Outstanding',
+            //                 'username' => $username,
+            //                 'password' => $password,
+            //                 'endpoint' => $outstanding,
+            //             ]
+            //         );
+            //     }
 
-                if ($pemilik) {
-                    \App\Models\ApiManagement::updateOrCreate(
-                        [
-                            'table' => 'rusun_pemiliks',
-                            'reff_id' => $row->id,
-                        ],                       
-                        [
-                            'keterangan' => $keterangan . ' Pemilik',
-                            'username' => $username,
-                            'password' => $password,
-                            'endpoint' => $pemilik,
-                        ]
-                    );
-                }
+            //     if ($pemilik) {
+            //         \App\Models\ApiManagement::updateOrCreate(
+            //             [
+            //                 'table' => 'rusun_pemiliks',
+            //                 'reff_id' => $row->id,
+            //             ],                       
+            //             [
+            //                 'keterangan' => $keterangan . ' Pemilik',
+            //                 'username' => $username,
+            //                 'password' => $password,
+            //                 'endpoint' => $pemilik,
+            //             ]
+            //         );
+            //     }
 
-                if ($penghuni) {
-                    \App\Models\ApiManagement::updateOrCreate(
-                        [
-                            'table' => 'rusun_penghunis',
-                            'reff_id' => $row->id,
-                        ],                       
-                        [
-                            'keterangan' => $keterangan . ' Penghuni',
-                            'username' => $username,
-                            'password' => $password,
-                            'endpoint' => $penghuni,
-                        ]
-                    );
-                }
-            }
+            //     if ($penghuni) {
+            //         \App\Models\ApiManagement::updateOrCreate(
+            //             [
+            //                 'table' => 'rusun_penghunis',
+            //                 'reff_id' => $row->id,
+            //             ],                       
+            //             [
+            //                 'keterangan' => $keterangan . ' Penghuni',
+            //                 'username' => $username,
+            //                 'password' => $password,
+            //                 'endpoint' => $penghuni,
+            //             ]
+            //         );
+            //     }
+            // }
 
             return $row;
         });
@@ -271,20 +265,7 @@ class RusunController extends Controller
         $title = self::TITLE;
         $subTitle = 'Detail Data';
 
-        $row = Rusun::with([
-            'provinces',
-            'kotas',
-            'kecamatans',
-            'desas',
-            'rusun_details',
-            'rusun_unit_details',
-            'rusun_fasilitas',
-            'rusun_pengelolas',
-            'rusun_pengembangs',
-            'rusun_tarifs',
-            'rusun_outstanding_penghunis',
-        ])
-        ->findOrFail($id);
+        $row = Rusun::findOrFail($id);
 
         $row->foto_1 = $row->foto_1 ? asset('storage/' . self::FOLDER_FOTO . '/' . $row->foto_1) : NULL;
         $row->foto_2 = $row->foto_2 ? asset('storage/' . self::FOLDER_FOTO . '/' . $row->foto_2) : NULL;
@@ -333,14 +314,7 @@ class RusunController extends Controller
         $title = self::TITLE;
         $subTitle = 'Edit Data';
 
-        $row = Rusun::with([
-            'provinces',
-            'kotas',
-            'kecamatans',
-            'desas',
-            'rusun_pengelolas',
-            'rusun_pengembangs',
-        ])->findOrFail($id);
+        $row = Rusun::findOrFail($id);
 
         $row->rusun_pengelolas = $row->rusun_pengelolas->map(function ($rusun_pengelola) {
             $pengelola = \App\Models\Pengelola::where('id', $rusun_pengelola->pengelola_id)->first();
@@ -364,50 +338,50 @@ class RusunController extends Controller
             return $rusun_pengembang;
         });
 
-        $username = NULL;
-        $password = NULL;
+        // $username = NULL;
+        // $password = NULL;
         
-        $tarif = \App\Models\ApiManagement::where([
-            ['table', 'rusun_tarifs'],
-            ['reff_id', $row->id],
-        ])->first();
+        // $tarif = \App\Models\ApiManagement::where([
+        //     ['table', 'rusun_tarifs'],
+        //     ['reff_id', $row->id],
+        // ])->first();
 
-        if ($tarif) {
-            $username = $tarif->username;
-            $password = $tarif->password;
-        }
+        // if ($tarif) {
+        //     $username = $tarif->username;
+        //     $password = $tarif->password;
+        // }
 
-        $outstanding = \App\Models\ApiManagement::where([
-            ['table', 'rusun_outstanding_penghunis'],
-            ['reff_id', $row->id],
-        ])->first();
+        // $outstanding = \App\Models\ApiManagement::where([
+        //     ['table', 'rusun_outstanding_penghunis'],
+        //     ['reff_id', $row->id],
+        // ])->first();
 
-        if ($outstanding) {
-            $username = $outstanding->username;
-            $password = $outstanding->password;
-        }
+        // if ($outstanding) {
+        //     $username = $outstanding->username;
+        //     $password = $outstanding->password;
+        // }
 
-        $pemilik = \App\Models\ApiManagement::where([
-            ['table', 'rusun_pemiliks'],
-            ['reff_id', $row->id],
-        ])->first();
+        // $pemilik = \App\Models\ApiManagement::where([
+        //     ['table', 'rusun_pemiliks'],
+        //     ['reff_id', $row->id],
+        // ])->first();
 
-        if ($pemilik) {
-            $username = $pemilik->username;
-            $password = $pemilik->password;
-        }
+        // if ($pemilik) {
+        //     $username = $pemilik->username;
+        //     $password = $pemilik->password;
+        // }
 
-        $penghuni = \App\Models\ApiManagement::where([
-            ['table', 'rusun_penghunis'],
-            ['reff_id', $row->id],
-        ])->first();
+        // $penghuni = \App\Models\ApiManagement::where([
+        //     ['table', 'rusun_penghunis'],
+        //     ['reff_id', $row->id],
+        // ])->first();
 
-        if ($penghuni) {
-            $username = $penghuni->username;
-            $password = $penghuni->password;
-        }
+        // if ($penghuni) {
+        //     $username = $penghuni->username;
+        //     $password = $penghuni->password;
+        // }
 
-        return view(self::FOLDER_VIEW . 'edit', compact('title', 'subTitle', 'row', 'tarif', 'outstanding', 'pemilik', 'penghuni', 'username', 'password'));
+        return view(self::FOLDER_VIEW . 'edit', compact('title', 'subTitle', 'row',));
     }
 
     /**
@@ -489,21 +463,21 @@ class RusunController extends Controller
         $input['foto_3'] = $foto_3;
 
         DB::transaction(function () use ($rusun, $pengembangs, $pengelolas, $input) {
-            $username = $input['endpoint_username'];
-            $password = $input['endpoint_password'];
-            $tarif = $input['endpoint_tarif'];
-            $outstanding = $input['endpoint_outstanding'];
-            $pemilik = $input['endpoint_pemilik'];
-            $penghuni = $input['endpoint_penghuni'];
+            // $username = $input['endpoint_username'];
+            // $password = $input['endpoint_password'];
+            // $tarif = $input['endpoint_tarif'];
+            // $outstanding = $input['endpoint_outstanding'];
+            // $pemilik = $input['endpoint_pemilik'];
+            // $penghuni = $input['endpoint_penghuni'];
 
-            unset(
-                $input['endpoint_username'],
-                $input['endpoint_password'],
-                $input['endpoint_tarif'],
-                $input['endpoint_outstanding'],
-                $input['endpoint_pemilik'],
-                $input['endpoint_penghuni'],
-            );
+            // unset(
+            //     $input['endpoint_username'],
+            //     $input['endpoint_password'],
+            //     $input['endpoint_tarif'],
+            //     $input['endpoint_outstanding'],
+            //     $input['endpoint_pemilik'],
+            //     $input['endpoint_penghuni'],
+            // );
 
             if (count($pengembangs)>0) {
                 for ($i=0; $i < count($pengembangs); $i++) { 
@@ -533,69 +507,69 @@ class RusunController extends Controller
                 }
             }
 
-            if (isset($username) && isset($password)) {
-                $keterangan = $rusun->nama . ' - ';
+            // if (isset($username) && isset($password)) {
+            //     $keterangan = $rusun->nama . ' - ';
 
-                if ($tarif) {
-                    \App\Models\ApiManagement::updateOrCreate(
-                        [
-                            'table' => 'rusun_tarifs',
-                            'reff_id' => $rusun->id,
-                        ],                       
-                        [
-                            'keterangan' => $keterangan . ' Tarif',
-                            'username' => $username,
-                            'password' => $password,
-                            'endpoint' => $tarif,
-                        ]
-                    );
-                }
+            //     if ($tarif) {
+            //         \App\Models\ApiManagement::updateOrCreate(
+            //             [
+            //                 'table' => 'rusun_tarifs',
+            //                 'reff_id' => $rusun->id,
+            //             ],                       
+            //             [
+            //                 'keterangan' => $keterangan . ' Tarif',
+            //                 'username' => $username,
+            //                 'password' => $password,
+            //                 'endpoint' => $tarif,
+            //             ]
+            //         );
+            //     }
 
-                if ($outstanding) {
-                    \App\Models\ApiManagement::updateOrCreate(
-                        [
-                            'table' => 'rusun_outstanding_penghunis',
-                            'reff_id' => $rusun->id,
-                        ],                       
-                        [
-                            'keterangan' => $keterangan . ' Outstanding',
-                            'username' => $username,
-                            'password' => $password,
-                            'endpoint' => $outstanding,
-                        ]
-                    );
-                }
+            //     if ($outstanding) {
+            //         \App\Models\ApiManagement::updateOrCreate(
+            //             [
+            //                 'table' => 'rusun_outstanding_penghunis',
+            //                 'reff_id' => $rusun->id,
+            //             ],                       
+            //             [
+            //                 'keterangan' => $keterangan . ' Outstanding',
+            //                 'username' => $username,
+            //                 'password' => $password,
+            //                 'endpoint' => $outstanding,
+            //             ]
+            //         );
+            //     }
 
-                if ($pemilik) {
-                    \App\Models\ApiManagement::updateOrCreate(
-                        [
-                            'table' => 'rusun_pemiliks',
-                            'reff_id' => $rusun->id,
-                        ],                       
-                        [
-                            'keterangan' => $keterangan . ' Pemilik',
-                            'username' => $username,
-                            'password' => $password,
-                            'endpoint' => $pemilik,
-                        ]
-                    );
-                }
+            //     if ($pemilik) {
+            //         \App\Models\ApiManagement::updateOrCreate(
+            //             [
+            //                 'table' => 'rusun_pemiliks',
+            //                 'reff_id' => $rusun->id,
+            //             ],                       
+            //             [
+            //                 'keterangan' => $keterangan . ' Pemilik',
+            //                 'username' => $username,
+            //                 'password' => $password,
+            //                 'endpoint' => $pemilik,
+            //             ]
+            //         );
+            //     }
 
-                if ($penghuni) {
-                    \App\Models\ApiManagement::updateOrCreate(
-                        [
-                            'table' => 'rusun_penghunis',
-                            'reff_id' => $rusun->id,
-                        ],                       
-                        [
-                            'keterangan' => $keterangan . ' Penghuni',
-                            'username' => $username,
-                            'password' => $password,
-                            'endpoint' => $penghuni,
-                        ]
-                    );
-                }
-            }
+            //     if ($penghuni) {
+            //         \App\Models\ApiManagement::updateOrCreate(
+            //             [
+            //                 'table' => 'rusun_penghunis',
+            //                 'reff_id' => $rusun->id,
+            //             ],                       
+            //             [
+            //                 'keterangan' => $keterangan . ' Penghuni',
+            //                 'username' => $username,
+            //                 'password' => $password,
+            //                 'endpoint' => $penghuni,
+            //             ]
+            //         );
+            //     }
+            // }
     
             $rusun->update($input);
         });

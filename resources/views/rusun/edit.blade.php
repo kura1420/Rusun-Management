@@ -62,7 +62,7 @@
         <x-adminlte-input-file name="foto_3" id="foto_3" label="Foto 3" fgroup-class="col-md-6" />
     </div>
 
-    <div class="row">
+    {{-- <div class="row">
         <div class="col-md-12">
             <div class="progress progress-xxs">
                 <div class="progress-bar progress-bar-danger progress-bar-striped" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%;"></div>
@@ -82,7 +82,7 @@
                 <div class="progress-bar progress-bar-danger progress-bar-striped" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%;"></div>
             </div>
         </div>
-    </div>
+    </div> --}}
 
     <div class="row mt-4">
         <div class="col-md-12">
@@ -666,12 +666,12 @@ $(function () {
         formData.append('district_id', $('#district_id').val());
         formData.append('village_id', $('#village_id').val());
 
-        formData.append('endpoint_username', $('#endpoint_username').val());
-        formData.append('endpoint_password', $('#endpoint_password').val());
-        formData.append('endpoint_tarif', $('#endpoint_tarif').val());
-        formData.append('endpoint_outstanding', $('#endpoint_outstanding').val());
-        formData.append('endpoint_pemilik', $('#endpoint_pemilik').val());
-        formData.append('endpoint_penghuni', $('#endpoint_penghuni').val());
+        // formData.append('endpoint_username', $('#endpoint_username').val());
+        // formData.append('endpoint_password', $('#endpoint_password').val());
+        // formData.append('endpoint_tarif', $('#endpoint_tarif').val());
+        // formData.append('endpoint_outstanding', $('#endpoint_outstanding').val());
+        // formData.append('endpoint_pemilik', $('#endpoint_pemilik').val());
+        // formData.append('endpoint_penghuni', $('#endpoint_penghuni').val());
 
         formData.append('pengembangs', JSON.stringify(tablePengembang.rows().data().toArray()));
         formData.append('pengelolas', JSON.stringify(tablePengelola.rows().data().toArray()));

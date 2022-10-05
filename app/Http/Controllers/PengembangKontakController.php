@@ -25,8 +25,7 @@ class PengembangKontakController extends Controller
         $title = self::TITLE;
         $subTitle = 'List Data';
 
-        $rows = PengembangKontak::with(['pengembangs'])
-            ->orderBy('created_at')
+        $rows = PengembangKontak::orderBy('created_at')
             ->get()
             ->map(fn($row) => [
                 $row->pengembangs->nama,
@@ -36,7 +35,7 @@ class PengembangKontakController extends Controller
                 $row->posisi,
                 '<nobr>' .
                     '<a href="'.route(self::URL .'edit', $row->id).'" class="btn btn-info btn-sm" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a> ' . 
-                    '<button type="button" class="btn btn-danger btn-sm btnDelete" value="'.$row->id.'" id="'.route(self::URL . 'destroy', $row->id).'"><i class="fas fa-trash"></i> Hapus</button>' .
+                    // '<button type="button" class="btn btn-danger btn-sm btnDelete" value="'.$row->id.'" id="'.route(self::URL . 'destroy', $row->id).'"><i class="fas fa-trash"></i> Hapus</button>' .
                 '</nobr>',
             ]);
 
@@ -69,9 +68,14 @@ class PengembangKontakController extends Controller
         $title = self::TITLE;
         $subTitle = 'Tambah Data';
 
+        $pengembang_id = $request->pengembang_id ?? NULL;
+
+        if (!$pengembang_id) {
+            return abort(404);
+        }
+
         $posisis = PengembangKontak::select('posisi')->distinct()->get();
         $pengembangs = \App\Models\Pengembang::orderBy('nama', 'asc')->get();
-        $pengembang_id = $request->pengembang_id ?? NULL;
 
         return view(self::FOLDER_VIEW . 'create', compact('title', 'subTitle', 'posisis', 'pengembangs', 'pengembang_id'));
     }
@@ -125,9 +129,9 @@ class PengembangKontakController extends Controller
         $title = self::TITLE;
         $subTitle = 'Edit Data';
 
+        $pengembang_id = $request->pengembang_id ?? NULL;
         $posisis = PengembangKontak::select('posisi')->distinct()->get();
         $pengembangs = \App\Models\Pengembang::orderBy('nama', 'asc')->get();
-        $pengembang_id = $request->pengembang_id ?? NULL;
 
         $row = $pengembangKontak;
 

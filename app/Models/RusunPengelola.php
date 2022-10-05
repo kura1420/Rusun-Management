@@ -13,4 +13,9 @@ class RusunPengelola extends Model
     public $incrementing = false;
 
     protected $guarded = [];
+
+    public function rusun()
+    {
+        return $this->belongsTo(Rusun::class);
+    }
 }

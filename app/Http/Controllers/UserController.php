@@ -28,11 +28,13 @@ class UserController extends Controller
 
         $rows = User::orderBy('created_at')
             ->where('id', '!=', auth()->user()->id)
+            ->where('level', 'root')
             ->get()
             ->map(fn($row) => [
                 $row->name,
                 $row->email,
                 $row->username,
+                $row->last_login,
                 $row->active ? '<span class="badge badge-success">Aktif</span>' : '<span class="badge badge-danger">Tidak Aktif</span>',
                 '<nobr><a href="'.route(self::URL . 'edit', $row->id).'" class="btn btn-info btn-sm" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a></nobr>',
             ]);
@@ -41,14 +43,13 @@ class UserController extends Controller
             'Nama',
             'Email',
             'Username',
+            'Last Login',
             'Status',
             ['label' => 'Aksi', 'no-export' => true, 'width' => 5],
         ];
         
         $config = [
             'data' => $rows,
-            'order' => [[1, 'asc']],
-            'columns' => [null, null, null, ['orderable' => false], ['orderable' => false]],
         ];
 
         return view(self::FOLDER_VIEW . 'index', compact('title', 'subTitle', 'heads', 'config'));
@@ -83,6 +84,7 @@ class UserController extends Controller
         $input['email'] = strtolower($request->email);
         $input['password'] = Hash::make($request->password);
         $input['active'] = $request->active == 'true' ? 1 : 0;
+        $input['level'] = 'root';
 
         User::create($input);
 

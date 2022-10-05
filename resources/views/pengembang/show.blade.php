@@ -6,6 +6,8 @@
     <h1>
         {{$title}}
         <a href="{{route('pengembang.index')}}" class="btn btn-xs btn-dark"> <i class="fa fa-arrow-left"></i> Kembali </a>
+        <a href="{{route('pengembang.edit', $row->id)}}" class="btn btn-xs btn-warning"><i class="fa fa-pencil-alt"></i> Edit</a>
+
         <div class="btn-group">
             <button type="button" class="btn btn-xs btn-primary"><i class="fa fa-plus"></i> Tambah</button>
             <button type="button" class="btn btn-xs btn-primary dropdown-toggle dropdown-icon" data-toggle="dropdown" aria-expanded="false">
@@ -82,7 +84,7 @@
                                     <td>{{$pengembang_kontak->posisi}}</td>
                                     <td>
                                         <a href="{{route('pengembang-kontak.edit', $pengembang_kontak->id)}}?pengembang_id={{$row->id}}" class="btn btn-info btn-xs" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a>
-                                        <button type="button" class="btn btn-danger btn-xs btnDeleteKontak" value="{{$pengembang_kontak->id}}" id="{{route('pengembang-kontak.destroy', $pengembang_kontak->id)}}"><i class="fas fa-trash"></i> Hapus</button>
+                                        <!-- <button type="button" class="btn btn-danger btn-xs btnDeleteKontak" value="{{$pengembang_kontak->id}}" id="{{route('pengembang-kontak.destroy', $pengembang_kontak->id)}}"><i class="fas fa-trash"></i> Hapus</button> -->
                                     </td>
                                 </tr>
                             @endforeach
@@ -93,7 +95,7 @@
                             'Rusun',
                             'Dokumen',
                             'Tersedia',
-                            'Keterangan',
+                            'Status',
                             ['label' => 'Aksi', 'no-export' => true, 'width' => 20],
                         ]">
                             @foreach($row->pengembang_dokumens as $pengembang_dokumen)
@@ -101,11 +103,11 @@
                                     <td>{{$pengembang_dokumen->rusun->nama}}</td>
                                     <td>{{$pengembang_dokumen->dokumen->nama}}</td>
                                     <td>{{$pengembang_dokumen->tersedia ? 'Ya' : 'Tidak'}}</td>
-                                    <td>{{$pengembang_dokumen->keterangan}}</td>
+                                    <td>{{$pengembang_dokumen->status_text}}</td>
                                     <td>
                                         <a href="{{route('pengembang-dokumen.show', $pengembang_dokumen->id)}}?pengembang_id={{$row->id}}" class="btn btn-success btn-xs" title="Show"><i class="fas fa-eye"></i> Detail</a>
                                         <a href="{{route('pengembang-dokumen.edit', $pengembang_dokumen->id)}}?pengembang_id={{$row->id}}" class="btn btn-info btn-xs" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a>
-                                        <button type="button" class="btn btn-danger btn-xs btnDeleteDokumen" value="{{$pengembang_dokumen->id}}" id="{{route('pengembang-dokumen.destroy', $pengembang_dokumen->id)}}"><i class="fas fa-trash"></i> Hapus</button>
+                                        <!-- <button type="button" class="btn btn-danger btn-xs btnDeleteDokumen" value="{{$pengembang_dokumen->id}}" id="{{route('pengembang-dokumen.destroy', $pengembang_dokumen->id)}}"><i class="fas fa-trash"></i> Hapus</button> -->
                                     </td>
                                 </tr>
                             @endforeach

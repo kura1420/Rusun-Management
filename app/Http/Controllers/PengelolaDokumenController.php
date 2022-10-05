@@ -27,12 +27,7 @@ class PengelolaDokumenController extends Controller
         $title = self::TITLE;
         $subTitle = 'List Data';
 
-        $rows = PengelolaDokumen::with([
-                'pengelolas',
-                'dokumens',
-                'rusuns',
-            ])
-            ->orderBy('created_at')
+        $rows = PengelolaDokumen::orderBy('created_at')
             ->get()
             ->map(fn($row) => [
                 $row->pengelolas->nama,
@@ -41,8 +36,8 @@ class PengelolaDokumenController extends Controller
                 $row->tersedia ? 'Ya' : 'Tidak',
                 '<nobr>' .
                     '<a href="'.route(self::URL .'show', $row->id).'" class="btn btn-success btn-sm" title="Detail"><i class="fas fa-folder"></i> Detail</a> ' . 
-                    '<a href="'.route(self::URL .'edit', $row->id).'" class="btn btn-info btn-sm" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a> ' . 
-                    '<button type="button" class="btn btn-danger btn-sm btnDelete" value="'.$row->id.'" id="'.route(self::URL . 'destroy', $row->id).'"><i class="fas fa-trash"></i> Hapus</button>' .
+                    '<a href="'.route(self::URL .'edit', $row->id).'?pengelola_id='.$row->pengelola_id.'" class="btn btn-info btn-sm" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a> ' . 
+                    // '<button type="button" class="btn btn-danger btn-sm btnDelete" value="'.$row->id.'" id="'.route(self::URL . 'destroy', $row->id).'"><i class="fas fa-trash"></i> Hapus</button>' .
                 '</nobr>',
             ]);
 
@@ -74,12 +69,17 @@ class PengelolaDokumenController extends Controller
         $title = self::TITLE;
         $subTitle = 'Tambah Data';
 
-        $rusuns = \App\Models\Rusun::orderBy('nama', 'asc')->get();
-        $dokumens = \App\Models\Dokumen::where('kepada', 'pengelola')->orderBy('nama', 'asc')->get();
-        $pengelolas = \App\Models\Pengelola::orderBy('nama', 'asc')->get();
         $pengelola_id = $request->pengelola_id ?? NULL;
 
-        return view(self::FOLDER_VIEW . 'create', compact('title', 'subTitle', 'rusuns', 'dokumens', 'pengelolas', 'pengelola_id'));
+        if (!$pengelola_id) {
+            return abort(404);
+        }
+
+        $rusunPengelolas = \App\Models\RusunPengelola::where('pengelola_id', $pengelola_id)->get();
+        $dokumens = \App\Models\Dokumen::where('kepada', 'pengelola')->orderBy('nama', 'asc')->get();
+        $pengelolas = \App\Models\Pengelola::orderBy('nama', 'asc')->get();
+
+        return view(self::FOLDER_VIEW . 'create', compact('title', 'subTitle', 'rusunPengelolas', 'dokumens', 'pengelolas', 'pengelola_id'));
     }
 
     /**
@@ -135,11 +135,7 @@ class PengelolaDokumenController extends Controller
         $title = self::TITLE;
         $subTitle = 'Detail Data';
         
-        $row = PengelolaDokumen::with([
-            'pengelolas',
-            'dokumens',
-            'rusuns',
-        ])->findOrFail($id);
+        $row = PengelolaDokumen::findOrFail($id);
 
         return view(self::FOLDER_VIEW . 'show', compact('title', 'subTitle', 'row'));
     }
@@ -156,14 +152,19 @@ class PengelolaDokumenController extends Controller
         $title = self::TITLE;
         $subTitle = 'Edit Data';
 
-        $rusuns = \App\Models\Rusun::orderBy('nama', 'asc')->get();
+        $pengelola_id = $request->pengelola_id ?? NULL;
+
+        if (!$pengelola_id) {
+            return abort(404);
+        }
+
+        $rusunPengelolas = \App\Models\RusunPengelola::where('pengelola_id', $pengelola_id)->get();
         $dokumens = \App\Models\Dokumen::where('kepada', 'pengelola')->orderBy('nama', 'asc')->get();
         $pengelolas = \App\Models\Pengelola::orderBy('nama', 'asc')->get();
-        $pengelola_id = $request->pengelola_id ?? NULL;
 
         $row = PengelolaDokumen::findOrFail($id);
 
-        return view(self::FOLDER_VIEW . 'edit', compact('title', 'subTitle', 'row', 'rusuns', 'dokumens', 'pengelolas', 'pengelola_id'));
+        return view(self::FOLDER_VIEW . 'edit', compact('title', 'subTitle', 'row', 'rusunPengelolas', 'dokumens', 'pengelolas', 'pengelola_id'));
     }
 
     /**

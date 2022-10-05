@@ -480,7 +480,37 @@ return [
             'submenu' => [
                 [
                     'text' => 'User',
-                    'route'  => 'user.index',
+                    'icon'    => 'fas fa-fw fa-users',
+                    'submenu' => [
+                        [
+                            'text' => 'Aplikasi',
+                            'route'  => 'user.index',
+                        ],
+                        [
+                            'text' => 'Dinas',
+                            'route'  => 'user-dinas.index',
+                        ],
+                        [
+                            'text' => 'Rusun',
+                            'route'  => 'user-rusun.index',
+                        ],
+                        [
+                            'text' => 'Pengembang',
+                            'route'  => 'user-pengembang.index',
+                        ],
+                        [
+                            'text' => 'Pengelola',
+                            'route'  => 'user-pengelola.index',
+                        ],
+                        [
+                            'text' => 'Pemilik',
+                            'route'  => 'user-pemilik.index',
+                        ],
+                        [
+                            'text' => 'Penghuni',
+                            'route'  => 'user-penghuni.index',
+                        ],
+                    ],
                 ],
                 [
                     'text' => 'Role',

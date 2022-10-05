@@ -6,7 +6,7 @@ use App\Traits\Uuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class RusunPengembang extends Model
+class UserMapping extends Model
 {
     use HasFactory, Uuid;
 
@@ -14,13 +14,8 @@ class RusunPengembang extends Model
 
     protected $guarded = [];
 
-    public function rusun()
+    public function user()
     {
-        return $this->belongsTo(Rusun::class, 'rusun_id');
-    }
-
-    public function pengembang()
-    {
-        return $this->belongsTo(Pengembang::class, 'pengembang_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

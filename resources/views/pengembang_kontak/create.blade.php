@@ -17,7 +17,7 @@
         <div class="row">
             <input type="hidden" name="redirect_to" value="{{$pengembang_id}}">
             
-            <x-adminlte-select2 name="pengembang_id" label="Pengembang" fgroup-class="col-md-6" :config="[
+            <x-adminlte-select2 name="pengembang_id" label="Pengembang" fgroup-class="col-md-6" readonly :config="[
                 'placeholder' => 'Pilih Pengembang',
                 'allowClear' => true,
             ]">

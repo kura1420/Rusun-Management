@@ -33,7 +33,7 @@ class PengelolaController extends Controller
                 '<nobr>' . 
                     '<a href="'.route(self::URL .'show', $row->id).'" class="btn btn-success btn-sm" title="Detail"><i class="fas fa-folder"></i> Detail</a> ' .
                     '<a href="'.route(self::URL .'edit', $row->id).'" class="btn btn-info btn-sm" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a> ' .
-                    '<button type="button" class="btn btn-danger btn-sm btnDelete" value="'.$row->id.'" id="'.route(self::URL . 'destroy', $row->id).'"><i class="fas fa-trash"></i> Hapus</button>' . 
+                    // '<button type="button" class="btn btn-danger btn-sm btnDelete" value="'.$row->id.'" id="'.route(self::URL . 'destroy', $row->id).'"><i class="fas fa-trash"></i> Hapus</button>' . 
                 '</nobr>',
             ]);
 
@@ -93,14 +93,7 @@ class PengelolaController extends Controller
         $title = self::TITLE;
         $subTitle = 'Detail Data';
 
-        $row = Pengelola::with([
-            'provinces',
-            'kotas',
-            'kecamatans',
-            'desas',
-            'pengelola_kontaks',
-            'pengelola_dokumens',
-        ])->findOrFail($id);
+        $row = Pengelola::findOrFail($id);
 
         $row->pengelola_dokumens = $row->pengelola_dokumens->map(function ($pengelola_dokumen) {
             $pengelola_dokumen->dokumen = $pengelola_dokumen->dokumens()->first();
@@ -124,12 +117,7 @@ class PengelolaController extends Controller
         $title = self::TITLE;
         $subTitle = 'Edit Data';
 
-        $row = Pengelola::with([
-            'provinces',
-            'kotas',
-            'kecamatans',
-            'desas',
-        ])->findOrFail($id);
+        $row = Pengelola::findOrFail($id);
 
         return view(self::FOLDER_VIEW . 'edit', compact('title', 'subTitle', 'row'));
     }

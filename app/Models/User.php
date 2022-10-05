@@ -26,6 +26,7 @@ class User extends Authenticatable
         'password',
         'active',
         'last_login',
+        'level',
     ];
 
     /**
@@ -47,6 +48,11 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    public function getActiveTextAttribute()
+    {
+        return $this->active ? 'Aktif' : 'Tidak Aktif';
+    }
+
     public function adminlte_image()
     {
         return 'https://picsum.photos/300/300';
@@ -60,5 +66,10 @@ class User extends Authenticatable
     public function adminlte_profile_url()
     {
         return 'profile/username';
+    }
+
+    public function user_mapping()
+    {
+        return $this->hasOne(UserMapping::class);
     }
 }

@@ -26,11 +26,7 @@ class RusunFasilitasController extends Controller
         $title = self::TITLE;
         $subTitle = 'List Data';
 
-        $rows = RusunFasilitas::with([
-                'rusuns',
-                'rusun_details',
-            ])
-            ->orderBy('created_at')
+        $rows = RusunFasilitas::orderBy('created_at')
             ->get()
             ->map(fn($row) => [
                 $row->rusuns->nama,
@@ -41,7 +37,7 @@ class RusunFasilitasController extends Controller
                 '<nobr>' . 
                     '<a href="'.route(self::URL .'show', $row->id).'" class="btn btn-success btn-sm" title="Detail"><i class="fas fa-folder"></i> Detail</a> ' .
                     '<a href="'.route(self::URL .'edit', $row->id).'" class="btn btn-info btn-sm" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a> ' .
-                    '<button type="button" class="btn btn-danger btn-sm btnDelete" value="'.$row->id.'" id="'.route(self::URL . 'destroy', $row->id).'"><i class="fas fa-trash"></i> Hapus</button>' . 
+                    // '<button type="button" class="btn btn-danger btn-sm btnDelete" value="'.$row->id.'" id="'.route(self::URL . 'destroy', $row->id).'"><i class="fas fa-trash"></i> Hapus</button>' . 
                 '</nobr>',
             ]);
 
@@ -123,11 +119,7 @@ class RusunFasilitasController extends Controller
         $title = self::TITLE;
         $subTitle = 'Detail Data';
 
-        $row = RusunFasilitas::with([
-                'rusuns',
-                'rusun_details',
-            ])
-            ->findOrFail($id);
+        $row = RusunFasilitas::findOrFail($id);
 
         return view(self::FOLDER_VIEW . 'show', compact('title', 'subTitle', 'row',));
     }
@@ -147,11 +139,7 @@ class RusunFasilitasController extends Controller
         $rusuns = \App\Models\Rusun::orderBy('nama', 'asc')->get();
         $namas = RusunFasilitas::select('nama')->distinct()->orderBy('nama', 'asc')->get();
 
-        $row = RusunFasilitas::with([
-                'rusuns',
-                'rusun_details',
-            ])
-            ->findOrFail($id);
+        $row = RusunFasilitas::findOrFail($id);
 
         return view(self::FOLDER_VIEW . 'edit', compact('title', 'subTitle', 'row', 'rusuns', 'namas'));
     }

@@ -6,6 +6,8 @@
     <h1>
         {{$subTitle}}
         <a href="{{route('rusun.index')}}" class="btn btn-xs btn-dark"> <i class="fa fa-arrow-left"></i> Kembali </a>
+        <a href="{{route('rusun.edit', $row->id)}}" class="btn btn-xs btn-warning"><i class="fa fa-pencil-alt"></i> Edit</a>
+
         <div class="btn-group">
             <button type="button" class="btn btn-xs btn-primary"><i class="fa fa-plus"></i> Tambah</button>
             <button type="button" class="btn btn-xs btn-primary dropdown-toggle dropdown-icon" data-toggle="dropdown" aria-expanded="false">
@@ -136,7 +138,7 @@
                                     <td>
                                         <a href="{{route('rusun-detail.show', $rusun_detail->id)}}?rusun_id={{$row->id}}" class="btn btn-success btn-xs" title="Show"><i class="fas fa-eye"></i> Detail</a>
                                         <a href="{{route('rusun-detail.edit', $rusun_detail->id)}}?rusun_id={{$row->id}}" class="btn btn-info btn-xs" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a>
-                                        <button type="button" class="btn btn-danger btn-xs btnDeleteTower" value="{{$rusun_detail->id}}" id="{{route('rusun-detail.destroy', $rusun_detail->id)}}"><i class="fas fa-trash"></i> Hapus</button>                                        
+                                        <!-- <button type="button" class="btn btn-danger btn-xs btnDeleteTower" value="{{$rusun_detail->id}}" id="{{route('rusun-detail.destroy', $rusun_detail->id)}}"><i class="fas fa-trash"></i> Hapus</button>                                         -->
                                     </td>
                                 </tr>
                             @endforeach
@@ -159,7 +161,7 @@
                                     <td>
                                         <a href="{{route('rusun-unit-detail.show', $rusun_unit_detail->id)}}?rusun_id={{$row->id}}" class="btn btn-success btn-xs" title="Show"><i class="fas fa-eye"></i> Detail</a>
                                         <a href="{{route('rusun-unit-detail.edit', $rusun_unit_detail->id)}}?rusun_id={{$row->id}}" class="btn btn-info btn-xs" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a>
-                                        <button type="button" class="btn btn-danger btn-xs btnDeleteUnit" value="{{$rusun_unit_detail->id}}" id="{{route('rusun-unit-detail.destroy', $rusun_unit_detail->id)}}"><i class="fas fa-trash"></i> Hapus</button>                                        
+                                        <!-- <button type="button" class="btn btn-danger btn-xs btnDeleteUnit" value="{{$rusun_unit_detail->id}}" id="{{route('rusun-unit-detail.destroy', $rusun_unit_detail->id)}}"><i class="fas fa-trash"></i> Hapus</button>                                         -->
                                     </td>
                                 </tr>
                             @endforeach
@@ -182,7 +184,7 @@
                                     <td>
                                         <a href="{{route('rusun-fasilitas.show', $rusun_fasilitas->id)}}?rusun_id={{$row->id}}" class="btn btn-success btn-xs" title="Show"><i class="fas fa-eye"></i> Detail</a>
                                         <a href="{{route('rusun-fasilitas.edit', $rusun_fasilitas->id)}}?rusun_id={{$row->id}}" class="btn btn-info btn-xs" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a>
-                                        <button type="button" class="btn btn-danger btn-xs btnDeleteFasilitas" value="{{$rusun_fasilitas->id}}" id="{{route('rusun-fasilitas.destroy', $rusun_fasilitas->id)}}"><i class="fas fa-trash"></i> Hapus</button>                                        
+                                        <!-- <button type="button" class="btn btn-danger btn-xs btnDeleteFasilitas" value="{{$rusun_fasilitas->id}}" id="{{route('rusun-fasilitas.destroy', $rusun_fasilitas->id)}}"><i class="fas fa-trash"></i> Hapus</button>                                         -->
                                     </td>
                                 </tr>
                             @endforeach

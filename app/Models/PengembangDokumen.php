@@ -14,6 +14,27 @@ class PengembangDokumen extends Model
 
     protected $guarded = [];
 
+    public function getStatusTextAttribute()
+    {
+        switch ($this->status) {
+            case 0:
+                return "Belum di verifikasi";
+                break;
+
+            case 1:
+                return "Sudah di verifikasi";
+                break;
+
+            case 2:
+                return "Dokumen ditolak";
+                break;
+            
+            default:
+                return "No defined";
+                break;
+        }
+    }
+
     public function pengembangs()
     {
         return $this->belongsTo(Pengembang::class, 'pengembang_id');

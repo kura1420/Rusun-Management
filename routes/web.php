@@ -30,6 +30,12 @@ use App\Http\Controllers\RusunPenghuniController;
 use App\Http\Controllers\RusunPenghuniDokumenController;
 use App\Http\Controllers\RusunUnitDetailController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\UserDinasController;
+use App\Http\Controllers\UserPemilikController;
+use App\Http\Controllers\UserPengelolaController;
+use App\Http\Controllers\UserPengembangController;
+use App\Http\Controllers\UserPenghuniController;
+use App\Http\Controllers\UserRusunController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -53,6 +59,13 @@ Route::middleware(['auth'])->group(function () {
     // setting
     Route::resources([
         'user' => UserController::class,
+        'user-dinas' => UserDinasController::class,
+        'user-rusun' => UserRusunController::class,
+        'user-pengembang' => UserPengembangController::class,
+        'user-pengelola' => UserPengelolaController::class,
+        'user-pemilik' => UserPemilikController::class,
+        'user-penghuni' => UserPenghuniController::class,
+
         'role' => RoleController::class,
         'permission' => PermissionController::class,
         'api-manage' => ApiManagementController::class,

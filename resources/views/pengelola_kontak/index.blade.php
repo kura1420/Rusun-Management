@@ -15,9 +15,9 @@
 
 <x-adminlte-card theme="primary" theme-mode="outline" title="{{$subTitle}}">
     <x-slot name="toolsSlot">
-        <a href="{{route('pengelola-kontak.create')}}" class="btn btn-sm btn-primary">
+        <!-- <a href="{{route('pengelola-kontak.create')}}" class="btn btn-sm btn-primary">
             <i class="fa fa-plus"></i> Tambah
-        </a>
+        </a> -->
     </x-slot>
     
     <x-adminlte-datatable id="table2" :heads="$heads" head-theme="dark" :config="$config" striped hoverable bordered beautify />

@@ -27,12 +27,7 @@ class PengembangDokumenController extends Controller
         $title = self::TITLE;
         $subTitle = 'List Data';
 
-        $rows = PengembangDokumen::with([
-                'pengembangs',
-                'dokumens',
-                'rusuns',
-            ])
-            ->orderBy('created_at')
+        $rows = PengembangDokumen::orderBy('created_at')
             ->get()
             ->map(fn($row) => [
                 $row->pengembangs->nama,
@@ -41,8 +36,8 @@ class PengembangDokumenController extends Controller
                 $row->tersedia ? 'Ya' : 'Tidak',
                 '<nobr>' .
                     '<a href="'.route(self::URL .'show', $row->id).'" class="btn btn-success btn-sm" title="Detail"><i class="fas fa-folder"></i> Detail</a> ' . 
-                    '<a href="'.route(self::URL .'edit', $row->id).'" class="btn btn-info btn-sm" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a> ' . 
-                    '<button type="button" class="btn btn-danger btn-sm btnDelete" value="'.$row->id.'" id="'.route(self::URL . 'destroy', $row->id).'"><i class="fas fa-trash"></i> Hapus</button>' .
+                    '<a href="'.route(self::URL .'edit', $row->id).'?pengembang_id='.$row->pengembang_id.'" class="btn btn-info btn-sm" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a> ' . 
+                    // '<button type="button" class="btn btn-danger btn-sm btnDelete" value="'.$row->id.'" id="'.route(self::URL . 'destroy', $row->id).'"><i class="fas fa-trash"></i> Hapus</button>' .
                 '</nobr>',
             ]);
 
@@ -74,12 +69,17 @@ class PengembangDokumenController extends Controller
         $title = self::TITLE;
         $subTitle = 'Tambah Data';
 
-        $rusuns = \App\Models\Rusun::orderBy('nama', 'asc')->get();
-        $dokumens = \App\Models\Dokumen::where('kepada', 'pengembang')->orderBy('nama', 'asc')->get();
-        $pengembangs = \App\Models\Pengembang::orderBy('nama', 'asc')->get();
         $pengembang_id = $request->pengembang_id ?? NULL;
 
-        return view(self::FOLDER_VIEW . 'create', compact('title', 'subTitle', 'rusuns', 'dokumens', 'pengembangs', 'pengembang_id'));
+        if (!$pengembang_id) {
+            return abort(404);
+        }
+
+        $rusunPengelolas = \App\Models\RusunPengembang::where('pengembang_id', $pengembang_id)->get();
+        $dokumens = \App\Models\Dokumen::where('kepada', 'pengembang')->orderBy('nama', 'asc')->get();
+        $pengembangs = \App\Models\Pengembang::orderBy('nama', 'asc')->get();
+
+        return view(self::FOLDER_VIEW . 'create', compact('title', 'subTitle', 'rusunPengelolas', 'dokumens', 'pengembangs', 'pengembang_id'));
     }
 
     /**
@@ -135,11 +135,7 @@ class PengembangDokumenController extends Controller
         $title = self::TITLE;
         $subTitle = 'Detail Data';
         
-        $row = PengembangDokumen::with([
-            'pengembangs',
-            'dokumens',
-            'rusuns',
-        ])->findOrFail($id);
+        $row = PengembangDokumen::findOrFail($id);
 
         return view(self::FOLDER_VIEW . 'show', compact('title', 'subTitle', 'row'));
     }
@@ -156,13 +152,19 @@ class PengembangDokumenController extends Controller
         $title = self::TITLE;
         $subTitle = 'Edit Data';
 
-        $rusuns = \App\Models\Rusun::orderBy('nama', 'asc')->get();
+        $pengembang_id = $request->pengembang_id ?? NULL;
+
+        if (!$pengembang_id) {
+            return abort(404);
+        }
+
+        $rusunPengelolas = \App\Models\RusunPengembang::where('pengembang_id', $pengembang_id)->get();
         $dokumens = \App\Models\Dokumen::where('kepada', 'pengembang')->orderBy('nama', 'asc')->get();
         $pengembangs = \App\Models\Pengembang::orderBy('nama', 'asc')->get();
-        $pengembang_id = $request->pengembang_id ?? NULL;
+        
         $row = PengembangDokumen::findOrFail($id);
 
-        return view(self::FOLDER_VIEW . 'edit', compact('title', 'subTitle', 'row', 'rusuns', 'dokumens', 'pengembangs', 'pengembang_id'));
+        return view(self::FOLDER_VIEW . 'edit', compact('title', 'subTitle', 'row', 'rusunPengelolas', 'dokumens', 'pengembangs', 'pengembang_id'));
     }
 
     /**

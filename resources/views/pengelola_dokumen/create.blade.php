@@ -17,7 +17,7 @@
         <div class="row">
             <input type="hidden" name="redirect_to" value="{{$pengelola_id}}">
             
-            <x-adminlte-select2 name="pengelola_id" label="Pengelola" fgroup-class="col-md-4" :config="[
+            <x-adminlte-select2 name="pengelola_id" label="Pengelola" fgroup-class="col-md-4" readonly :config="[
                 'placeholder' => 'Pilih Pengelola',
                 'allowClear' => true,
             ]">
@@ -32,8 +32,8 @@
                 'allowClear' => true,
             ]">
                 <option value=""></option>
-                @foreach ($rusuns as $rusun)
-                <option value="{{$rusun->id}}" {{$rusun->id == old('rusun_id') ? 'selected' : ''}}>{{$rusun->nama}}</option>
+                @foreach ($rusunPengelolas as $rusunPengelola)
+                <option value="{{$rusunPengelola->rusun_id}}" {{$rusunPengelola->rusun_id == old('rusun_id') ? 'selected' : ''}}>{{$rusunPengelola->rusun->nama}}</option>
                 @endforeach
             </x-adminlte-select2>
 
