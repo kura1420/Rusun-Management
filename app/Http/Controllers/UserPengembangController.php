@@ -97,13 +97,16 @@ class UserPengembangController extends Controller
         ])->validate();
 
         DB::transaction(function () use ($request) {
+            $token = md5(uniqid());
+
             $user = User::create([
                 'name' => $request->name,
                 'username' => strtolower($request->username),
                 'email' => strtolower($request->email),
                 'password' => Hash::make($request->password),
-                'active' => 1,
+                'active' => 0,
                 'level' => 'pengembang',
+                'remember_token' => $token,
             ]);
 
             $user->user_mapping()
@@ -112,12 +115,14 @@ class UserPengembangController extends Controller
                     'reff_id' => $request->pengembang,
                 ]);
 
-            // event(new UserVerifiedNotification($user));
+            $user->assignRole('Pengembang');
+
+            $user->notify(new UserVerifiedNotification($token));
         });
 
         return redirect()
             ->route(self::URL . 'index')
-            ->with('success', 'Tambah data berhasil...');
+            ->with('success', 'Tambah data berhasil, silahkan konfirmasi ke user agar cek emailnya...');
     }
 
     /**

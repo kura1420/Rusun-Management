@@ -3,11 +3,12 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Providers\RouteServiceProvider;
 use Carbon\Carbon;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class LoginController extends Controller
 {
@@ -52,7 +53,7 @@ class LoginController extends Controller
   
         $usernameOrEmail = filter_var($request->username, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
 
-        if(auth()->attempt([
+        if(Auth::attempt([
             $usernameOrEmail => $input['username'], 
             'password' => $input['password'], 
             'active' => 1,
@@ -64,6 +65,18 @@ class LoginController extends Controller
             $row->update([
                 'last_login' => Carbon::now(),
             ]);
+
+            if ($row->level !== 'root') {
+                $userMapping = $row->user_mapping()->first();
+
+                $profileTable = DB::table($userMapping->table)->where('id', $userMapping->reff_id)->first();
+
+                $sessionKey = Str::singular($userMapping->table);
+
+                session([
+                    $sessionKey => $profileTable,
+                ]);
+            }
 
             return redirect()
                 ->route('home');

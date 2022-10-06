@@ -86,7 +86,9 @@ class UserController extends Controller
         $input['active'] = $request->active == 'true' ? 1 : 0;
         $input['level'] = 'root';
 
-        User::create($input);
+        $user = User::create($input);
+
+        $user->assignRole('Root');
 
         return redirect()
             ->route(self::URL . 'index')

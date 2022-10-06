@@ -27,6 +27,7 @@ class User extends Authenticatable
         'active',
         'last_login',
         'level',
+        'remember_token',
     ];
 
     /**

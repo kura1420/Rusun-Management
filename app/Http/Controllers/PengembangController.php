@@ -24,7 +24,16 @@ class PengembangController extends Controller
         $title = self::TITLE;
         $subTitle = 'List Data';
 
+        $user = auth()->user();
+
         $rows = Pengembang::orderBy('created_at')
+            ->when($user, function ($query, $user) {
+                if ($user->level == 'pengembang') {
+                    $pengembangSession = session()->get('pengembang');
+
+                    $query->where('id', $pengembangSession->id);
+                }
+            })
             ->get()
             ->map(fn($row) => [
                 $row->nama,
@@ -61,6 +70,10 @@ class PengembangController extends Controller
     public function create()
     {
         //
+        if (! auth()->user()->can('create', Pengembang::class)) {
+            return abort(403, "User does not have the right roles");
+        }
+
         $title = self::TITLE;
         $subTitle = 'Tambah Data';
 
@@ -118,6 +131,10 @@ class PengembangController extends Controller
         $subTitle = 'Edit Data';
 
         $row = Pengembang::findOrFail($id);
+        
+        if (! auth()->user()->can('update', $row)) {
+            return abort(403, "User does not have the right roles");
+        }
 
         return view(self::FOLDER_VIEW . 'edit', compact('title', 'subTitle', 'row'));
     }

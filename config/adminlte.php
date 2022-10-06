@@ -333,6 +333,7 @@ return [
         [
             'text'    => 'Pengembang',
             'icon'    => 'fas fa-fw fa-building',
+            'can' => ['Root', 'Admin', 'Pemda', 'Pengembang'],
             'submenu' => [
                 [
                     'text' => 'List',
@@ -352,6 +353,7 @@ return [
         [
             'text'    => 'Pengelola',
             'icon'    => 'fas fa-fw fa-user-friends',
+            'can' => ['Root', 'Admin', 'Pemda', 'Pengelola'],
             'submenu' => [
                 [
                     'text' => 'List',
@@ -371,6 +373,7 @@ return [
         [
             'text'    => 'Rusun',
             'icon'    => 'fas fa-fw fa-city',
+            'can' => ['Root', 'Admin', 'Pemda', 'Rusun'],
             'submenu' => [
                 [
                     'text' => 'List',
@@ -403,6 +406,12 @@ return [
             'text'    => 'Pemilik',
             'icon'    => 'fas fa-fw fa-user-check',
             'route'  => 'pemilik.index',
+            'can' => ['Root', 'Admin', 'Pemda', 'Pemilik'],
+        ],
+        [
+            'text' => 'Penghuni',
+            'route'  => 'rusun-penghuni.index',
+            'can' => ['Root', 'Admin', 'Pemda', 'Penghuni'],
         ],
 
         [
@@ -458,6 +467,7 @@ return [
         [
             'text'    => 'Master',
             'icon'    => 'fas fa-fw fa-layer-group',
+            'can' => ['Root', 'Admin'],
             'submenu' => [
                 [
                     'text' => 'Faq',
@@ -477,10 +487,12 @@ return [
         [
             'text'    => 'Setting',
             'icon'    => 'fas fa-fw fa-cogs',
+            'can' => ['Root', 'Admin'],
             'submenu' => [
                 [
                     'text' => 'User',
                     'icon'    => 'fas fa-fw fa-users',
+                    'can' => ['Root', 'Admin'],
                     'submenu' => [
                         [
                             'text' => 'Aplikasi',
@@ -513,16 +525,19 @@ return [
                     ],
                 ],
                 [
+                    'text' => 'API Manage',
+                    'route'  => 'api-manage.index',
+                    'can' => ['Root', 'Admin'],
+                ],
+                [
                     'text' => 'Role',
                     'route'  => 'role.index',
+                    'can' => ['Root'],
                 ],
                 [
                     'text' => 'Permission',
                     'route'  => 'permission.index',
-                ],
-                [
-                    'text' => 'API Manage',
-                    'route'  => 'api-manage.index',
+                    'can' => ['Root'],
                 ],
             ],
         ],
@@ -541,13 +556,14 @@ return [
     */
 
     'filters' => [
-        JeroenNoten\LaravelAdminLte\Menu\Filters\GateFilter::class,
+        // JeroenNoten\LaravelAdminLte\Menu\Filters\GateFilter::class,
         JeroenNoten\LaravelAdminLte\Menu\Filters\HrefFilter::class,
         JeroenNoten\LaravelAdminLte\Menu\Filters\SearchFilter::class,
         JeroenNoten\LaravelAdminLte\Menu\Filters\ActiveFilter::class,
         JeroenNoten\LaravelAdminLte\Menu\Filters\ClassesFilter::class,
         JeroenNoten\LaravelAdminLte\Menu\Filters\LangFilter::class,
         JeroenNoten\LaravelAdminLte\Menu\Filters\DataFilter::class,
+        \App\MenuFilter::class,
     ],
 
     /*

@@ -29,20 +29,20 @@ class PermissionController extends Controller
             ->get()
             ->map(fn($row) => [
                 $row->name,
-                strtoupper($row->guard_name),
+                // strtoupper($row->guard_name),
                 '<nobr><a href="'.route(self::URL .'edit', $row->id).'" class="btn btn-info btn-sm" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a></nobr>',
             ]);
 
         $heads = [
             'Nama',
-            'Guard',
+            // 'Guard',
             ['label' => 'Aksi', 'no-export' => true, 'width' => 5],
         ];
         
         $config = [
             'data' => $rows,
-            'order' => [[1, 'asc']],
-            'columns' => [null, null, ['orderable' => false]],
+            // 'order' => [[1, 'asc']],
+            // 'columns' => [null, null, ['orderable' => false]],
         ];
 
         return view(self::FOLDER_VIEW . 'index', compact('title', 'subTitle', 'heads', 'config'));

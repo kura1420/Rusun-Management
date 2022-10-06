@@ -22,7 +22,7 @@
             <x-adminlte-input type="email" name="email" label="Email" placeholder="Email" fgroup-class="col-md-6" value="{{old('email')}}" />
             <x-adminlte-input type="password" name="password" label="Password" placeholder="Password" fgroup-class="col-md-6" />
         </div>
-            <x-adminlte-input-switch name="active" data-on-color="success" data-off-color="danger" {{old('active') == 'true' ? 'checked' : ''}} />
+            <x-adminlte-input-switch name="active" data-on-color="success" data-off-color="danger" />
 
         <x-slot name="footerSlot">
             <x-adminlte-button type="submit" class="btn-sm" label="Simpan" theme="primary" icon="fab fa-telegram-plane" />

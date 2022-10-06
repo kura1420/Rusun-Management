@@ -18,10 +18,10 @@
         
         <div class="row">
             <x-adminlte-input name="name" label="Nama" placeholder="Nama" fgroup-class="col-md-6" value="{{old('name')}}" />
-            <x-adminlte-select name="guard_name" label="Guard" fgroup-class="col-md-6">
+            {{-- <x-adminlte-select name="guard_name" label="Guard" fgroup-class="col-md-6">
                 <option value="web" {{old('guard_name') == 'web' ? 'selected' : ''}}>WEB</option>
                 <option value="admin" {{old('guard_name') == 'admin' ? 'selected' : ''}}>ADMIN</option>
-            </x-adminlte-select>
+            </x-adminlte-select> --}}
         </div>
 
         <x-slot name="footerSlot">
