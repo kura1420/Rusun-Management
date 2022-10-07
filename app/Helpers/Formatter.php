@@ -2,8 +2,6 @@
 
 namespace App\Helpers;
 
-use App\Helpers\Terbilang;
-
 class Formatter {
 
     public static function rupiah($angka)

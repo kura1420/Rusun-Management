@@ -39,8 +39,8 @@
             <strong><i class="fas fa-map-marker-alt mr-1"></i> Alamat</strong>
             <p class="text-muted">
                 {{$row->alamat}} <br>
-                {{$row->kecamatans->name}}, {{$row->desas->name ?? NULL}} <br>
-                {{$row->kotas->name}}, {{$row->provinces->name}}
+                {{-- {{$row->kecamatans->name}}, {{$row->desas->name ?? NULL}} <br>
+                {{$row->kotas->name}}, {{$row->provinces->name}} --}}
             </p>
 
             <strong><i class="fas fa-phone mr-1"></i> Telp</strong>

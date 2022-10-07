@@ -15,7 +15,9 @@
 
 <x-adminlte-card theme="primary" theme-mode="outline" title="{{$subTitle}}">
     <x-slot name="toolsSlot">
-        
+        <a href="{{route('api-manage.create')}}" class="btn btn-sm btn-primary">
+            <i class="fa fa-plus"></i> Tambah
+        </a>
     </x-slot>
     
     <x-adminlte-datatable id="table2" :heads="$heads" head-theme="dark" :config="$config" striped hoverable bordered />
@@ -62,8 +64,6 @@ $(function () {
             allowOutsideClick: () => !Swal.isLoading()
         }).then((result) => {
             const {status, statusText} = result.value;
-
-            console.log(result);
 
             switch (status) {
                 case 200:

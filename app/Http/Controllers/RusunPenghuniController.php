@@ -27,22 +27,16 @@ class RusunPenghuniController extends Controller
         $title = self::TITLE;
         $subTitle = 'List Data';
 
-        $rows = RusunPenghuni::with([
-                'rusuns',
-                'rusun_details',
-                'rusun_unit_details',
-                'pemiliks',
-            ])
-            ->orderBy('updated_at', 'desc')
+        $rows = RusunPenghuni::orderBy('updated_at', 'desc')
             ->get()
             ->map(fn($row) => [
                 $row->rusuns->nama,
                 $row->rusun_details->nama_tower ?? NULL,
-                $row->rusun_unit_details->ukuran ?? NULL,
+                $row->rusun_unit_details->jenis ?? NULL,
                 $row->pemiliks->nama,
                 $row->nama,
-                $row->email,
-                $row->phone,
+                // $row->email,
+                // $row->phone,
                 $row->status_label,
                 '<nobr>' . 
                     '<a href="'.route(self::URL .'show', $row->id).'" class="btn btn-success btn-sm" title="Detail"><i class="fas fa-folder"></i> Detail</a> ' .
@@ -57,16 +51,16 @@ class RusunPenghuniController extends Controller
             'Unit',
             'Pemilik',
             'Nama',
-            'Email',
-            'Phone',
+            // 'Email',
+            // 'Phone',
             'Status',
             ['label' => 'Aksi', 'no-export' => true, 'width' => 10],
         ];
         
         $config = [
             'data' => $rows,
-            'order' => [[1, 'asc']],
-            'columns' => [null, null, null, null, null, null, null, null, ['orderable' => false]],
+            // 'order' => [[1, 'asc']],
+            // 'columns' => [null, null, null, null, null, null, null, null, ['orderable' => false]],
         ];
 
         $lastUpdate = collect($rows)

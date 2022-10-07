@@ -21,13 +21,13 @@
     <div class="row">
         <x-adminlte-input name="nama" id="nama" label="Nama" placeholder="Nama" fgroup-class="col-md-6" />
 
-        <x-adminlte-select2 name="province_id" id="province_id" label="Provinsi" fgroup-class="col-md-6" />
+        {{-- <x-adminlte-select2 name="province_id" id="province_id" label="Provinsi" fgroup-class="col-md-6" />
 
         <x-adminlte-select2 name="regencie_id" id="regencie_id" label="Kota" fgroup-class="col-md-6" disabled />
 
         <x-adminlte-select2 name="district_id" id="district_id" label="Kecamatan" fgroup-class="col-md-6" disabled />
 
-        <x-adminlte-select2 name="village_id" id="village_id" label="Desa" fgroup-class="col-md-6" disabled />
+        <x-adminlte-select2 name="village_id" id="village_id" label="Desa" fgroup-class="col-md-6" disabled /> --}}
 
         <x-adminlte-input name="alamat" id="alamat" label="Alamat" placeholder="Alamat" fgroup-class="col-md-6" />
         <x-adminlte-input name="telp" id="telp" label="Telp" placeholder="Telp" fgroup-class="col-md-6" />

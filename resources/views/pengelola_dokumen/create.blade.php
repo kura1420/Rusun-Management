@@ -52,6 +52,7 @@
                     <small class="text-lightblue">*Hanya file <strong>PDF</strong> dan Maksimal <strong>5MB</strong></small>
                 </x-slot>
             </x-adminlte-input>
+            
             <x-adminlte-input name="keterangan" label="Keterangan" placeholder="Keterangan" fgroup-class="col-md-6" value="{{old('keterangan')}}" />
         </div>
 

@@ -306,28 +306,11 @@ return [
             'type' => 'sidebar-menu-search',
             'text' => 'search',
         ],
-        // [
-        //     'text' => 'blog',
-        //     'url'  => 'admin/blog',
-        //     // 'can'  => 'manage-blog',
-        // ],
-        // [
-        //     'text'        => 'pages',
-        //     'url'         => 'admin/pages',
-        //     'icon'        => 'far fa-fw fa-file',
-        //     'label'       => 4,
-        //     'label_color' => 'success',
-        // ],
         ['header' => 'MAIN MENU'],
         [
             'text' => 'Dashboard',
             'route' => 'home',
             'icon' => 'fas fa-fw fa-tachometer-alt',
-        ],
-        [
-            'text' => 'FAQ',
-            'route'  => 'faq.helps',
-            'icon' => 'fas fa-fw fa-question-circle',
         ],
 
         [
@@ -410,6 +393,7 @@ return [
         ],
         [
             'text' => 'Penghuni',
+            'icon'    => 'fas fa-fw fa-users',
             'route'  => 'rusun-penghuni.index',
             'can' => ['Root', 'Admin', 'Pemda', 'Penghuni'],
         ],
@@ -460,6 +444,10 @@ return [
                 [
                     'text' => 'Laporan',
                     'url'  => '#',
+                ],
+                [
+                    'text' => 'FAQ',
+                    'route'  => 'faq.helps',
                 ],
             ],
         ],
@@ -526,16 +514,19 @@ return [
                 ],
                 [
                     'text' => 'API Manage',
+                    'icon_color' => 'danger',
                     'route'  => 'api-manage.index',
                     'can' => ['Root', 'Admin'],
                 ],
                 [
                     'text' => 'Role',
+                    'icon_color' => 'primary',
                     'route'  => 'role.index',
                     'can' => ['Root'],
                 ],
                 [
                     'text' => 'Permission',
+                    'icon_color' => 'warning',
                     'route'  => 'permission.index',
                     'can' => ['Root'],
                 ],

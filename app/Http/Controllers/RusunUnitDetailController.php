@@ -15,6 +15,17 @@ class RusunUnitDetailController extends Controller
     const FOLDER_FOTO = 'rusun_unit_detail/foto';
     const URL = 'rusun-unit-detail.';
 
+    protected $sessionUser;
+
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            $this->sessionUser = auth()->user();
+
+            return $next($request);
+        });
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -26,36 +37,41 @@ class RusunUnitDetailController extends Controller
         $title = self::TITLE;
         $subTitle = 'List Data';
 
-        $rows = RusunUnitDetail::with([
-                'rusuns',
-                'rusun_details',
-            ])
-            ->orderBy('created_at')
+        $user = $this->sessionUser;
+
+        $rows = RusunUnitDetail::orderBy('created_at')
+            ->when($user, function ($query, $user) {
+                if ($user->level == 'rusun') {
+                    $sessionData = session()->get('rusun');
+
+                    $query->where('rusun_id', $sessionData->id);
+                }
+            })
             ->get()
             ->map(fn($row) => [
                 $row->rusuns->nama,
                 $row->rusun_details->nama_tower,
-                $row->ukuran,
+                $row->jenis,
                 $row->jumlah,
                 '<nobr>' . 
                     '<a href="'.route(self::URL .'show', $row->id).'" class="btn btn-success btn-sm" title="Detail"><i class="fas fa-folder"></i> Detail</a> ' .
                     '<a href="'.route(self::URL .'edit', $row->id).'" class="btn btn-info btn-sm" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a> ' .
-                    '<button type="button" class="btn btn-danger btn-sm btnDelete" value="'.$row->id.'" id="'.route(self::URL . 'destroy', $row->id).'"><i class="fas fa-trash"></i> Hapus</button>' . 
+                    // '<button type="button" class="btn btn-danger btn-sm btnDelete" value="'.$row->id.'" id="'.route(self::URL . 'destroy', $row->id).'"><i class="fas fa-trash"></i> Hapus</button>' . 
                 '</nobr>',
             ]);
 
         $heads = [
             'Rusun',
             'Tower',
-            'Ukuran',
+            'Jenis',
             'Jumlah',
             ['label' => 'Aksi', 'no-export' => true, 'width' => 10],
         ];
         
         $config = [
             'data' => $rows,
-            'order' => [[1, 'asc']],
-            'columns' => [null, null, null, null, ['orderable' => false]],
+            // 'order' => [[1, 'asc']],
+            // 'columns' => [null, null, null, null, ['orderable' => false]],
         ];
 
         return view(self::FOLDER_VIEW . 'index', compact('title', 'subTitle', 'heads', 'config'));
@@ -69,10 +85,24 @@ class RusunUnitDetailController extends Controller
     public function create()
     {
         //
+        if (! $this->sessionUser->can('create', RusunUnitDetail::class)) {
+            return abort(403, "User does not have the right roles");
+        }
+
         $title = self::TITLE;
         $subTitle = 'Tambah Data';
 
-        $rusuns = \App\Models\Rusun::orderBy('nama', 'asc')->get();
+        $user = $this->sessionUser;
+
+        $rusuns = \App\Models\Rusun::orderBy('nama', 'asc')
+            ->when($user, function ($query, $user) {
+                if ($user->level == 'rusun') {
+                    $sessionData = session()->get('rusun');
+
+                    $query->where('id', $sessionData->id);
+                }
+            })
+            ->get();
 
         return view(self::FOLDER_VIEW . 'create', compact('title', 'subTitle', 'rusuns'));
     }
@@ -120,11 +150,11 @@ class RusunUnitDetailController extends Controller
         $title = self::TITLE;
         $subTitle = 'Detail Data';
 
-        $row = RusunUnitDetail::with([
-                'rusuns',
-                'rusun_details',
-            ])
-            ->findOrFail($id);
+        $row = RusunUnitDetail::findOrFail($id);
+
+        if (! $this->sessionUser->can('view', $row)) {
+            return abort(403, "User does not have the right roles");
+        }
 
         $row->foto = $row->foto ? asset('storage/' . self::FOLDER_FOTO . '/' . $row->foto) : NULL;
 
@@ -143,13 +173,23 @@ class RusunUnitDetailController extends Controller
         $title = self::TITLE;
         $subTitle = 'Edit Data';
 
-        $rusuns = \App\Models\Rusun::orderBy('nama', 'asc')->get();
+        $user = $this->sessionUser;
 
-        $row = RusunUnitDetail::with([
-                'rusuns',
-                'rusun_details',
-            ])
-            ->findOrFail($id);
+        $rusuns = \App\Models\Rusun::orderBy('nama', 'asc')
+            ->when($user, function ($query, $user) {
+                if ($user->level == 'rusun') {
+                    $sessionData = session()->get('rusun');
+
+                    $query->where('id', $sessionData->id);
+                }
+            })
+            ->get();
+
+        $row = RusunUnitDetail::findOrFail($id);
+
+        if (! $this->sessionUser->can('update', $row)) {
+            return abort(403, "User does not have the right roles");
+        }
 
         return view(self::FOLDER_VIEW . 'edit', compact('title', 'subTitle', 'row', 'rusuns'));
     }
@@ -206,7 +246,13 @@ class RusunUnitDetailController extends Controller
     public function destroy($id)
     {
         //
-        RusunUnitDetail::findOrFail($id)->delete();
+        $row = RusunUnitDetail::findOrFail($id);
+
+        if (! $this->sessionUser->can('delete', $row)) {
+            return abort(403, "User does not have the right roles");
+        }
+        
+        $row->delete();
 
         return response()->json('Success');
     }

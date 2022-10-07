@@ -6,6 +6,8 @@
     <h1>
         {{$title}}
         <a href="{{route('pengelola.index')}}" class="btn btn-xs btn-dark"> <i class="fa fa-arrow-left"></i> Kembali </a>
+        <a href="{{route('pengelola.edit', $row->id)}}" class="btn btn-xs btn-warning"> <i class="fa fa-pencil-alt"></i> Edit </a>
+
         <div class="btn-group">
             <button type="button" class="btn btn-xs btn-primary"><i class="fa fa-plus"></i> Tambah</button>
             <button type="button" class="btn btn-xs btn-primary dropdown-toggle dropdown-icon" data-toggle="dropdown" aria-expanded="false">
@@ -37,8 +39,8 @@
             <strong><i class="fas fa-map-marker-alt mr-1"></i> Alamat</strong>
             <p class="text-muted">
                 {{$row->alamat}} <br>
-                {{$row->kecamatans->name}}, {{$row->desas->name ?? NULL}} <br>
-                {{$row->kotas->name}}, {{$row->provinces->name}}
+                {{-- {{$row->kecamatans->name}}, {{$row->desas->name ?? NULL}} <br>
+                {{$row->kotas->name}}, {{$row->provinces->name}} --}}
             </p>
 
             <strong><i class="fas fa-phone mr-1"></i> Telp</strong>

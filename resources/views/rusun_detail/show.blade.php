@@ -78,7 +78,7 @@
                 <div class="tab-pane fade show active" id="product-desc" role="tabpanel" aria-labelledby="product-desc-tab">
                     <x-adminlte-datatable id="tableUnit" :heads="[
                             'Tower',
-                            'Ukuran',
+                            'Jenis',
                             'Jumlah',
                             'Keterangan',
                             ['label' => 'Aksi', 'no-export' => true, 'width' => 15],
@@ -86,13 +86,13 @@
                             @foreach($row->rusun_unit_details as $rusun_unit_detail)
                                 <tr>
                                     <td>{{$rusun_unit_detail->rusun_details->nama_tower}}</td>
-                                    <td>{{$rusun_unit_detail->ukuran}}</td>
+                                    <td>{{$rusun_unit_detail->jenis}}</td>
                                     <td>{{$rusun_unit_detail->jumlah}}</td>
                                     <td>{{$rusun_unit_detail->keterangan}}</td>
                                     <td>
                                         <a href="{{route('rusun-unit-detail.show', $rusun_unit_detail->id)}}?rusun_id={{$row->rusun_id}}" class="btn btn-success btn-xs" title="Show"><i class="fas fa-eye"></i> Detail</a>
                                         <a href="{{route('rusun-unit-detail.edit', $rusun_unit_detail->id)}}?rusun_id={{$row->rusun_id}}" class="btn btn-info btn-xs" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a>
-                                        <button type="button" class="btn btn-danger btn-xs btnDeleteUnit" value="{{$rusun_unit_detail->id}}" id="{{route('rusun-unit-detail.destroy', $rusun_unit_detail->id)}}"><i class="fas fa-trash"></i> Hapus</button>                
+                                        <!-- <button type="button" class="btn btn-danger btn-xs btnDeleteUnit" value="{{$rusun_unit_detail->id}}" id="{{route('rusun-unit-detail.destroy', $rusun_unit_detail->id)}}"><i class="fas fa-trash"></i> Hapus</button>                 -->
                                     </td>
                                 </tr>
                             @endforeach

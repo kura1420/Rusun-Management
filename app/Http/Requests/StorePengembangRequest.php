@@ -31,10 +31,10 @@ class StorePengembangRequest extends FormRequest
             'email' => 'nullable|string|max:255|email|unique:pengembangs',
             'website' => 'nullable|string|max:255|url',
             'keterangan' => 'nullable|string',
-            'province_id' => 'required|string',
-            'regencie_id' => 'required|string',
-            'district_id' => 'nullable|string',
-            'village_id' => 'nullable|string',
+            // 'province_id' => 'required|string',
+            // 'regencie_id' => 'required|string',
+            // 'district_id' => 'nullable|string',
+            // 'village_id' => 'nullable|string',
         ];
     }
 

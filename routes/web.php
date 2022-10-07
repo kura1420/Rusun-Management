@@ -54,6 +54,10 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index']);
 
 Route::get('/verify/{id}/{token}', function (Request $request) {
+    if (auth()->check()) {
+        return abort(404);
+    }
+
     $user = \App\Models\User::where([
         ['id', $request->id],
         ['remember_token', $request->token]

@@ -13,4 +13,9 @@ class ApiManagement extends Model
     public $incrementing = false;
 
     protected $guarded = [];
+
+    public function getReffTextAttribute()
+    {
+        return \App\Models\Rusun::where('id', $this->reff_id)->first()->nama;
+    }
 }

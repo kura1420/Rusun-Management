@@ -13,7 +13,7 @@ class StoreApiManagementRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return auth()->check();
     }
 
     /**
@@ -25,6 +25,19 @@ class StoreApiManagementRequest extends FormRequest
     {
         return [
             //
+            'table' => 'required|string|max:100',
+            'reff_id' => 'required|string|max:100',
+            'keterangan' => 'nullable|string',
+            'username' => 'required|string|max:255',
+            'password' => 'required|string|max:255',
+            'endpoint' => 'required|string|max:255|url',
+        ];
+    }
+
+    public function attributes()
+    {
+        return [
+            'reff_id' => 'rusun',
         ];
     }
 }

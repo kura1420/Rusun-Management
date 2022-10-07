@@ -15,6 +15,16 @@ class RusunOutstandingPenghuni extends Model
 
     protected $guarded = [];
 
+    public function getPemilikPenghuniTextAttribute()
+    {
+        if ($this->adalah_pemilik) {
+            return \App\Models\Pemilik::where('id', $this->pemilik_penghuni_id)->first()->nama;
+        } else {
+            return \App\Models\RusunPenghuni::where('id', $this->pemilik_penghuni_id)->first()->nama;
+        }
+        
+    }
+
     public function getTotalFormatAttribute()
     {
         return Formatter::rupiah($this->total);

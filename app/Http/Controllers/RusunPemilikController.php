@@ -24,18 +24,12 @@ class RusunPemilikController extends Controller
         $title = self::TITLE;
         $subTitle = 'List Data';
 
-        $rows = RusunPemilik::with([
-                'rusuns',
-                'rusun_details',
-                'rusun_unit_details',
-                'pemiliks',
-            ])
-            ->orderBy('created_at')
+        $rows = RusunPemilik::orderBy('created_at')
             ->get()
             ->map(fn($row) => [
                 $row->rusuns->nama,
                 $row->rusun_details->nama_tower ?? NULL,
-                $row->rusun_unit_details->ukuran ?? NULL,
+                $row->rusun_unit_details->jenis ?? NULL,
                 $row->pemiliks->nama ?? NULL,
                 $row->pemiliks->telp ?? NULL,
                 $row->pemiliks->email ?? NULL,
@@ -56,8 +50,8 @@ class RusunPemilikController extends Controller
         
         $config = [
             'data' => $rows,
-            'order' => [[1, 'asc']],
-            'columns' => [null, null, null, null, null, null, ['orderable' => false]],
+            // 'order' => [[1, 'asc']],
+            // 'columns' => [null, null, null, null, null, null, ['orderable' => false]],
         ];
 
         return view(self::FOLDER_VIEW . 'index', compact('title', 'subTitle', 'heads', 'config'));

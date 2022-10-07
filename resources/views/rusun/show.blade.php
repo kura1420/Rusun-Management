@@ -14,8 +14,8 @@
                 <span class="sr-only">Toggle Dropdown</span>
             </button>
             <div class="dropdown-menu" role="menu">
-                <a class="dropdown-item" href="{{route('rusun-detail.create')}}?rusun_id={{$row->id}}">Detail</a>
-                <a class="dropdown-item" href="{{route('rusun-unit-detail.create')}}?rusun_id={{$row->id}}">Unit</a>
+                {{-- <a class="dropdown-item" href="{{route('rusun-detail.create')}}?rusun_id={{$row->id}}">Detail</a> --}}
+                {{-- <a class="dropdown-item" href="{{route('rusun-unit-detail.create')}}?rusun_id={{$row->id}}">Unit</a> --}}
                 <a class="dropdown-item" href="{{route('rusun-fasilitas.create')}}?rusun_id={{$row->id}}">Fasilitas</a>
             </div>
         </div>
@@ -147,6 +147,7 @@
                 <div class="tab-pane fade" id="product-comments" role="tabpanel" aria-labelledby="product-comments-tab">
                     <x-adminlte-datatable id="tableUnit" :heads="[
                             'Tower',
+                            'Jenis',
                             'Ukuran',
                             'Jumlah',
                             'Keterangan',
@@ -155,6 +156,7 @@
                             @foreach($row->rusun_unit_details as $rusun_unit_detail)
                                 <tr>
                                     <td>{{$rusun_unit_detail->rusun_details->nama_tower}}</td>
+                                    <td>{{$rusun_unit_detail->jenis}}</td>
                                     <td>{{$rusun_unit_detail->ukuran}}</td>
                                     <td>{{$rusun_unit_detail->jumlah}}</td>
                                     <td>{{$rusun_unit_detail->keterangan}}</td>
@@ -250,9 +252,9 @@
                         ]">
                             @foreach($row->rusun_outstanding_penghunis as $rusun_outstanding_penghuni)
                                 <tr>
-                                    <td>{{$rusun_outstanding_penghuni->pemilik_penghuni_id}}</td>
-                                    <td>{{$rusun_outstanding_penghuni->rusun_detail_id}}</td>
-                                    <td>{{$rusun_outstanding_penghuni->rusun_unit_detail_id}}</td>
+                                    <td>{{$rusun_outstanding_penghuni->pemilik_penghuni_text}}</td>
+                                    <td>{{$rusun_outstanding_penghuni->rusun_details->nama_tower}}</td>
+                                    <td>{{$rusun_outstanding_penghuni->rusun_unit_details->jenis ?? '-'}}</td>
                                     <td>{{$rusun_outstanding_penghuni->total_format}}</td>
                                 </tr>
                             @endforeach

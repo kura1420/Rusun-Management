@@ -15,6 +15,17 @@ class RusunFasilitasController extends Controller
     const FOLDER_FOTO = 'rusun_fasilitas/foto';
     const URL = 'rusun-fasilitas.';
 
+    protected $sessionUser;
+
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            $this->sessionUser = auth()->user();
+
+            return $next($request);
+        });
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -26,7 +37,16 @@ class RusunFasilitasController extends Controller
         $title = self::TITLE;
         $subTitle = 'List Data';
 
+        $user = $this->sessionUser;
+
         $rows = RusunFasilitas::orderBy('created_at')
+            ->when($user, function ($query, $user) {
+                if ($user->level == 'rusun') {
+                    $sessionData = session()->get('rusun');
+
+                    $query->where('rusun_id', $sessionData->id);
+                }
+            })
             ->get()
             ->map(fn($row) => [
                 $row->rusuns->nama,
@@ -52,8 +72,8 @@ class RusunFasilitasController extends Controller
         
         $config = [
             'data' => $rows,
-            'order' => [[1, 'asc']],
-            'columns' => [null, null, null, null, null, ['orderable' => false]],
+            // 'order' => [[1, 'asc']],
+            // 'columns' => [null, null, null, null, null, ['orderable' => false]],
         ];
 
         return view(self::FOLDER_VIEW . 'index', compact('title', 'subTitle', 'heads', 'config'));
@@ -67,10 +87,25 @@ class RusunFasilitasController extends Controller
     public function create()
     {
         //
+        if (! $this->sessionUser->can('create', RusunFasilitas::class)) {
+            return abort(403, "User does not have the right roles");
+        }
+
         $title = self::TITLE;
         $subTitle = 'Tambah Data';
 
-        $rusuns = \App\Models\Rusun::orderBy('nama', 'asc')->get();
+        $user = $this->sessionUser;
+
+        $rusuns = \App\Models\Rusun::orderBy('nama', 'asc')
+            ->when($user, function ($query, $user) {
+                if ($user->level == 'rusun') {
+                    $sessionData = session()->get('rusun');
+
+                    $query->where('id', $sessionData->id);
+                }
+            })
+            ->get();
+
         $namas = RusunFasilitas::select('nama')->distinct()->orderBy('nama', 'asc')->get();
 
         return view(self::FOLDER_VIEW . 'create', compact('title', 'subTitle', 'rusuns', 'namas'));
@@ -121,6 +156,10 @@ class RusunFasilitasController extends Controller
 
         $row = RusunFasilitas::findOrFail($id);
 
+        if (! $this->sessionUser->can('view', $row)) {
+            return abort(403, "User does not have the right roles");
+        }
+
         return view(self::FOLDER_VIEW . 'show', compact('title', 'subTitle', 'row',));
     }
 
@@ -136,10 +175,25 @@ class RusunFasilitasController extends Controller
         $title = self::TITLE;
         $subTitle = 'Edit Data';
 
-        $rusuns = \App\Models\Rusun::orderBy('nama', 'asc')->get();
+        $user = $this->sessionUser;
+
+        $rusuns = \App\Models\Rusun::orderBy('nama', 'asc')
+            ->when($user, function ($query, $user) {
+                if ($user->level == 'rusun') {
+                    $sessionData = session()->get('rusun');
+
+                    $query->where('id', $sessionData->id);
+                }
+            })
+            ->get();
+            
         $namas = RusunFasilitas::select('nama')->distinct()->orderBy('nama', 'asc')->get();
 
         $row = RusunFasilitas::findOrFail($id);
+
+        if (! $this->sessionUser->can('update', $row)) {
+            return abort(403, "User does not have the right roles");
+        }
 
         return view(self::FOLDER_VIEW . 'edit', compact('title', 'subTitle', 'row', 'rusuns', 'namas'));
     }
@@ -196,7 +250,13 @@ class RusunFasilitasController extends Controller
     public function destroy($id)
     {
         //
-        RusunFasilitas::findOrFail($id)->delete();
+        $row = RusunFasilitas::findOrFail($id);
+
+        if (! $this->sessionUser->can('delete', $row)) {
+            return abort(403, "User does not have the right roles");
+        }
+        
+        $row->delete();
 
         return response()->json('Success');
     }

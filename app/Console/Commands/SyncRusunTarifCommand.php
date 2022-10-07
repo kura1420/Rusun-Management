@@ -10,21 +10,21 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-class RusunTarifSyncCommand extends Command
+class SyncRusunTarifCommand extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'rusun:tarifSync';
+    protected $signature = 'sync:rusuntarif';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Rusun Tarif Sync';
+    protected $description = 'Auto Sync Rusun Tarif with API Manage';
 
     /**
      * Create a new command instance.
@@ -49,30 +49,32 @@ class RusunTarifSyncCommand extends Command
             foreach ($rows as $row) {
                 $res = ApiService::run($row, 'GET', NULL);
 
-                $object = $res->object();
+                if ($res->ok()) {
+                    $object = $res->object();
 
-                DB::transaction(function () use ($object, $row) {
-                    foreach ($object as $key => $value) {
-                        RusunTarif::updateOrCreate(
-                            [
-                                'rusun_id' => $row->reff_id,
-                            ],
-                            [
-                                'item' => $value->item,
-                                'tarif' => $value->tarif,
-                            ]
-                        );
-                    }
-                });
+                    DB::transaction(function () use ($object, $row) {
+                        foreach ($object as $key => $value) {
+                            RusunTarif::updateOrCreate(
+                                [
+                                    'rusun_id' => $row->reff_id,
+                                    'item' => $value->item,
+                                ],
+                                [
+                                    'tarif' => $value->tarif,
+                                ]
+                            );
+                        }
 
-                $row->update([
-                    'last_sync' => Carbon::now(),
-                ]);
+                        $row->update([
+                            'last_sync' => Carbon::now(),
+                        ]);
+                    });
+                }
             }
 
             $this->info('Done...');
         } catch (\Exception $e) {
-            Log::error('RusunTarifSyncCommand: ' . $e->getMessage());
+            Log::error('SyncRusunTarifCommand: ' . $e->getMessage());
             
             $this->error($e->getMessage());
         }

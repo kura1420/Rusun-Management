@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Notifications\UserVerifiedNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -96,13 +97,16 @@ class UserRusunController extends Controller
         ])->validate();
 
         DB::transaction(function () use ($request) {
+            $token = md5(uniqid());
+
             $user = User::create([
                 'name' => $request->name,
                 'username' => strtolower($request->username),
                 'email' => strtolower($request->email),
                 'password' => Hash::make($request->password),
-                'active' => 1,
+                'active' => 0,
                 'level' => 'rusun',
+                'remember_token' => $token,
             ]);
 
             $user->user_mapping()
@@ -111,7 +115,9 @@ class UserRusunController extends Controller
                     'reff_id' => $request->rusun,
                 ]);
 
-            // event(new UserVerifiedNotification($user));
+            $user->assignRole('Rusun');
+
+            $user->notify(new UserVerifiedNotification($token));
         });
 
         return redirect()

@@ -37,8 +37,9 @@
                 @endfor
             </x-adminlte-select2> --}}
 
-            <x-adminlte-text-editor name="penjelasan" id="penjelasan" fgroup-class="col-md-12" :config="[
+            <x-adminlte-text-editor name="penjelasan" id="penjelasan" label="Penjelasan" fgroup-class="col-md-12" :config="[
                 'height' => '300',
+                'placeholder' => 'Penjelasan'
             ]">
                 {{$row->penjelasan}}
             </x-adminlte-text-editor>

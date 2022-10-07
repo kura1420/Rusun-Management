@@ -28,23 +28,21 @@ class P3srsKegiatanController extends Controller
             ->get()
             ->map(fn($row) => [
                 $row->nama,
-                $row->keterangan,
                 '<nobr>' . 
                     '<a href="'.route(self::URL .'edit', $row->id).'" class="btn btn-info btn-sm" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a> ' .
-                    '<button type="button" class="btn btn-danger btn-sm btnDelete" value="'.$row->id.'" id="'.route(self::URL . 'destroy', $row->id).'"><i class="fas fa-trash"></i> Hapus</button>' . 
+                    // '<button type="button" class="btn btn-danger btn-sm btnDelete" value="'.$row->id.'" id="'.route(self::URL . 'destroy', $row->id).'"><i class="fas fa-trash"></i> Hapus</button>' . 
                 '</nobr>',
             ]);
 
         $heads = [
             'Nama',
-            'Keterangan',
             ['label' => 'Aksi', 'no-export' => true, 'width' => 5],
         ];
         
         $config = [
             'data' => $rows,
-            'order' => [[1, 'asc']],
-            'columns' => [null, null, ['orderable' => false]],
+            // 'order' => [[1, 'asc']],
+            // 'columns' => [null, null, ['orderable' => false]],
         ];
 
         return view(self::FOLDER_VIEW . 'index', compact('title', 'subTitle', 'heads', 'config'));
@@ -74,6 +72,8 @@ class P3srsKegiatanController extends Controller
     {
         //
         $input = $request->all();
+
+        unset($input['files']);
 
         P3srsKegiatan::create($input);
 
@@ -121,6 +121,8 @@ class P3srsKegiatanController extends Controller
     {
         //
         $input = $request->all();
+
+        unset($input['files']);
 
         $p3srsKegiatan->update($input);
 

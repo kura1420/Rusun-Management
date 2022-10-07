@@ -37,7 +37,7 @@
 
                     <li class="list-group-item"><b>Rusun</b> <a class="float-right">{{$row->rusuns->nama}}</a></li>
                     <li class="list-group-item"><b>Tower</b> <a class="float-right">{{$row->rusun_details->nama_tower}}</a></li>
-                    <li class="list-group-item"><b>Unit Ukuran</b> <a class="float-right">{{$row->rusun_unit_details->ukuran}}</a></li>
+                    <li class="list-group-item"><b>Unit</b> <a class="float-right">{{$row->rusun_unit_details->jenis}}</a></li>
                     <li class="list-group-item"><b>Status</b> <a class="float-right">{{$row->status_label}}</a></li>
                     
                     <li class="list-group-item">

@@ -21,7 +21,7 @@
     <div class="row">
         <x-adminlte-input name="nama" id="nama" label="Nama" placeholder="Nama" fgroup-class="col-md-6" value="{{$row->nama}}" />
 
-        <x-adminlte-select2 name="province_id" id="province_id" label="Provinsi" fgroup-class="col-md-6">
+        {{-- <x-adminlte-select2 name="province_id" id="province_id" label="Provinsi" fgroup-class="col-md-6">
             @if($row->provinces)
             <option value="{{$row->provinces->id}}">{{$row->provinces->name}}</option>
             @endif
@@ -43,7 +43,7 @@
             @if($row->desas)
             <option value="{{$row->desas->id}}">{{$row->desas->name}}</option>
             @endif
-        </x-adminlte-select2>
+        </x-adminlte-select2> --}}
 
         <x-adminlte-input name="alamat" id="alamat" label="Alamat" placeholder="Alamat" fgroup-class="col-md-6" value="{{$row->alamat}}" />
         <x-adminlte-input name="telp" id="telp" label="Telp" placeholder="Telp" fgroup-class="col-md-6" value="{{$row->telp}}" />

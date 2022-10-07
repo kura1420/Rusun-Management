@@ -16,6 +16,9 @@ class AuthServiceProvider extends ServiceProvider
         \App\Models\Pengembang::class => \App\Policies\PengembangPolicy::class,
         \App\Models\Pengelola::class => \App\Policies\PengelolaPolicy::class,
         \App\Models\Rusun::class => \App\Policies\RusunPolicy::class,
+        \App\Models\RusunDetail::class => \App\Policies\RusunDetailPolicy::class,
+        \App\Models\RusunUnitDetail::class => \App\Policies\RusunUnitDetailPolicy::class,
+        \App\Models\RusunFasilitas::class => \App\Policies\RusunFasilitasPolicy::class,
         \App\Models\RusunPenghuni::class => \App\Policies\RusunPenghuniPolicy::class,
         \App\Models\Pemilik::class => \App\Policies\PemilikPolicy::class,
     ];

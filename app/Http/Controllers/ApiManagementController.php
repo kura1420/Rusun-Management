@@ -29,7 +29,8 @@ class ApiManagementController extends Controller
         $rows = ApiManagement::orderBy('created_at')
             ->get()
             ->map(fn($row) => [
-                $row->keterangan,
+                $row->reff_text,
+                $this->getTableTextAttribute($row->table),
                 $row->username,
                 $row->password,
                 $row->last_sync,
@@ -41,7 +42,8 @@ class ApiManagementController extends Controller
             ]);
 
         $heads = [
-            'Keterangan',
+            'Rusun',
+            'Data Singkronisasi',
             'Username',
             'Password',
             'Last Sync',
@@ -50,8 +52,8 @@ class ApiManagementController extends Controller
         
         $config = [
             'data' => $rows,
-            'order' => [[1, 'asc']],
-            'columns' => [null, null, null, null, ['orderable' => false]],
+            // 'order' => [[1, 'asc']],
+            // 'columns' => [null, null, null, null, ['orderable' => false]],
         ];
 
         return view(self::FOLDER_VIEW . 'index', compact('title', 'subTitle', 'heads', 'config'));
@@ -65,7 +67,12 @@ class ApiManagementController extends Controller
     public function create()
     {
         //
-        return abort(404);
+        $title = self::TITLE;
+        $subTitle = 'Tambah Data';
+
+        $rusuns = \App\Models\Rusun::orderBy('nama', 'asc')->get();
+
+        return view(self::FOLDER_VIEW . 'create', compact('title', 'subTitle', 'rusuns'));
     }
 
     /**
@@ -77,6 +84,13 @@ class ApiManagementController extends Controller
     public function store(StoreApiManagementRequest $request)
     {
         //
+        $input = $request->all();
+
+        ApiManagement::create($input);
+
+        return redirect()
+            ->route(self::URL . 'index')
+            ->with('success', 'Tambah data berhasil...');
     }
 
     /**
@@ -105,7 +119,9 @@ class ApiManagementController extends Controller
 
         $row = ApiManagement::findOrFail($id);
 
-        return view(self::FOLDER_VIEW . 'edit', compact('title', 'subTitle', 'row'));
+        $rusuns = \App\Models\Rusun::orderBy('nama', 'asc')->get();
+
+        return view(self::FOLDER_VIEW . 'edit', compact('title', 'subTitle', 'row', 'rusuns'));
     }
 
     /**
@@ -135,10 +151,10 @@ class ApiManagementController extends Controller
      * @param  \App\Models\ApiManagement  $apiManagement
      * @return \Illuminate\Http\Response
      */
-    public function destroy(ApiManagement $apiManagement)
+    public function destroy($id)
     {
         //
-        $apiManagement->delete();
+        ApiManagement::findOrFail($id)->delete();
 
         return response()->json('Success');
     }
@@ -150,5 +166,34 @@ class ApiManagementController extends Controller
         $res = ApiService::run($row, 'GET', NULL);
 
         return $res->object();
+    }
+
+    protected function getTableTextAttribute($table)
+    {
+        switch ($table) {
+            case 'rusun_details':
+                return 'Tower';
+                break;
+
+            case 'rusun_tarifs':
+                return 'Tarif';
+                break;
+
+            case 'rusun_outstanding_penghunis':
+                return 'Outstanding Penghuni';
+                break;
+
+            case 'rusun_pemiliks':
+                return 'Pemilik';
+                break;
+
+            case 'rusun_penghunis':
+                return 'Penghuni';
+                break;
+            
+            default:
+                return 'No Defined';
+                break;
+        }
     }
 }

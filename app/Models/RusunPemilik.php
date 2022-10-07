@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\Uuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class RusunPemilik extends Model
 {
-    use HasFactory;
+    use HasFactory, Uuid;
 
     public $incrementing = false;
 

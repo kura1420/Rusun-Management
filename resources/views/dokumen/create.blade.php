@@ -28,8 +28,9 @@
                 <option value="penghuni" {{old('kepada') == 'penghuni' ? 'selected' : ''}}>Penghuni</option>
             </x-adminlte-select>
 
-            <x-adminlte-text-editor name="keterangan" id="keterangan" fgroup-class="col-md-12" :config="[
+            <x-adminlte-text-editor name="keterangan" id="keterangan" label="Keterangan" fgroup-class="col-md-12" :config="[
                 'height' => '300',
+                'placeholder' => 'Keterangan'
             ]">
                 {{old('keterangan')}}
             </x-adminlte-text-editor>
