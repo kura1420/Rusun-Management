@@ -16,6 +16,17 @@ class PengelolaDokumenController extends Controller
     const FOLDER_FILE = 'pengelola/dokumen';
     const URL = 'pengelola-dokumen.';
 
+    protected $sessionUser;
+
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            $this->sessionUser = auth()->user();
+
+            return $next($request);
+        });
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -27,7 +38,16 @@ class PengelolaDokumenController extends Controller
         $title = self::TITLE;
         $subTitle = 'List Data';
 
+        $user = $this->sessionUser;
+
         $rows = PengelolaDokumen::orderBy('created_at')
+            ->when($user, function ($query, $user) {
+                if ($user->level == 'pengelola') {
+                    $sessionData = session()->get('pengelola');
+
+                    $query->where('pengelola_id', $sessionData->id);
+                }
+            })
             ->get()
             ->map(fn($row) => [
                 $row->pengelolas->nama,
@@ -66,6 +86,10 @@ class PengelolaDokumenController extends Controller
     public function create(Request $request)
     {
         //
+        if (! $this->sessionUser->can('create', PengelolaDokumen::class)) {
+            return abort(403, "User does not have the right roles");
+        }
+
         $title = self::TITLE;
         $subTitle = 'Tambah Data';
 
@@ -137,6 +161,10 @@ class PengelolaDokumenController extends Controller
         
         $row = PengelolaDokumen::findOrFail($id);
 
+        if (! $this->sessionUser->can('view', $row)) {
+            return abort(403, "User does not have the right roles");
+        }
+
         return view(self::FOLDER_VIEW . 'show', compact('title', 'subTitle', 'row'));
     }
 
@@ -163,6 +191,10 @@ class PengelolaDokumenController extends Controller
         $pengelolas = \App\Models\Pengelola::orderBy('nama', 'asc')->get();
 
         $row = PengelolaDokumen::findOrFail($id);
+
+        if (! $this->sessionUser->can('update', $row)) {
+            return abort(403, "User does not have the right roles");
+        }
 
         return view(self::FOLDER_VIEW . 'edit', compact('title', 'subTitle', 'row', 'rusunPengelolas', 'dokumens', 'pengelolas', 'pengelola_id'));
     }
@@ -225,6 +257,10 @@ class PengelolaDokumenController extends Controller
     {
         //
         $row = PengelolaDokumen::findOrFail($id);
+
+        if (! $this->sessionUser->can('delete', $row)) {
+            return abort(403, "User does not have the right roles");
+        }
         
         if ($row->file) {
             Storage::delete(self::FOLDER_FILE . '/' . $row->file);

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Notifications\UserVerifiedNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -96,13 +97,16 @@ class UserPengelolaController extends Controller
         ])->validate();
 
         DB::transaction(function () use ($request) {
+            $token = md5(uniqid());
+
             $user = User::create([
                 'name' => $request->name,
                 'username' => strtolower($request->username),
                 'email' => strtolower($request->email),
                 'password' => Hash::make($request->password),
-                'active' => 1,
+                'active' => 0,
                 'level' => 'pengelola',
+                'remember_token' => $token,
             ]);
 
             $user->user_mapping()
@@ -111,7 +115,9 @@ class UserPengelolaController extends Controller
                     'reff_id' => $request->pengelola,
                 ]);
 
-            // event(new UserVerifiedNotification($user));
+            $user->assignRole('Pengelola');
+                
+            $user->notify(new UserVerifiedNotification($token));
         });
 
         return redirect()

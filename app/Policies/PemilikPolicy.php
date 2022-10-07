@@ -31,6 +31,17 @@ class PemilikPolicy
     public function view(User $user, Pemilik $pemilik)
     {
         //
+        if ($user->hasRole('Root') || $user->hasRole('Admin') || $user->hasRole('Pemda')) {
+            return TRUE;
+        }
+
+        if ($user->level == 'pemilik') {
+            $sessionData = session()->get('pemilik');
+
+            if ($sessionData->id == $pemilik->id) {
+                return TRUE;
+            }
+        }
     }
 
     /**
@@ -77,6 +88,7 @@ class PemilikPolicy
     public function delete(User $user, Pemilik $pemilik)
     {
         //
+        return $user->hasRole('Root');
     }
 
     /**

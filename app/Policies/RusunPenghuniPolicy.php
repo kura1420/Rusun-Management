@@ -31,6 +31,17 @@ class RusunPenghuniPolicy
     public function view(User $user, RusunPenghuni $rusunPenghuni)
     {
         //
+        if ($user->hasRole('Root') || $user->hasRole('Admin') || $user->hasRole('Pemda')) {
+            return TRUE;
+        }
+
+        if ($user->level == 'rusun_penghuni') {
+            $sessionData = session()->get('rusun_penghuni');
+
+            if ($sessionData->id == $rusunPenghuni->id) {
+                return TRUE;
+            }
+        }
     }
 
     /**
@@ -77,6 +88,7 @@ class RusunPenghuniPolicy
     public function delete(User $user, RusunPenghuni $rusunPenghuni)
     {
         //
+        return $user->hasRole('Root');
     }
 
     /**

@@ -13,6 +13,17 @@ class PengelolaController extends Controller
     const FOLDER_VIEW = 'pengelola.';
     const URL = 'pengelola.';
 
+    protected $sessionUser;
+
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            $this->sessionUser = auth()->user();
+
+            return $next($request);
+        });
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -24,7 +35,16 @@ class PengelolaController extends Controller
         $title = self::TITLE;
         $subTitle = 'List Data';
 
+        $user = $this->sessionUser;
+
         $rows = Pengelola::orderBy('created_at')
+            ->when($user, function ($query, $user) {
+                if ($user->level == 'pengelola') {
+                    $sessionData = session()->get('pengelola');
+
+                    $query->where('id', $sessionData->id);
+                }
+            })
             ->get()
             ->map(fn($row) => [
                 $row->nama,
@@ -61,6 +81,10 @@ class PengelolaController extends Controller
     public function create()
     {
         //
+        if (! $this->sessionUser->can('create', Pengelola::class)) {
+            return abort(403, "User does not have the right roles");
+        }
+
         $title = self::TITLE;
         $subTitle = 'Tambah Data';
 
@@ -102,6 +126,10 @@ class PengelolaController extends Controller
             return $pengelola_dokumen;
         });
 
+        if (! $this->sessionUser->can('view', $row)) {
+            return abort(403, "User does not have the right roles");
+        }
+
         return view(self::FOLDER_VIEW . 'show', compact('title', 'subTitle', 'row'));
     }
 
@@ -118,6 +146,10 @@ class PengelolaController extends Controller
         $subTitle = 'Edit Data';
 
         $row = Pengelola::findOrFail($id);
+
+        if (! $this->sessionUser->can('update', $row)) {
+            return abort(403, "User does not have the right roles");
+        }
 
         return view(self::FOLDER_VIEW . 'edit', compact('title', 'subTitle', 'row'));
     }
@@ -146,7 +178,13 @@ class PengelolaController extends Controller
     public function destroy($id)
     {
         //
-        Pengelola::findOrFail($id)->delete();
+        $row = Pengelola::findOrFail($id);
+
+        if (! $this->sessionUser->can('delete', $row)) {
+            return abort(403, "User does not have the right roles");
+        }
+
+        $row->delete();
 
         return response()->json('Success');
     }

@@ -16,6 +16,17 @@ class PemilikController extends Controller
     const FOLDER_DOKUMEN = 'pemilik/dokumen';
     const URL = 'pemilik.';
 
+    protected $sessionUser;
+
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            $this->sessionUser = auth()->user();
+
+            return $next($request);
+        });
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -27,7 +38,16 @@ class PemilikController extends Controller
         $title = self::TITLE;
         $subTitle = 'List Data';
 
+        $user = $this->sessionUser;
+
         $rows = Pemilik::orderBy('updated_at', 'desc')
+            ->when($user, function ($query, $user) {
+                if ($user->level == 'pemilik') {
+                    $sessionData = session()->get('pemilik');
+
+                    $query->where('id', $sessionData->id);
+                }
+            })
             ->get()
             ->map(fn($row) => [
                 $row->nama,
@@ -108,6 +128,10 @@ class PemilikController extends Controller
             'rusun_pembayaran_ipls',
         ])->findOrFail($id);
 
+        if (! $this->sessionUser->can('view', $row)) {
+            return abort(403, "User does not have the right roles");
+        }
+
         $row->rusun_pemiliks = $row->rusun_pemiliks->map(function ($rusun_pemilik) {
             $rusun_pemilik->rusuns = $rusun_pemilik->rusuns()->first();
             $rusun_pemilik->rusun_details = $rusun_pemilik->rusun_details()->first();
@@ -160,6 +184,10 @@ class PemilikController extends Controller
 
         $row = $pemilik;
 
+        if (! $this->sessionUser->can('update', $row)) {
+            return abort(403, "User does not have the right roles");
+        }
+
         return view(self::FOLDER_VIEW . 'edit', compact('title', 'subTitle', 'row',));
     }
 
@@ -209,6 +237,10 @@ class PemilikController extends Controller
     public function destroy(Pemilik $pemilik)
     {
         //
+        if (! $this->sessionUser->can('delete', $pemilik)) {
+            return abort(403, "User does not have the right roles");
+        }
+
         return abort(404);
     }
 

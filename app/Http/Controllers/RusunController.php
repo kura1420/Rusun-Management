@@ -17,6 +17,17 @@ class RusunController extends Controller
     const FOLDER_FOTO = 'rusun/foto';
     const URL = 'rusun.';
 
+    protected $sessionUser;
+
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            $this->sessionUser = auth()->user();
+
+            return $next($request);
+        });
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -28,7 +39,16 @@ class RusunController extends Controller
         $title = self::TITLE;
         $subTitle = 'List Data';
 
+        $user = $this->sessionUser;
+
         $rows = Rusun::orderBy('created_at')
+            ->when($user, function ($query, $user) {
+                if ($user->level == 'rusun') {
+                    $sessionData = session()->get('rusun');
+
+                    $query->where('id', $sessionData->id);
+                }
+            })
             ->get()
             ->map(fn($row) => [
                 $row->nama,
@@ -71,6 +91,10 @@ class RusunController extends Controller
     public function create()
     {
         //
+        if (! $this->sessionUser->can('create', Rusun::class)) {
+            return abort(403, "User does not have the right roles");
+        }
+
         $title = self::TITLE;
         $subTitle = 'Tambah Data';
 
@@ -267,6 +291,10 @@ class RusunController extends Controller
 
         $row = Rusun::findOrFail($id);
 
+        if (! $this->sessionUser->can('view', $row)) {
+            return abort(403, "User does not have the right roles");
+        }
+
         $row->foto_1 = $row->foto_1 ? asset('storage/' . self::FOLDER_FOTO . '/' . $row->foto_1) : NULL;
         $row->foto_2 = $row->foto_2 ? asset('storage/' . self::FOLDER_FOTO . '/' . $row->foto_2) : NULL;
         $row->foto_3 = $row->foto_3 ? asset('storage/' . self::FOLDER_FOTO . '/' . $row->foto_3) : NULL;
@@ -315,6 +343,10 @@ class RusunController extends Controller
         $subTitle = 'Edit Data';
 
         $row = Rusun::findOrFail($id);
+
+        if (! $this->sessionUser->can('update', $row)) {
+            return abort(403, "User does not have the right roles");
+        }
 
         $row->rusun_pengelolas = $row->rusun_pengelolas->map(function ($rusun_pengelola) {
             $pengelola = \App\Models\Pengelola::where('id', $rusun_pengelola->pengelola_id)->first();
@@ -586,7 +618,13 @@ class RusunController extends Controller
     public function destroy($id)
     {
         //
-        Rusun::findOrFail($id)->delete();
+        $row = Rusun::findOrFail($id);
+
+        if (! $this->sessionUser->can('delete', $row)) {
+            return abort(403, "User does not have the right roles");
+        }
+
+        $row->delete();
         
         return response()->json('Success');
     }

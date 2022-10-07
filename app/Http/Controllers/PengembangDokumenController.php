@@ -16,6 +16,17 @@ class PengembangDokumenController extends Controller
     const FOLDER_FILE = 'pengembang/dokumen';
     const URL = 'pengembang-dokumen.';
 
+    protected $sessionUser;
+
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            $this->sessionUser = auth()->user();
+
+            return $next($request);
+        });
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -27,7 +38,16 @@ class PengembangDokumenController extends Controller
         $title = self::TITLE;
         $subTitle = 'List Data';
 
+        $user = $this->sessionUser;
+
         $rows = PengembangDokumen::orderBy('created_at')
+            ->when($user, function ($query, $user) {
+                if ($user->level == 'pengembang') {
+                    $sessionData = session()->get('pengembang');
+
+                    $query->where('pengembang_id', $sessionData->id);
+                }
+            })
             ->get()
             ->map(fn($row) => [
                 $row->pengembangs->nama,
@@ -66,6 +86,10 @@ class PengembangDokumenController extends Controller
     public function create(Request $request)
     {
         //
+        if (! $this->sessionUser->can('create', PengembangDokumen::class)) {
+            return abort(403, "User does not have the right roles");
+        }
+
         $title = self::TITLE;
         $subTitle = 'Tambah Data';
 
@@ -137,6 +161,10 @@ class PengembangDokumenController extends Controller
         
         $row = PengembangDokumen::findOrFail($id);
 
+        if (! $this->sessionUser->can('view', $row)) {
+            return abort(403, "User does not have the right roles");
+        }
+
         return view(self::FOLDER_VIEW . 'show', compact('title', 'subTitle', 'row'));
     }
 
@@ -163,6 +191,10 @@ class PengembangDokumenController extends Controller
         $pengembangs = \App\Models\Pengembang::orderBy('nama', 'asc')->get();
         
         $row = PengembangDokumen::findOrFail($id);
+
+        if (! $this->sessionUser->can('update', $row)) {
+            return abort(403, "User does not have the right roles");
+        }
 
         return view(self::FOLDER_VIEW . 'edit', compact('title', 'subTitle', 'row', 'rusunPengelolas', 'dokumens', 'pengembangs', 'pengembang_id'));
     }
@@ -225,6 +257,10 @@ class PengembangDokumenController extends Controller
     {
         //
         $row = PengembangDokumen::findOrFail($id);
+
+        if (! $this->sessionUser->can('delete', $row)) {
+            return abort(403, "User does not have the right roles");
+        }
 
         if ($row->file) {
             Storage::delete(self::FOLDER_FILE . '/' . $row->file);

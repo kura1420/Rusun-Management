@@ -2,11 +2,11 @@
 
 namespace App\Policies;
 
-use App\Models\Pengembang;
+use App\Models\PengelolaDokumen;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class PengembangPolicy
+class PengelolaDokumenPolicy
 {
     use HandlesAuthorization;
 
@@ -25,20 +25,20 @@ class PengembangPolicy
      * Determine whether the user can view the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Pengembang  $pengembang
+     * @param  \App\Models\PengelolaDokumen  $pengelolaDokumen
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function view(User $user, Pengembang $pengembang)
+    public function view(User $user, PengelolaDokumen $pengelolaDokumen)
     {
         //
         if ($user->hasRole('Root') || $user->hasRole('Admin') || $user->hasRole('Pemda')) {
             return TRUE;
         }
 
-        if ($user->level == 'pengembang') {
-            $sessionData = session()->get('pengembang');
+        if ($user->level == 'pengelola') {
+            $sessionData = session()->get('pengelola');
 
-            if ($sessionData->id == $pengembang->id) {
+            if ($sessionData->id == $pengelolaDokumen->pengelola_id) {
                 return TRUE;
             }
         }
@@ -53,27 +53,27 @@ class PengembangPolicy
     public function create(User $user)
     {
         //
-        return $user->hasRole('Root') || $user->hasRole('Admin') || $user->hasRole('Pemda');
+        return $user->hasRole('Root') || $user->hasRole('Admin') || $user->hasRole('Pemda') || $user->hasRole('Pengelola');
     }
 
     /**
      * Determine whether the user can update the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Pengembang  $pengembang
+     * @param  \App\Models\PengelolaDokumen  $pengelolaDokumen
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function update(User $user, Pengembang $pengembang)
+    public function update(User $user, PengelolaDokumen $pengelolaDokumen)
     {
         //
         if ($user->hasRole('Root') || $user->hasRole('Admin') || $user->hasRole('Pemda')) {
             return TRUE;
         }
 
-        if ($user->level == 'pengembang') {
-            $sessionData = session()->get('pengembang');
+        if ($user->level == 'pengelola') {
+            $sessionData = session()->get('pengelola');
 
-            if ($sessionData->id == $pengembang->id) {
+            if ($sessionData->id == $pengelolaDokumen->pengelola_id) {
                 return TRUE;
             }
         }
@@ -83,10 +83,10 @@ class PengembangPolicy
      * Determine whether the user can delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Pengembang  $pengembang
+     * @param  \App\Models\PengelolaDokumen  $pengelolaDokumen
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function delete(User $user, Pengembang $pengembang)
+    public function delete(User $user, PengelolaDokumen $pengelolaDokumen)
     {
         //
         return $user->hasRole('Root');
@@ -96,10 +96,10 @@ class PengembangPolicy
      * Determine whether the user can restore the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Pengembang  $pengembang
+     * @param  \App\Models\PengelolaDokumen  $pengelolaDokumen
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function restore(User $user, Pengembang $pengembang)
+    public function restore(User $user, PengelolaDokumen $pengelolaDokumen)
     {
         //
     }
@@ -108,10 +108,10 @@ class PengembangPolicy
      * Determine whether the user can permanently delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Pengembang  $pengembang
+     * @param  \App\Models\PengelolaDokumen  $pengelolaDokumen
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function forceDelete(User $user, Pengembang $pengembang)
+    public function forceDelete(User $user, PengelolaDokumen $pengelolaDokumen)
     {
         //
     }

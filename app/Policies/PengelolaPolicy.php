@@ -31,6 +31,17 @@ class PengelolaPolicy
     public function view(User $user, Pengelola $pengelola)
     {
         //
+        if ($user->hasRole('Root') || $user->hasRole('Admin') || $user->hasRole('Pemda')) {
+            return TRUE;
+        }
+
+        if ($user->level == 'pengelola') {
+            $sessionData = session()->get('pengelola');
+
+            if ($sessionData->id == $pengelola->id) {
+                return TRUE;
+            }
+        }
     }
 
     /**
@@ -78,6 +89,7 @@ class PengelolaPolicy
     public function delete(User $user, Pengelola $pengelola)
     {
         //
+        return $user->hasRole('Root');
     }
 
     /**

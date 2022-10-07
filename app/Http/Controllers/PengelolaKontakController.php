@@ -14,6 +14,17 @@ class PengelolaKontakController extends Controller
     const FOLDER_VIEW = 'pengelola_kontak.';
     const URL = 'pengelola-kontak.';
 
+    protected $sessionUser;
+
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            $this->sessionUser = auth()->user();
+
+            return $next($request);
+        });
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -25,7 +36,16 @@ class PengelolaKontakController extends Controller
         $title = self::TITLE;
         $subTitle = 'List Data';
 
+        $user = $this->sessionUser;
+
         $rows = PengelolaKontak::orderBy('created_at')
+            ->when($user, function ($query, $user) {
+                if ($user->level == 'pengelola') {
+                    $sessionData = session()->get('pengelola');
+
+                    $query->where('pengelola_id', $sessionData->id);
+                }
+            })
             ->get()
             ->map(fn($row) => [
                 $row->pengelolas->nama,
@@ -65,6 +85,10 @@ class PengelolaKontakController extends Controller
     public function create(Request $request)
     {
         //
+        if (! $this->sessionUser->can('create', PengelolaKontak::class)) {
+            return abort(403, "User does not have the right roles");
+        }
+
         $title = self::TITLE;
         $subTitle = 'Tambah Data';
 
@@ -135,6 +159,10 @@ class PengelolaKontakController extends Controller
 
         $row = $pengelolaKontak;
 
+        if (! $this->sessionUser->can('update', $row)) {
+            return abort(403, "User does not have the right roles");
+        }
+
         return view(self::FOLDER_VIEW . 'edit', compact('title', 'subTitle', 'row', 'posisis', 'pengelolas', 'pengelola_id'));
     }
 
@@ -174,6 +202,10 @@ class PengelolaKontakController extends Controller
     public function destroy(PengelolaKontak $pengelolaKontak)
     {
         //
+        if (! $this->sessionUser->can('delete', $pengelolaKontak)) {
+            return abort(403, "User does not have the right roles");
+        }
+
         $pengelolaKontak->delete();
 
         return response()->json('Success');

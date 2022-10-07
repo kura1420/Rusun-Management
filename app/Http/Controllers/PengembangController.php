@@ -13,6 +13,17 @@ class PengembangController extends Controller
     const FOLDER_VIEW = 'pengembang.';
     const URL = 'pengembang.';
 
+    protected $sessionUser;
+
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            $this->sessionUser = auth()->user();
+
+            return $next($request);
+        });
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -24,14 +35,14 @@ class PengembangController extends Controller
         $title = self::TITLE;
         $subTitle = 'List Data';
 
-        $user = auth()->user();
+        $user = $this->sessionUser;
 
         $rows = Pengembang::orderBy('created_at')
             ->when($user, function ($query, $user) {
                 if ($user->level == 'pengembang') {
-                    $pengembangSession = session()->get('pengembang');
+                    $sessionData = session()->get('pengembang');
 
-                    $query->where('id', $pengembangSession->id);
+                    $query->where('id', $sessionData->id);
                 }
             })
             ->get()
@@ -70,7 +81,7 @@ class PengembangController extends Controller
     public function create()
     {
         //
-        if (! auth()->user()->can('create', Pengembang::class)) {
+        if (! $this->sessionUser->can('create', Pengembang::class)) {
             return abort(403, "User does not have the right roles");
         }
 
@@ -115,6 +126,10 @@ class PengembangController extends Controller
             return $pengembang_dokumen;
         });
 
+        if (! $this->sessionUser->can('view', $row)) {
+            return abort(403, "User does not have the right roles");
+        }
+
         return view(self::FOLDER_VIEW . 'show', compact('title', 'subTitle', 'row'));
     }
 
@@ -132,7 +147,7 @@ class PengembangController extends Controller
 
         $row = Pengembang::findOrFail($id);
         
-        if (! auth()->user()->can('update', $row)) {
+        if (! $this->sessionUser->can('update', $row)) {
             return abort(403, "User does not have the right roles");
         }
 
@@ -163,7 +178,13 @@ class PengembangController extends Controller
     public function destroy($id)
     {
         //
-        Pengembang::findOrFail($id)->delete();
+        $row = Pengembang::findOrFail($id)->delete();
+
+        if (! $this->sessionUser->can('delete', $row)) {
+            return abort(403, "User does not have the right roles");
+        }
+
+        $row->delete();
 
         return response()->json('OK');
     }

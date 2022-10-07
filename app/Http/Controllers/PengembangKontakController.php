@@ -13,6 +13,17 @@ class PengembangKontakController extends Controller
     const TITLE = 'Pengembang Kontak';
     const FOLDER_VIEW = 'pengembang_kontak.';
     const URL = 'pengembang-kontak.';
+
+    protected $sessionUser;
+
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            $this->sessionUser = auth()->user();
+
+            return $next($request);
+        });
+    }
     
     /**
      * Display a listing of the resource.
@@ -25,7 +36,16 @@ class PengembangKontakController extends Controller
         $title = self::TITLE;
         $subTitle = 'List Data';
 
+        $user = $this->sessionUser;
+
         $rows = PengembangKontak::orderBy('created_at')
+            ->when($user, function ($query, $user) {
+                if ($user->level == 'pengembang') {
+                    $sessionData = session()->get('pengembang');
+
+                    $query->where('pengembang_id', $sessionData->id);
+                }
+            })
             ->get()
             ->map(fn($row) => [
                 $row->pengembangs->nama,
@@ -65,6 +85,10 @@ class PengembangKontakController extends Controller
     public function create(Request $request)
     {
         //
+        if (! $this->sessionUser->can('create', PengembangKontak::class)) {
+            return abort(403, "User does not have the right roles");
+        }
+
         $title = self::TITLE;
         $subTitle = 'Tambah Data';
 
@@ -135,6 +159,10 @@ class PengembangKontakController extends Controller
 
         $row = $pengembangKontak;
 
+        if (! $this->sessionUser->can('update', $row)) {
+            return abort(403, "User does not have the right roles");
+        }
+
         return view(self::FOLDER_VIEW . 'edit', compact('title', 'subTitle', 'row', 'posisis', 'pengembangs', 'pengembang_id'));
     }
 
@@ -174,7 +202,13 @@ class PengembangKontakController extends Controller
     public function destroy(Request $request)
     {
         //
-        PengembangKontak::where('id', $request->id)->delete();
+        $row = PengembangKontak::where('id', $request->id)->firstOrFail();
+
+        if (! $this->sessionUser->can('delete', $row)) {
+            return abort(403, "User does not have the right roles");
+        }
+
+        $row->delete();
 
         return response()->json('Success');
     }

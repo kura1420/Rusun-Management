@@ -30,7 +30,7 @@
             <x-adminlte-input name="name" label="Nama" placeholder="Nama" fgroup-class="col-md-6" value="{{old('name')}}" />
             <x-adminlte-input name="username" label="Username" placeholder="Username" fgroup-class="col-md-6" value="{{old('username')}}" />
             <x-adminlte-input type="email" name="email" label="Email" placeholder="Email" fgroup-class="col-md-6" value="{{old('email')}}" />
-            <x-adminlte-input name="password" label="Password" placeholder="Password" fgroup-class="col-md-6" value="{{config('app.user_password_default', 'RusunKT@2022')}}" readonly />
+            <x-adminlte-input name="password" label="Password" placeholder="Password" fgroup-class="col-md-6" value="{{config('app.user_password_default', 'RusunKT@2022')}}" />
         </div>
 
         <x-slot name="footerSlot">
