@@ -5,8 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 
-class UserDinasController extends Controller
+class UserPemndaController extends Controller
 {
+
+    const TITLE = 'User Pemnda';
+    const FOLDER_VIEW = 'user_pemnda.';
+    const URL = 'user-pemnda.';
+
     /**
      * Display a listing of the resource.
      *
@@ -15,6 +20,38 @@ class UserDinasController extends Controller
     public function index()
     {
         //
+        $title = self::TITLE;
+        $subTitle = 'List Data';
+
+        $rows = User::orderBy('created_at')
+            ->where('level', 'pemnda')
+            ->get()
+            ->map(fn($row) => [
+                $row->name,
+                $row->username,
+                $row->email,
+                $row->active_text,
+                $row->last_login,
+                '<nobr>' . 
+                    '<a href="'.route(self::URL .'edit', $row->id).'" class="btn btn-info btn-sm" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a> ' .
+                    '<button type="button" class="btn btn-danger btn-sm btnDelete" value="'.$row->id.'" id="'.route(self::URL . 'destroy', $row->id).'"><i class="fas fa-ban"></i> Non Aktifkan</button>' . 
+                '</nobr>',
+            ]);
+
+        $heads = [
+            'Name',
+            'Username',
+            'Email',
+            'Aktif',
+            'Terakhir Masuk',
+            ['label' => 'Aksi', 'no-export' => true, 'width' => 5],
+        ];
+        
+        $config = [
+            'data' => $rows,
+        ];
+
+        return view(self::FOLDER_VIEW . 'index', compact('title', 'subTitle', 'heads', 'config'));
     }
 
     /**

@@ -35,8 +35,8 @@
                 <option value="rusun_details" {{$row->table == 'rusun_details' ? 'selected' : ''}}>Tower</option>
                 <option value="rusun_tarifs" {{$row->table == 'rusun_tarifs' ? 'selected' : ''}}>Tarif</option>
                 <option value="rusun_outstanding_penghunis" {{$row->table == 'rusun_outstanding_penghunis' ? 'selected' : ''}}>Outstanding Penghuni</option>
-                <option value="rusun_pemiliks" {{$row->table == 'rusun_pemiliks' ? 'selected' : ''}}>Pemilik</option>
-                <option value="rusun_penghunis" {{$row->table == 'rusun_penghunis' ? 'selected' : ''}}>Penghuni</option>
+                <option value="rusun_pemiliks" {{$row->table == 'rusun_pemiliks' ? 'selected' : ''}}>Pemilik & Penghuni</option>
+                <!-- <option value="rusun_penghunis" {{$row->table == 'rusun_penghunis' ? 'selected' : ''}}>Penghuni</option> -->
             </x-adminlte-select>
 
             <x-adminlte-input name="username" id="username" label="Username" placeholder="Username" fgroup-class="col-md-6" value="{{$row->username}}" />

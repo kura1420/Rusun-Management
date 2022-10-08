@@ -28,7 +28,6 @@ class UserPengelolaController extends Controller
         $subTitle = 'List Data';
 
         $rows = User::orderBy('created_at')
-            ->with(['user_mapping'])
             ->where('level', 'pengelola')
             ->get()
             ->map(fn($row) => [
@@ -165,7 +164,7 @@ class UserPengelolaController extends Controller
     public function update(Request $request, $id)
     {
         //
-        $row = User::with(['user_mapping'])->findOrFail($id);
+        $row = User::findOrFail($id);
 
         Validator::make($request->all(), [
             'name' => 'required|string|max:255',

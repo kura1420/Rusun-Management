@@ -487,8 +487,8 @@ return [
                             'route'  => 'user.index',
                         ],
                         [
-                            'text' => 'Dinas',
-                            'route'  => 'user-dinas.index',
+                            'text' => 'Pemnda',
+                            'route'  => 'user-pemnda.index',
                         ],
                         [
                             'text' => 'Rusun',

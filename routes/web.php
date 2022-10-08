@@ -30,13 +30,12 @@ use App\Http\Controllers\RusunPenghuniController;
 use App\Http\Controllers\RusunPenghuniDokumenController;
 use App\Http\Controllers\RusunUnitDetailController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\UserDinasController;
+use App\Http\Controllers\UserPemndaController;
 use App\Http\Controllers\UserPemilikController;
 use App\Http\Controllers\UserPengelolaController;
 use App\Http\Controllers\UserPengembangController;
 use App\Http\Controllers\UserPenghuniController;
 use App\Http\Controllers\UserRusunController;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -89,7 +88,7 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['role:Root|Admin'])->group(function () {
         Route::resources([
             'user' => UserController::class,
-                'user-dinas' => UserDinasController::class,
+                'user-pemnda' => UserPemndaController::class,
                 'user-rusun' => UserRusunController::class,
                 'user-pengembang' => UserPengembangController::class,
                 'user-pengelola' => UserPengelolaController::class,

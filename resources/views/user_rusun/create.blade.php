@@ -7,6 +7,16 @@
 @stop
 
 @section('content')
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
 <form action="{{route('user-rusun.store')}}" method="post">
     @csrf
     <x-adminlte-card theme="primary" theme-mode="outline" title="{{$subTitle}}">

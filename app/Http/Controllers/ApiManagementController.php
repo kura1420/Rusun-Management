@@ -184,12 +184,12 @@ class ApiManagementController extends Controller
                 break;
 
             case 'rusun_pemiliks':
-                return 'Pemilik';
+                return 'Pemilik & Penghuni';
                 break;
 
-            case 'rusun_penghunis':
-                return 'Penghuni';
-                break;
+            // case 'rusun_penghunis':
+            //     return 'Penghuni';
+            //     break;
             
             default:
                 return 'No Defined';

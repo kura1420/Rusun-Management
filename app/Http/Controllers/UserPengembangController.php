@@ -28,7 +28,6 @@ class UserPengembangController extends Controller
         $subTitle = 'List Data';
 
         $rows = User::orderBy('created_at')
-            ->with(['user_mapping'])
             ->where('level', 'pengembang')
             ->get()
             ->map(fn($row) => [
