@@ -39,11 +39,7 @@ class P3srsKegiatanKanidatController extends Controller
         $subTitle = 'Tambah Data';
         
         $p3srs_jadwal_id = $request->p3srs_jadwal_id ?? NULL;
-        $p3srsKegiatanJadwal = \App\Models\P3srsKegiatanJadwal::with([
-                'p3srs_kegiatans',
-                'rusuns',
-            ])
-            ->where('id', $p3srs_jadwal_id)
+        $p3srsKegiatanJadwal = \App\Models\P3srsKegiatanJadwal::where('id', $p3srs_jadwal_id)
             ->firstOrFail();
 
         $rowsPemilikPenghuniKanidats = P3srsKegiatanKanidat::where('p3srs_kegiatan_jadwal_id', $p3srs_jadwal_id)->get();
@@ -156,11 +152,7 @@ class P3srsKegiatanKanidatController extends Controller
         $subTitle = 'Edit Data';
         
         $p3srs_jadwal_id = $request->p3srs_jadwal_id ?? NULL;
-        $p3srsKegiatanJadwal = \App\Models\P3srsKegiatanJadwal::with([
-                'p3srs_kegiatans',
-                'rusuns',
-            ])
-            ->where('id', $p3srs_jadwal_id)
+        $p3srsKegiatanJadwal = \App\Models\P3srsKegiatanJadwal::where('id', $p3srs_jadwal_id)
             ->firstOrFail();
 
         $rowsPemilikPenghuni = P3srsKegiatanKanidat::where('p3srs_kegiatan_jadwal_id', $p3srs_jadwal_id)->get();
@@ -211,10 +203,7 @@ class P3srsKegiatanKanidatController extends Controller
 
         $p3srsJabatans = \App\Models\P3srsJabatan::orderBy('nama')->get();
 
-        $row = P3srsKegiatanKanidat::with([
-            'p3srs_jabatans'
-        ])
-        ->where('grup_id', $groupId)
+        $row = P3srsKegiatanKanidat::where('grup_id', $groupId)
         ->get()
         ->map(function ($r) {
             $r->profile = $r->getPemilikPenghuniProfileAttribute();

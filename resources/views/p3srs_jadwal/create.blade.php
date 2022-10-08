@@ -46,7 +46,6 @@
             ]"
         >
             <option value=""></option>
-            <option value="new">Tambah Kegiatan</option>
             @foreach ($kegiatans as $kegiatan)
             <option value="{{$kegiatan->id}}">{{$kegiatan->nama}}</option>
             @endforeach

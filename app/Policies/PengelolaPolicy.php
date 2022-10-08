@@ -31,7 +31,7 @@ class PengelolaPolicy
     public function view(User $user, Pengelola $pengelola)
     {
         //
-        if ($user->hasRole('Root') || $user->hasRole('Admin') || $user->hasRole('Pemda')) {
+        if ($user->hasRole('Root') || $user->hasRole('Admin')) {
             return TRUE;
         }
 
@@ -53,7 +53,7 @@ class PengelolaPolicy
     public function create(User $user)
     {
         //
-        return $user->hasRole('Root') || $user->hasRole('Admin') || $user->hasRole('Pemda');
+        return $user->hasRole('Root') || $user->hasRole('Admin');
     }
 
     /**
@@ -66,7 +66,7 @@ class PengelolaPolicy
     public function update(User $user, Pengelola $pengelola)
     {
         //
-        if ($user->hasRole('Root') || $user->hasRole('Admin') || $user->hasRole('Pemda')) {
+        if ($user->hasRole('Root') || $user->hasRole('Admin')) {
             return TRUE;
         }
 

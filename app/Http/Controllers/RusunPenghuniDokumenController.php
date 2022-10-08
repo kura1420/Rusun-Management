@@ -38,12 +38,7 @@ class RusunPenghuniDokumenController extends Controller
         $subTitle = 'Tambah Data';
 
         $rusun_penghuni_id = $request->rusun_penghuni_id ?? NULL;
-        $rusunPenghuni = \App\Models\RusunPenghuni::with([
-            'rusuns',
-            'rusun_details',
-            'rusun_unit_details',
-        ])
-        ->where('id', $rusun_penghuni_id)
+        $rusunPenghuni = \App\Models\RusunPenghuni::where('id', $rusun_penghuni_id)
         ->firstOrFail();
 
         $dokumens = \App\Models\Dokumen::where('kepada', 'penghuni')->orderBy('nama')->get();

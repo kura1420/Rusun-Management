@@ -3,18 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Notifications\UserVerifiedNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
-class UserPengembangController extends Controller
+class UserPemdaController extends Controller
 {
 
-    const TITLE = 'User Pengembang';
-    const FOLDER_VIEW = 'user_pengembang.';
-    const URL = 'user-pengembang.';
+    const TITLE = 'User Pemda';
+    const FOLDER_VIEW = 'user_pemda.';
+    const URL = 'user-pemda.';
 
     /**
      * Display a listing of the resource.
@@ -28,13 +27,12 @@ class UserPengembangController extends Controller
         $subTitle = 'List Data';
 
         $rows = User::orderBy('created_at')
-            ->where('level', 'pengembang')
+            ->where('level', 'pemda')
             ->get()
             ->map(fn($row) => [
                 $row->name,
                 $row->username,
                 $row->email,
-                \App\Models\Pengembang::where('id', $row->user_mapping->reff_id)->first()->nama,
                 $row->active_text,
                 $row->last_login,
                 '<nobr>' . 
@@ -47,7 +45,6 @@ class UserPengembangController extends Controller
             'Name',
             'Username',
             'Email',
-            'Pengembang',
             'Aktif',
             'Terakhir Masuk',
             ['label' => 'Aksi', 'no-export' => true, 'width' => 5],
@@ -71,9 +68,7 @@ class UserPengembangController extends Controller
         $title = self::TITLE;
         $subTitle = 'Tambah Data';
 
-        $pengembangs = \App\Models\Pengembang::orderBy('nama')->get();
-
-        return view(self::FOLDER_VIEW . 'create', compact('title', 'subTitle', 'pengembangs'));
+        return view(self::FOLDER_VIEW . 'create', compact('title', 'subTitle'));
     }
 
     /**
@@ -92,7 +87,8 @@ class UserPengembangController extends Controller
             'email' => 'required|string|max:255|email|unique:users',
             'password' => 'required|string|min:6',
 
-            'pengembang' => 'required|string',
+            'provinsi' => 'required|string',
+            'kota' => 'required|string',
         ])->validate();
 
         DB::transaction(function () use ($request) {
@@ -104,24 +100,25 @@ class UserPengembangController extends Controller
                 'email' => strtolower($request->email),
                 'password' => Hash::make($request->password),
                 'active' => 1,
-                'level' => 'pengembang',
+                'level' => 'pemda',
                 'remember_token' => $token,
             ]);
 
             $user->user_mapping()
                 ->create([
-                    'table' => 'pengembangs',
-                    'reff_id' => $request->pengembang,
+                    'table' => 'user_mappings',
+                    'province_id' => $request->provinsi,
+                    'regencie_id' => $request->kota,
                 ]);
 
-            $user->assignRole('Pengembang');
-
+            $user->assignRole('Pemda');
+                
             // $user->notify(new UserVerifiedNotification($token));
         });
 
         return redirect()
             ->route(self::URL . 'index')
-            ->with('success', 'Tambah data berhasil, silahkan konfirmasi ke user agar cek emailnya...');
+            ->with('success', 'Tambah data berhasil...');
     }
 
     /**
@@ -149,9 +146,7 @@ class UserPengembangController extends Controller
 
         $row = User::findOrFail($id);
 
-        $pengembangs = \App\Models\Pengembang::orderBy('nama')->get();
-
-        return view(self::FOLDER_VIEW . 'edit', compact('title', 'subTitle', 'row', 'pengembangs'));
+        return view(self::FOLDER_VIEW . 'edit', compact('title', 'subTitle', 'row'));
     }
 
     /**
@@ -173,13 +168,15 @@ class UserPengembangController extends Controller
             'email' => 'required|string|max:255|email|unique:users,email,' . $row->id,
             // 'password' => 'required|string|min:6',
 
-            'pengembang' => 'required|string',
+            'provinsi' => 'required|string',
+            'kota' => 'required|string',
         ])->validate();
 
         DB::transaction(function () use ($row, $request) {
             $row->user_mapping()
                 ->update([
-                    'reff_id' => $request->pengembang,
+                    'province_id' => $request->provinsi,
+                    'regencie_id' => $request->kota,
                 ]);
 
             $row->update([

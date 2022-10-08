@@ -7,6 +7,16 @@
 @stop
 
 @section('content')
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
 <form action="{{route('p3srs-kegiatan-laporan.store')}}?p3srs_kegiatan_jadwal_id={{$p3srs_kegiatan_jadwal->id}}" method="post" enctype="multipart/form-data">
     @csrf
     <x-adminlte-card theme="primary" theme-mode="outline" title="{{$subTitle}}">

@@ -29,6 +29,7 @@ class P3srsKegiatanController extends Controller
             ->map(fn($row) => [
                 $row->nama,
                 '<nobr>' . 
+                    '<a href="'.route(self::URL .'copy', $row->id).'" class="btn btn-warning btn-sm" title="Copy"><i class="fas fa-copy"></i> Copy</a> ' .
                     '<a href="'.route(self::URL .'edit', $row->id).'" class="btn btn-info btn-sm" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a> ' .
                     // '<button type="button" class="btn btn-danger btn-sm btnDelete" value="'.$row->id.'" id="'.route(self::URL . 'destroy', $row->id).'"><i class="fas fa-trash"></i> Hapus</button>' . 
                 '</nobr>',
@@ -41,8 +42,6 @@ class P3srsKegiatanController extends Controller
         
         $config = [
             'data' => $rows,
-            // 'order' => [[1, 'asc']],
-            // 'columns' => [null, null, ['orderable' => false]],
         ];
 
         return view(self::FOLDER_VIEW . 'index', compact('title', 'subTitle', 'heads', 'config'));
@@ -143,5 +142,15 @@ class P3srsKegiatanController extends Controller
         $p3srsKegiatan->delete();
 
         return response()->json('Success');
+    }
+
+    public function copy($id)
+    {
+        $title = self::TITLE;
+        $subTitle = 'Edit Data';
+
+        $row = P3srsKegiatan::findOrFail($id);
+
+        return view(self::FOLDER_VIEW . 'copy', compact('title', 'subTitle', 'row'));
     }
 }

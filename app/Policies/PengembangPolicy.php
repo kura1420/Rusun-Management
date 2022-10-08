@@ -31,7 +31,7 @@ class PengembangPolicy
     public function view(User $user, Pengembang $pengembang)
     {
         //
-        if ($user->hasRole('Root') || $user->hasRole('Admin') || $user->hasRole('Pemda')) {
+        if ($user->hasRole('Root') || $user->hasRole('Admin')) {
             return TRUE;
         }
 
@@ -53,7 +53,7 @@ class PengembangPolicy
     public function create(User $user)
     {
         //
-        return $user->hasRole('Root') || $user->hasRole('Admin') || $user->hasRole('Pemda');
+        return $user->hasRole('Root') || $user->hasRole('Admin');
     }
 
     /**
@@ -66,7 +66,7 @@ class PengembangPolicy
     public function update(User $user, Pengembang $pengembang)
     {
         //
-        if ($user->hasRole('Root') || $user->hasRole('Admin') || $user->hasRole('Pemda')) {
+        if ($user->hasRole('Root') || $user->hasRole('Admin')) {
             return TRUE;
         }
 

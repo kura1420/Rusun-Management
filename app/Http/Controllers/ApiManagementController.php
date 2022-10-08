@@ -52,8 +52,6 @@ class ApiManagementController extends Controller
         
         $config = [
             'data' => $rows,
-            // 'order' => [[1, 'asc']],
-            // 'columns' => [null, null, null, null, ['orderable' => false]],
         ];
 
         return view(self::FOLDER_VIEW . 'index', compact('title', 'subTitle', 'heads', 'config'));

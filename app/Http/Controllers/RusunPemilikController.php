@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreRusunPemilikRequest;
 use App\Http\Requests\UpdateRusunPemilikRequest;
 use App\Models\RusunPemilik;
+use Illuminate\Database\Eloquent\Builder;
 
 class RusunPemilikController extends Controller
 {
@@ -12,6 +13,17 @@ class RusunPemilikController extends Controller
     const TITLE = 'Rusun Pemilik';
     const FOLDER_VIEW = 'rusun_pemilik.';
     const URL = 'rusun-pemilik.';
+
+    protected $sessionUser;
+
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            $this->sessionUser = auth()->user();
+
+            return $next($request);
+        });
+    }
     
     /**
      * Display a listing of the resource.
@@ -24,8 +36,28 @@ class RusunPemilikController extends Controller
         $title = self::TITLE;
         $subTitle = 'List Data';
 
-        $rows = RusunPemilik::orderBy('created_at')
-            ->get()
+        $user = $this->sessionUser;
+
+        $table = RusunPemilik::orderBy('created_at')
+            ->when($user, function ($query, $user) {
+                if ($user->level == 'rusun') {
+                    $sessionData = session()->get('rusun');
+
+                    $query->where('rusun_id', $sessionData->id);
+                }
+            });
+
+        if ($user->level == 'pemda') {
+            $table->whereHas('rusuns', function (Builder $query) {
+                $sessionData = session()->get('pemda');
+
+                $query
+                    ->where('province_id', $sessionData->province_id)
+                    ->where('regencie_id', $sessionData->regencie_id);
+            });
+        }
+
+        $rows = $table->get()
             ->map(fn($row) => [
                 $row->rusuns->nama,
                 $row->rusun_details->nama_tower ?? NULL,
@@ -50,8 +82,6 @@ class RusunPemilikController extends Controller
         
         $config = [
             'data' => $rows,
-            // 'order' => [[1, 'asc']],
-            // 'columns' => [null, null, null, null, null, null, ['orderable' => false]],
         ];
 
         return view(self::FOLDER_VIEW . 'index', compact('title', 'subTitle', 'heads', 'config'));
@@ -91,13 +121,7 @@ class RusunPemilikController extends Controller
         $title = self::TITLE;
         $subTitle = 'Detail Data';
 
-        $row = RusunPemilik::with([
-            'rusuns',
-            'rusun_details',
-            'rusun_unit_details',
-            'pemiliks',
-        ])
-        ->findOrFail($id);
+        $row = RusunPemilik::findOrFail($id);
 
         $row->penghunis = $row->pemiliks
             ->rusun_penghunis()

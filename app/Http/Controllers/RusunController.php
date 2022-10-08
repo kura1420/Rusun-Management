@@ -48,6 +48,14 @@ class RusunController extends Controller
 
                     $query->where('id', $sessionData->id);
                 }
+
+                if ($user->level == 'pemda') {
+                    $sessionData = session()->get('pemda');
+
+                    $query
+                        ->where('province_id', $sessionData->province_id)
+                        ->where('regencie_id', $sessionData->regencie_id);
+                }
             })
             ->get()
             ->map(fn($row) => [
@@ -76,8 +84,6 @@ class RusunController extends Controller
         
         $config = [
             'data' => $rows,
-            'order' => [[1, 'asc']],
-            'columns' => [null, null, null, null, null, null, ['orderable' => false]],
         ];
 
         return view(self::FOLDER_VIEW . 'index', compact('title', 'subTitle', 'heads', 'config'));
@@ -651,11 +657,7 @@ class RusunController extends Controller
     {
         $pengelola_id = $request->pengelola_id ?? NULL;
 
-        $rows = \App\Models\PengelolaDokumen::with([
-            'dokumens',
-            'pengelolas',
-        ])
-        ->where([
+        $rows = \App\Models\PengelolaDokumen::where([
             ['rusun_id', $id],
             ['pengelola_id', $pengelola_id],
         ])
@@ -680,11 +682,7 @@ class RusunController extends Controller
     {
         $pengembang_id = $request->pengembang_id ?? NULL;
 
-        $rows = \App\Models\PengembangDokumen::with([
-            'dokumens',
-            'pengembangs',
-        ])
-        ->where([
+        $rows = \App\Models\PengembangDokumen::where([
             ['rusun_id', $id],
             ['pengembang_id', $pengembang_id],
         ])

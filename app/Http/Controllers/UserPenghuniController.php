@@ -102,7 +102,7 @@ class UserPenghuniController extends Controller
         $title = self::TITLE;
         $subTitle = 'Edit Data';
 
-        $row = User::with('user_mapping')->findOrFail($id);
+        $row = User::findOrFail($id);
 
         $penghunis = \App\Models\RusunPenghuni::orderBy('nama')->get();
 

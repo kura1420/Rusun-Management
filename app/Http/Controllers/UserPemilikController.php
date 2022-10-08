@@ -102,7 +102,7 @@ class UserPemilikController extends Controller
         $title = self::TITLE;
         $subTitle = 'Edit Data';
 
-        $row = User::with('user_mapping')->findOrFail($id);
+        $row = User::findOrFail($id);
 
         $pemiliks = \App\Models\Pemilik::orderBy('nama')->get();
 

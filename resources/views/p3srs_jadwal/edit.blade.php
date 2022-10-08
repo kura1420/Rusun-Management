@@ -46,7 +46,6 @@
             ]"
         >
             <option value=""></option>
-            <option value="new">Tambah Kegiatan</option>
             @foreach ($kegiatans as $kegiatan)
             <option value="{{$kegiatan->id}}" {{$kegiatan->id == $row->p3srs_kegiatan_id ? 'selected' : ''}}>{{$kegiatan->nama}}</option>
             @endforeach

@@ -7,6 +7,16 @@
 @stop
 
 @section('content')
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
 <form action="{{route('p3srs-kegiatan-laporan.update', $row->id)}}?p3srs_kegiatan_jadwal_id={{$row->p3srs_kegiatan_jadwal_id}}" method="post" enctype="multipart/form-data">
     @csrf
     @method('PUT')

@@ -316,7 +316,7 @@ return [
         [
             'text'    => 'Pengembang',
             'icon'    => 'fas fa-fw fa-building',
-            'can' => ['Root', 'Admin', 'Pemda', 'Pengembang'],
+            'can' => ['Root', 'Admin', 'Pengembang'],
             'submenu' => [
                 [
                     'text' => 'List',
@@ -336,7 +336,7 @@ return [
         [
             'text'    => 'Pengelola',
             'icon'    => 'fas fa-fw fa-user-friends',
-            'can' => ['Root', 'Admin', 'Pemda', 'Pengelola'],
+            'can' => ['Root', 'Admin', 'Pengelola'],
             'submenu' => [
                 [
                     'text' => 'List',
@@ -389,13 +389,13 @@ return [
             'text'    => 'Pemilik',
             'icon'    => 'fas fa-fw fa-user-check',
             'route'  => 'pemilik.index',
-            'can' => ['Root', 'Admin', 'Pemda', 'Pemilik'],
+            'can' => ['Pemilik'],
         ],
         [
             'text' => 'Penghuni',
             'icon'    => 'fas fa-fw fa-users',
             'route'  => 'rusun-penghuni.index',
-            'can' => ['Root', 'Admin', 'Pemda', 'Penghuni'],
+            'can' => ['Penghuni'],
         ],
 
         [
@@ -487,8 +487,8 @@ return [
                             'route'  => 'user.index',
                         ],
                         [
-                            'text' => 'Pemnda',
-                            'route'  => 'user-pemnda.index',
+                            'text' => 'Pemda',
+                            'route'  => 'user-pemda.index',
                         ],
                         [
                             'text' => 'Rusun',
@@ -524,12 +524,12 @@ return [
                     'route'  => 'role.index',
                     'can' => ['Root'],
                 ],
-                [
-                    'text' => 'Permission',
-                    'icon_color' => 'warning',
-                    'route'  => 'permission.index',
-                    'can' => ['Root'],
-                ],
+                // [
+                //     'text' => 'Permission',
+                //     'icon_color' => 'warning',
+                //     'route'  => 'permission.index',
+                //     'can' => ['Root'],
+                // ],
             ],
         ],
     ],

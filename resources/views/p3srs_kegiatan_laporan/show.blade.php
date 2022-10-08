@@ -15,11 +15,11 @@
 
 <x-adminlte-card theme="primary" theme-mode="outline" title="{{$row->rusuns->nama}}">
     <x-slot name="toolsSlot">
-        <x-adminlte-button type="button" label="Verifikasi" theme="success" icon="fas fa-check" class="btn-sm" />
-
+        @if (! $row->status)
         <a href="{{route('p3srs-kegiatan-laporan.create')}}?p3srs_kegiatan_jadwal_id={{$row->id}}" class="btn btn-sm btn-primary">
             <i class="fa fa-plus"></i> Buat Laporan
         </a>
+        @endif
 
         <a href="{{route('p3srs-kegiatan-laporan.index')}}" class="btn btn-sm btn-dark">
             <i class="fa fa-arrow-left"></i> Kembali
@@ -36,10 +36,11 @@
                 <i class="fas fa-pencil-alt bg-blue"></i>
                 <div class="timeline-item">
                     <span class="time"><i class="fas fa-clock"></i> {{$row->created_at}}</span>
-                    <h3 class="timeline-header"><a href="#">{{$row->p3srs_kegiatans->nama}}</a></h3>
+                    <h3 class="timeline-header"><a href="{{route('p3srs-jadwal.show', $row->id)}}" target="_blank">{{$row->p3srs_kegiatans->nama}}</a></h3>
                     <div class="timeline-body">
                         @php echo $row->keterangan; @endphp 
-                        <i class="fa fa-map-marker-alt"></i> {{$row->lokasi}}
+                        <i class="fa fa-map-marker-alt"></i> {{$row->lokasi}} &nbsp;
+                        <i class="fa fa-calendar-day"></i> {{$row->tanggal_format}}
                     </div>
                 </div>
             </div>
@@ -65,7 +66,9 @@
                                         @break
                                 
                                     @case('pdf')
-                                        <a href="{{route('p3srs-kegiatan-laporan.dokumentasiViewFile', [$p3srs_kegiatan_dokumentasi->id, $p3srs_kegiatan_dokumentasi->filename])}}" target="_blank"> {{$loop->iteration}}. View File PDF</a>
+                                        <a href="{{route('p3srs-kegiatan-laporan.dokumentasiViewFile', [$p3srs_kegiatan_dokumentasi->id, $p3srs_kegiatan_dokumentasi->filename])}}" target="_blank"> 
+                                            <img src="{{asset('images/pdf.png')}}" alt="" class="img-thumbnail" style="width:10%;">
+                                        </a>
                                         @break
                                 
                                     @default
@@ -74,24 +77,81 @@
                             @endforeach
                         @endif
                     </div>
+
+                    @if (! $row->status)
                     <div class="timeline-footer">
                         <a href="{{route('p3srs-kegiatan-laporan.edit', $p3srs_kegiatan_laporan->id)}}" class="btn btn-info btn-sm">Edit</a>
                         <button type="button" class="btn btn-danger btn-sm btnDelete" value="{{$p3srs_kegiatan_laporan->id}}" id="{{route('p3srs-kegiatan-laporan.destroy', $p3srs_kegiatan_laporan->id)}}">Hapus</button>
                     </div>
+                    @endif
                 </div>
             </div>
             @endforeach
 
+            @if ($row->status)
             <div>
-                <i class="fas fa-clock bg-gray"></i>
+                <i class="fas fa-check bg-success"></i>
+                <div class="timeline-item">
+                    <span class="time"><i class="fas fa-clock"></i> 5 mins ago</span>
+                    <h3 class="timeline-header card-success card-outline">Grup <a href="#">{{$groupTerpilih->grup_nama}} </a> Telah Terpilih</h3>
+                </div>
             </div>
-            <!-- <div>
-                <i class="fas fa-check bg-gray"></i>
-            </div> -->
+            @else
+            <div>
+                <i class="fas fa-clock bg-dark"></i>
+            </div>
+            @endif
+            
         </div>
     </div>
 
+    <x-slot name="footerSlot">
+        @if (! $row->status)
+        <x-adminlte-button type="button" id="btnVerifikasi" label="Verifikasi" theme="success" icon="fas fa-tasks" class="btn-sm" />
+        @endif
+
+        <button type="button" class="btn btn-warning float-right" id="btnModal"><i class="fa fa-file"></i> Cek Keterangan Kegiatan</button>
+    </x-slot>
+
 </x-adminlte-card>
+
+<x-adminlte-modal id="modalKeterangan" title="{{$row->p3srs_kegiatans->nama}}" theme="purple" size='lg' scrollable static-backdrop v-centered>
+    @php echo $row->p3srs_kegiatans->keterangan; @endphp
+</x-adminlte-modal>
+
+<x-adminlte-modal id="modalVerifikasi" title="Verifikasi Kegiatan" theme="success" size='lg' scrollable static-backdrop v-centered>
+    <div class="row">
+        <div class="col-md-2">
+            <strong>Kegiatan: </strong>
+        </div>
+        <div class="col-md-10">
+            {{$row->p3srs_kegiatans->nama}}
+        </div>
+    </div>
+
+    <div class="row mt-2">
+        <div class="col-md-2">
+            <strong>Grup Terpilih: </strong>
+        </div>
+        <div class="col-md-10">
+            <select name="terpilih" id="terpilih" class="form-control input-sm">
+                <option value="">Pilih</option>
+                @foreach ($groupKanidats as $key => $groupKanidat) 
+                <option value="{{$groupKanidat->grup_id}}">{{$groupKanidat->grup_nama}}</option>
+                @endforeach
+            </select>
+        </div>
+    </div>
+
+    <div class="direct-chat-text mt-2">
+        @php echo $row->p3srs_kegiatans->keterangan; @endphp
+    </div>
+
+    <x-slot name="footerSlot">
+        <x-adminlte-button id="btnAccept" class="mr-auto" theme="success" label="Terima"/>
+        <x-adminlte-button theme="danger" label="Tutup" data-dismiss="modal"/>
+    </x-slot>
+</x-adminlte-modal>
 @stop
 
 @section('css')
@@ -106,6 +166,63 @@ $(document).ready(function () {
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
         }
+    });
+
+    $('#btnAccept').click(function (e) { 
+        e.preventDefault();
+        
+        let terpilih = $('#terpilih').val();
+
+        if (terpilih) {
+            $.ajax({
+                type: "POST",
+                url: "{{route('p3srs-jadwal.groupTerpilih')}}",
+                data: {
+                    id: '{{$row->id}}',
+                    terpilih: terpilih
+                },
+                dataType: "json",
+                success: function (response) {
+                    Swal.fire(
+                        'Informasi!',
+                        'Kegiatan sudah terselesaikan.',
+                        'success'
+                    );
+
+                    window.location.reload();
+                },
+                error: function (xhr) {
+                    const {responseJSON, status, statusText} = xhr;
+
+                    switch (status) {
+                        case 500:
+                        case 419:
+                            Swal.fire({
+                                title: 'Error',
+                                text: statusText,
+                            });                 
+                            break;
+                        
+                        default:
+                            break;
+                    }
+                }
+            });
+        } else {
+            Swal.fire('Silahkan pilih group kanidat terlebih dahulu');
+        }
+    });
+
+    $('#btnVerifikasi').click(function (e) { 
+        e.preventDefault();
+        
+        $('#modalVerifikasi').modal('show');
+    });
+
+    $('#btnModal').click(function (e) { 
+        e.preventDefault();
+        
+        $('#modalKeterangan').modal('show');
     });
 
     $(document).on('click', '[data-toggle="lightbox"]', function(event) {

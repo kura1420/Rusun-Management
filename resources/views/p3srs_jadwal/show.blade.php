@@ -6,6 +6,8 @@
     <h1>
         {{$subTitle}}
         <a href="{{route('p3srs-jadwal.index')}}" class="btn btn-xs btn-dark"> <i class="fa fa-arrow-left"></i> Kembali </a>
+
+        @if (! $row->status)
         <div class="btn-group">
             <button type="button" class="btn btn-xs btn-primary"><i class="fa fa-plus"></i> Tambah</button>
             <button type="button" class="btn btn-xs btn-primary dropdown-toggle dropdown-icon" data-toggle="dropdown" aria-expanded="false">
@@ -16,6 +18,7 @@
                 <a class="dropdown-item" href="{{route('p3srs-kegiatan-anggota.create')}}?p3srs_jadwal_id={{$row->id}}">Anggota</a>
             </div>
         </div>
+        @endif
     </h1>
 @stop
 
@@ -30,7 +33,7 @@
                     <strong>Rusun:</strong> {{$row->rusuns->nama}}
                 </li>
                 <li class="list-group-item">
-                    <strong>Tanggal:</strong> {{$row->tanggal}}
+                    <strong>Tanggal:</strong> {{$row->tanggal_format}}
                 </li>
                 <li class="list-group-item">
                     <strong>Lokasi:</strong> {{$row->lokasi}}
@@ -49,11 +52,16 @@
     <div class="row">
         @foreach ($groupBys as $key => $values)        
         <div class="col-md-4">
-            <div class="card card-primary">
+            <div class="card @if ($values['terpilih']) card-success @else card-secondary @endif">
                 <div class="card-header">
                     <div class="card-title">{{$values['text']}}</div>
+
                     <div class="card-tools">
+                    @if (! $row->status)
                         <a href="{{route('p3srs-kegiatan-kanidat.edit', $values['id'])}}?p3srs_jadwal_id={{$row->id}}" class="btn btn-sm btn-warning text-dark"><strong><i class="fa fa-pencil-alt"></i> Edit</strong></a>
+                    @else
+                        @if ($values['terpilih']) Terpilih <i class="fa fa-award"></i>  @endif
+                    @endif
                     </div>
                 </div>
 
@@ -72,7 +80,7 @@
                             <tr>
                                 <td>{{$loop->iteration}}.</td>
                                 <td>{{$value['profile']->nama_tower}}</td>
-                                <td>{{$value['profile']->ukuran}}</td>
+                                <td>{{$value['profile']->jenis}}</td>
                                 <td>{{$value['profile']->nama}}</td>
                             </tr>
                             @endforeach
@@ -88,7 +96,9 @@
 @if (count($row->p3srs_kegiatan_anggotas)>0)
 <x-adminlte-card theme="primary" theme-mode="outline" title="Peserta" id="cardTableAnggota">
     <x-slot name="toolsSlot">
+        @if (! $row->status)
         <x-adminlte-button type="button" label="Hapus" theme="danger" class="btn-sm btnDeleteAnggota" id="{{route('p3srs-kegiatan-anggota.destroy', $row->id)}}" value="{{$row->id}}" />
+        @endif
     </x-slot>
 
     <div class="row table-responsive">
@@ -106,7 +116,7 @@
                 <tr>
                     <td>{{$loop->iteration}}.</td>
                     <td>{{$p3srs_kegiatan_anggota->profile->nama_tower}}</td>
-                    <td>{{$p3srs_kegiatan_anggota->profile->ukuran}}</td>
+                    <td>{{$p3srs_kegiatan_anggota->profile->jenis}}</td>
                     <td>{{$p3srs_kegiatan_anggota->profile->nama}}</td>
                 </tr>
                 @endforeach

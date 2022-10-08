@@ -14,6 +14,11 @@ class P3srsKegiatanJadwal extends Model
 
     protected $guarded = [];
 
+    public function getTanggalFormatAttribute()
+    {
+        return date('d F Y', strtotime($this->tanggal));
+    }
+
     public function p3srs_kegiatans()
     {
         return $this->belongsTo(P3srsKegiatan::class, 'p3srs_kegiatan_id');

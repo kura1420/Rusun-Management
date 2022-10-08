@@ -73,8 +73,6 @@ class PemilikController extends Controller
         
         $config = [
             'data' => $rows,
-            'order' => [[1, 'asc']],
-            'columns' => [null, null, null, null, null, ['orderable' => false]],
         ];
 
         $lastUpdate = collect($rows)
@@ -121,12 +119,7 @@ class PemilikController extends Controller
         $title = self::TITLE;
         $subTitle = 'Detail Data';
 
-        $row = Pemilik::with([
-            'rusun_pemiliks',
-            'rusun_pemilik_dokumens',
-            'rusun_penghunis',
-            'rusun_pembayaran_ipls',
-        ])->findOrFail($id);
+        $row = Pemilik::findOrFail($id);
 
         if (! $this->sessionUser->can('view', $row)) {
             return abort(403, "User does not have the right roles");

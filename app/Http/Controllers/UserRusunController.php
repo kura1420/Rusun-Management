@@ -28,7 +28,6 @@ class UserRusunController extends Controller
         $subTitle = 'List Data';
 
         $rows = User::orderBy('created_at')
-            ->with(['user_mapping'])
             ->where('level', 'rusun')
             ->get()
             ->map(fn($row) => [
@@ -104,7 +103,7 @@ class UserRusunController extends Controller
                 'username' => strtolower($request->username),
                 'email' => strtolower($request->email),
                 'password' => Hash::make($request->password),
-                'active' => 0,
+                'active' => 1,
                 'level' => 'rusun',
                 'remember_token' => $token,
             ]);
@@ -117,7 +116,7 @@ class UserRusunController extends Controller
 
             $user->assignRole('Rusun');
 
-            $user->notify(new UserVerifiedNotification($token));
+            // $user->notify(new UserVerifiedNotification($token));
         });
 
         return redirect()
@@ -148,7 +147,7 @@ class UserRusunController extends Controller
         $title = self::TITLE;
         $subTitle = 'Edit Data';
 
-        $row = User::with('user_mapping')->findOrFail($id);
+        $row = User::findOrFail($id);
 
         $rusuns = \App\Models\Rusun::orderBy('nama')->get();
 
@@ -165,7 +164,7 @@ class UserRusunController extends Controller
     public function update(Request $request, $id)
     {
         //
-        $row = User::with(['user_mapping'])->findOrFail($id);
+        $row = User::findOrFail($id);
 
         Validator::make($request->all(), [
             'name' => 'required|string|max:255',

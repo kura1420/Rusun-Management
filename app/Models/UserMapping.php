@@ -18,4 +18,14 @@ class UserMapping extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    public function provinces()
+    {
+        return $this->belongsTo(Provinsi::class, 'province_id');
+    }
+
+    public function kotas()
+    {
+        return $this->belongsTo(Kota::class, 'regencie_id');
+    }
 }

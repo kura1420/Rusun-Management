@@ -69,9 +69,15 @@ class LoginController extends Controller
             if ($row->level !== 'root') {
                 $userMapping = $row->user_mapping()->first();
 
-                $profileTable = DB::table($userMapping->table)->where('id', $userMapping->reff_id)->first();
+                if ($userMapping->table == 'user_mappings') {
+                    $profileTable = $userMapping;
 
-                $sessionKey = Str::singular($userMapping->table);
+                    $sessionKey = $row->level;
+                } else {
+                    $profileTable = DB::table($userMapping->table)->where('id', $userMapping->reff_id)->first();
+
+                    $sessionKey = Str::singular($userMapping->table);
+                }
 
                 session([
                     $sessionKey => $profileTable,

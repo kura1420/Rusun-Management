@@ -28,7 +28,8 @@ class UpdateP3srsKegiatanLaporanRequest extends FormRequest
             'tanggal' => 'required|date',
             'judul' => 'required|string|max:255',
             'penjelasan' => 'required|string',
-            'dokumentasis' => 'nullable|array|max:5|mimes:pdf,jpg,jpeg,png',
+            'dokumentasis' => 'nullable|array|max:5',
+            'dokumentasis.*' => 'nullable|max:1024|mimes:jpeg,bmp,png,gif,svg,pdf'
         ];
     }
 }

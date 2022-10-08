@@ -38,11 +38,7 @@ class P3srsKegiatanAnggotaController extends Controller
         $subTitle = 'Tambah Data';
         
         $p3srs_jadwal_id = $request->p3srs_jadwal_id ?? NULL;
-        $p3srsKegiatanJadwal = \App\Models\P3srsKegiatanJadwal::with([
-                'p3srs_kegiatans',
-                'rusuns',
-            ])
-            ->where('id', $p3srs_jadwal_id)
+        $p3srsKegiatanJadwal = \App\Models\P3srsKegiatanJadwal::where('id', $p3srs_jadwal_id)
             ->firstOrFail();
 
         $rowsPemilikPenghuniKanidats = \App\Models\P3srsKegiatanKanidat::where('p3srs_kegiatan_jadwal_id', $p3srs_jadwal_id)->get();

@@ -6,6 +6,7 @@ use App\Http\Requests\StoreRusunDetailRequest;
 use App\Http\Requests\UpdateRusunDetailRequest;
 use App\Models\RusunDetail;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Builder;
 
 class RusunDetailController extends Controller
 {
@@ -39,15 +40,26 @@ class RusunDetailController extends Controller
 
         $user = $this->sessionUser;
 
-        $rows = RusunDetail::orderBy('created_at')
+        $table = RusunDetail::orderBy('created_at')
             ->when($user, function ($query, $user) {
                 if ($user->level == 'rusun') {
                     $sessionData = session()->get('rusun');
 
                     $query->where('rusun_id', $sessionData->id);
                 }
-            })
-            ->get()
+            });
+
+        if ($user->level == 'pemda') {
+            $table->whereHas('rusuns', function (Builder $query) {
+                $sessionData = session()->get('pemda');
+
+                $query
+                    ->where('province_id', $sessionData->province_id)
+                    ->where('regencie_id', $sessionData->regencie_id);
+            });
+        }
+            
+        $rows = $table->get()
             ->map(fn($row) => [
                 $row->rusuns->nama,
                 $row->nama_tower,
@@ -72,8 +84,6 @@ class RusunDetailController extends Controller
         
         $config = [
             'data' => $rows,
-            // 'order' => [[1, 'asc']],
-            // 'columns' => [null, null, null, null, null, ['orderable' => false]],
         ];
 
         return view(self::FOLDER_VIEW . 'index', compact('title', 'subTitle', 'heads', 'config'));

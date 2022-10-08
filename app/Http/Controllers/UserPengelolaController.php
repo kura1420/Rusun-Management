@@ -103,7 +103,7 @@ class UserPengelolaController extends Controller
                 'username' => strtolower($request->username),
                 'email' => strtolower($request->email),
                 'password' => Hash::make($request->password),
-                'active' => 0,
+                'active' => 1,
                 'level' => 'pengelola',
                 'remember_token' => $token,
             ]);
@@ -116,7 +116,7 @@ class UserPengelolaController extends Controller
 
             $user->assignRole('Pengelola');
                 
-            $user->notify(new UserVerifiedNotification($token));
+            // $user->notify(new UserVerifiedNotification($token));
         });
 
         return redirect()
@@ -147,7 +147,7 @@ class UserPengelolaController extends Controller
         $title = self::TITLE;
         $subTitle = 'Edit Data';
 
-        $row = User::with('user_mapping')->findOrFail($id);
+        $row = User::findOrFail($id);
 
         $pengelolas = \App\Models\Pengelola::orderBy('nama')->get();
 

@@ -30,7 +30,7 @@ use App\Http\Controllers\RusunPenghuniController;
 use App\Http\Controllers\RusunPenghuniDokumenController;
 use App\Http\Controllers\RusunUnitDetailController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\UserPemndaController;
+use App\Http\Controllers\UserPemdaController;
 use App\Http\Controllers\UserPemilikController;
 use App\Http\Controllers\UserPengelolaController;
 use App\Http\Controllers\UserPengembangController;
@@ -81,14 +81,14 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['role:Root'])->group(function () {
         Route::resources([
             'role' => RoleController::class,
-            'permission' => PermissionController::class,
+            // 'permission' => PermissionController::class,
         ]);
     });
 
     Route::middleware(['role:Root|Admin'])->group(function () {
         Route::resources([
             'user' => UserController::class,
-                'user-pemnda' => UserPemndaController::class,
+                'user-pemda' => UserPemdaController::class,
                 'user-rusun' => UserRusunController::class,
                 'user-pengembang' => UserPengembangController::class,
                 'user-pengelola' => UserPengelolaController::class,
@@ -144,7 +144,7 @@ Route::middleware(['auth'])->group(function () {
         });
     });
 
-    Route::middleware(['role:Root|Admin|Rusun'])->group(function () {
+    Route::middleware(['role:Root|Admin|Pemda|Rusun'])->group(function () {
         Route::resources([
             'rusun' => RusunController::class,
             'rusun-detail' => RusunDetailController::class,
@@ -217,6 +217,18 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('faq')->group(function () {
         Route::controller(FaqController::class)->group(function () {
             Route::get('helps/users', 'helps')->name('faq.helps');
+        });
+    });
+
+    Route::prefix('p3srs-kegiatan')->group(function () {
+        Route::controller(P3srsKegiatanController::class)->group(function () {
+            Route::get('{id}/copy', 'copy')->name('p3srs-kegiatan.copy');
+        });
+    });
+
+    Route::prefix('p3srs-jadwal')->group(function () {
+        Route::controller(P3srsKegiatanJadwalController::class)->group(function () {
+            Route::post('/grup/terpilih', 'groupTerpilih')->name('p3srs-jadwal.groupTerpilih');
         });
     });
 

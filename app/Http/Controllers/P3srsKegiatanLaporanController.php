@@ -28,17 +28,16 @@ class P3srsKegiatanLaporanController extends Controller
         $title = self::TITLE;
         $subTitle = 'List Data';
 
-        $rows = P3srsKegiatanJadwal::with([
-                'rusuns',
-                'p3srs_kegiatans',
-            ])
-            ->orderBy('created_at')
+        $rows = P3srsKegiatanJadwal::orderBy('created_at')
             ->get()
             ->map(fn($row) => [
                 $row->rusuns->nama,
                 $row->p3srs_kegiatans->nama,
                 $row->tanggal,
                 $row->lokasi,
+                $row->status ? '<nobr>' . 
+                    '<a href="'.route(self::URL .'show', $row->id).'" class="btn btn-success btn-sm" title="Detail"><i class="fas fa-folder"></i> Detail</a> ' .
+                '</nobr>' :
                 '<nobr>' . 
                     '<a href="'.route(self::URL .'show', $row->id).'" class="btn btn-success btn-sm" title="Detail"><i class="fas fa-folder"></i> Detail</a> ' .
                     '<a href="'.route(self::URL .'create').'?p3srs_kegiatan_jadwal_id='.$row->id.'" class="btn btn-info btn-sm" title="Edit"><i class="fas fa-pencil-alt"></i> Tulis</a> ' .
@@ -55,8 +54,6 @@ class P3srsKegiatanLaporanController extends Controller
         
         $config = [
             'data' => $rows,
-            'order' => [[1, 'asc']],
-            'columns' => [null, null, null, null, ['orderable' => false]],
         ];
 
         return view(self::FOLDER_VIEW . 'index', compact('title', 'subTitle', 'heads', 'config'));
@@ -71,11 +68,7 @@ class P3srsKegiatanLaporanController extends Controller
     {
         //
         $p3srs_kegiatan_jadwal_id = $request->p3srs_kegiatan_jadwal_id ?? NULL;
-        $p3srs_kegiatan_jadwal = P3srsKegiatanJadwal::with([
-            'rusuns',
-            'p3srs_kegiatans',
-        ])
-        ->where('id', $p3srs_kegiatan_jadwal_id)
+        $p3srs_kegiatan_jadwal = P3srsKegiatanJadwal::where('id', $p3srs_kegiatan_jadwal_id)
         ->firstOrFail();
 
         // if ($p3srs_kegiatan_jadwal->tanggal < Carbon::today()) {
@@ -153,12 +146,13 @@ class P3srsKegiatanLaporanController extends Controller
         $title = self::TITLE;
         $subTitle = 'Detail Data';
 
-        $row = P3srsKegiatanJadwal::with([
-            'rusuns',
-            'p3srs_kegiatans',
-            'p3srs_kegiatan_laporans',
-        ])
-        ->findOrFail($id);
+        $row = P3srsKegiatanJadwal::findOrFail($id);
+
+        $groupKanidats = \App\Models\P3srsKegiatanKanidat::where('p3srs_kegiatan_jadwal_id', $id)
+            ->select('grup_id', 'grup_nama')
+            ->distinct()
+            ->orderBy('grup_nama')
+            ->get();
 
         $row->p3srs_kegiatan_laporans = $row->p3srs_kegiatan_laporans->map(function ($p3srs_kegiatan_laporan) {
             $p3srs_kegiatan_laporan->p3srs_kegiatan_dokumentasis = $p3srs_kegiatan_laporan->p3srs_kegiatan_dokumentasis()->get();
@@ -166,7 +160,13 @@ class P3srsKegiatanLaporanController extends Controller
             return $p3srs_kegiatan_laporan;
         });
 
-        return view(self::FOLDER_VIEW . 'show', compact('title', 'subTitle', 'row'));        
+        $terpilihs = \App\Models\P3srsKegiatanKanidat::where('p3srs_kegiatan_jadwal_id', $id)
+            ->where('terpilih', 1)
+            ->get();
+
+        $groupTerpilih = collect($terpilihs)->unique('grup_nama')->first();
+
+        return view(self::FOLDER_VIEW . 'show', compact('title', 'subTitle', 'row', 'groupKanidats', 'groupTerpilih'));        
     }
 
     /**
@@ -178,13 +178,7 @@ class P3srsKegiatanLaporanController extends Controller
     public function edit($id)
     {
         //
-        $row = P3srsKegiatanLaporan::with([
-            'rusuns',
-            'p3srs_kegiatans',
-            'p3srs_kegiatan_jadwals',
-            'p3srs_kegiatan_dokumentasis',
-        ])
-            ->findOrFail($id);
+        $row = P3srsKegiatanLaporan::findOrFail($id);
 
         $title = self::TITLE;
         $subTitle = 'Laporan ' . $row->p3srs_kegiatans->nama;

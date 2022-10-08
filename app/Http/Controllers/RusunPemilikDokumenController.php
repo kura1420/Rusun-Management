@@ -39,10 +39,7 @@ class RusunPemilikDokumenController extends Controller
         $subTitle = 'Tambah Data';
 
         $pemilik_id = $request->pemilik_id ?? NULL;
-        $pemilik = \App\Models\Pemilik::with([
-            'rusun_pemiliks',
-        ])
-        ->where('id', $pemilik_id)
+        $pemilik = \App\Models\Pemilik::where('id', $pemilik_id)
         ->firstOrFail();
 
         $pemilik->rusun_pemiliks = $pemilik->rusun_pemiliks->map(function ($rusun_pemilik) {
@@ -128,10 +125,7 @@ class RusunPemilikDokumenController extends Controller
         
         $row = RusunPemilikDokumen::findOrFail($id);
 
-        $pemilik = \App\Models\Pemilik::with([
-            'rusun_pemiliks',
-        ])
-        ->where('id', $row->pemilik_id)
+        $pemilik = \App\Models\Pemilik::where('id', $row->pemilik_id)
         ->firstOrFail();
         
         $pemilik->rusun_pemilik_groups = $this->rusunPemilikList($pemilik->rusun_pemiliks);

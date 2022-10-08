@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreP3srsKegiatanJadwalRequest;
 use App\Http\Requests\UpdateP3srsKegiatanJadwalRequest;
 use App\Models\P3srsKegiatanJadwal;
+use App\Models\P3srsKegiatanKanidat;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class P3srsKegiatanJadwalController extends Controller
@@ -26,21 +28,22 @@ class P3srsKegiatanJadwalController extends Controller
         $title = self::TITLE;
         $subTitle = 'List Data';
 
-        $rows = P3srsKegiatanJadwal::with([
-                'rusuns',
-                'p3srs_kegiatans',
-            ])
-            ->orderBy('created_at')
+        $rows = P3srsKegiatanJadwal::orderBy('created_at')
             ->get()
             ->map(fn($row) => [
                 $row->rusuns->nama,
                 $row->p3srs_kegiatans->nama,
                 $row->tanggal,
                 $row->lokasi,
-                '<nobr>' . 
+                $row->status ?
+                    '<nobr>' . 
+                        '<a href="'.route(self::URL .'show', $row->id).'" class="btn btn-success btn-sm" title="Detail"><i class="fas fa-folder"></i> Detail</a> ' .
+                        // '<button type="button" class="btn btn-danger btn-sm btnDelete" value="'.$row->id.'" id="'.route(self::URL . 'destroy', $row->id).'"><i class="fas fa-trash"></i> Hapus</button>' . 
+                    '</nobr>'
+                    : '<nobr>' . 
                     '<a href="'.route(self::URL .'show', $row->id).'" class="btn btn-success btn-sm" title="Detail"><i class="fas fa-folder"></i> Detail</a> ' .
                     '<a href="'.route(self::URL .'edit', $row->id).'" class="btn btn-info btn-sm" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a> ' .
-                    '<button type="button" class="btn btn-danger btn-sm btnDelete" value="'.$row->id.'" id="'.route(self::URL . 'destroy', $row->id).'"><i class="fas fa-trash"></i> Hapus</button>' . 
+                    // '<button type="button" class="btn btn-danger btn-sm btnDelete" value="'.$row->id.'" id="'.route(self::URL . 'destroy', $row->id).'"><i class="fas fa-trash"></i> Hapus</button>' . 
                 '</nobr>',
             ]);
 
@@ -54,8 +57,6 @@ class P3srsKegiatanJadwalController extends Controller
         
         $config = [
             'data' => $rows,
-            'order' => [[1, 'asc']],
-            'columns' => [null, null, null, null, ['orderable' => false]],
         ];
 
         return view(self::FOLDER_VIEW . 'index', compact('title', 'subTitle', 'heads', 'config'));
@@ -118,12 +119,7 @@ class P3srsKegiatanJadwalController extends Controller
         $title = self::TITLE;
         $subTitle = 'Detail Data';
 
-        $row = P3srsKegiatanJadwal::with([
-            'rusuns',
-            'p3srs_kegiatans',
-            'p3srs_kegiatan_kanidats',
-            'p3srs_kegiatan_anggotas',
-        ])->findOrFail($id);
+        $row = P3srsKegiatanJadwal::findOrFail($id);
 
         $row->p3srs_kegiatan_kanidats = $row->p3srs_kegiatan_kanidats->map(function ($p3srs_kegiatan_kanidat) {
             if ($p3srs_kegiatan_kanidat->apakah_pemilik) {
@@ -135,7 +131,7 @@ class P3srsKegiatanJadwalController extends Controller
                         'rusun_pemiliks.id',
                             'pemiliks.nama',
                                 'rusun_details.nama_tower',
-                                    'rusun_unit_details.ukuran'
+                                    'rusun_unit_details.jenis'
                     ])
                     ->first();
             } else {
@@ -146,7 +142,7 @@ class P3srsKegiatanJadwalController extends Controller
                         'rusun_penghunis.id',
                             'rusun_penghunis.nama',
                                 'rusun_details.nama_tower',
-                                    'rusun_unit_details.ukuran'
+                                    'rusun_unit_details.jenis'
                     ])
                     ->first();
             }
@@ -164,7 +160,7 @@ class P3srsKegiatanJadwalController extends Controller
                         'rusun_pemiliks.id',
                             'pemiliks.nama',
                                 'rusun_details.nama_tower',
-                                    'rusun_unit_details.ukuran'
+                                    'rusun_unit_details.jenis'
                     ])
                     ->first();
             } else {
@@ -175,7 +171,7 @@ class P3srsKegiatanJadwalController extends Controller
                         'rusun_penghunis.id',
                             'rusun_penghunis.nama',
                                 'rusun_details.nama_tower',
-                                    'rusun_unit_details.ukuran'
+                                    'rusun_unit_details.jenis'
                     ])
                     ->first();
             }
@@ -197,6 +193,11 @@ class P3srsKegiatanJadwalController extends Controller
                         ->map(function ($item, $key) {
                             return $item->grup_nama;
                         })[0],
+                    'terpilih' => collect($collect)
+                    ->unique('unique')
+                    ->map(function ($item, $key) {
+                        return $item->terpilih;
+                    })[0],
                     'childrens' => $collect,
                 ];
             }
@@ -220,10 +221,7 @@ class P3srsKegiatanJadwalController extends Controller
         $rusuns = \App\Models\Rusun::orderBy('nama', 'asc')->get();
         $kegiatans = \App\Models\P3srsKegiatan::orderBy('nama', 'asc')->get();
 
-        $row = P3srsKegiatanJadwal::with([
-            'rusuns',
-            'p3srs_kegiatans',
-        ])->findOrFail($id);
+        $row = P3srsKegiatanJadwal::findOrFail($id);
 
         // if ($row->tanggal < Carbon::today()) {
         //     return abort(403, 'Tanggal kegiatan sudah kedaluwarsa.');
@@ -279,5 +277,21 @@ class P3srsKegiatanJadwalController extends Controller
 
             return response()->json('Success');
         // }
+    }
+
+    public function groupTerpilih(Request $request)
+    {
+        $id = $request->id ?? NULL;
+        $terpilih = $request->terpilih ?? NULL;
+
+        if (isset($id) && isset($terpilih)) {
+            $p3srsKegiatanJadwal = P3srsKegiatanJadwal::findOrFail($id)->update(['status' => 1]);
+
+            $kanidatTerpilih = P3srsKegiatanKanidat::where('grup_id', $terpilih)->update(['terpilih' => 1]);
+
+            return response()->json('Success');
+        } else {
+            return abort(404);
+        }
     }
 }

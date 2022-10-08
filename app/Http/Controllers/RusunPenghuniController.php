@@ -7,6 +7,7 @@ use App\Http\Requests\StoreRusunPenghuniRequest;
 use App\Http\Requests\UpdateRusunPenghuniRequest;
 use App\Models\RusunPenghuni;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Builder;
 
 class RusunPenghuniController extends Controller
 {
@@ -15,6 +16,17 @@ class RusunPenghuniController extends Controller
     const FOLDER_VIEW = 'rusun_penghuni.';
     const FOLDER_DOKUMEN = 'rusun_penghuni/dokumen';
     const URL = 'rusun-penghuni.';
+
+    protected $sessionUser;
+
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            $this->sessionUser = auth()->user();
+
+            return $next($request);
+        });
+    }
     
     /**
      * Display a listing of the resource.
@@ -27,8 +39,28 @@ class RusunPenghuniController extends Controller
         $title = self::TITLE;
         $subTitle = 'List Data';
 
-        $rows = RusunPenghuni::orderBy('updated_at', 'desc')
-            ->get()
+        $user = $this->sessionUser;
+
+        $table = RusunPenghuni::orderBy('updated_at', 'desc')
+            ->when($user, function ($query, $user) {
+                if ($user->level == 'rusun') {
+                    $sessionData = session()->get('rusun');
+
+                    $query->where('rusun_id', $sessionData->id);
+                }
+            });
+
+        if ($user->level == 'pemda') {
+            $table->whereHas('rusuns', function (Builder $query) {
+                $sessionData = session()->get('pemda');
+
+                $query
+                    ->where('province_id', $sessionData->province_id)
+                    ->where('regencie_id', $sessionData->regencie_id);
+            });
+        }
+
+        $rows = $table->get()
             ->map(fn($row) => [
                 $row->rusuns->nama,
                 $row->rusun_details->nama_tower ?? NULL,
@@ -59,8 +91,6 @@ class RusunPenghuniController extends Controller
         
         $config = [
             'data' => $rows,
-            // 'order' => [[1, 'asc']],
-            // 'columns' => [null, null, null, null, null, null, null, null, ['orderable' => false]],
         ];
 
         $lastUpdate = collect($rows)
@@ -107,12 +137,7 @@ class RusunPenghuniController extends Controller
         $title = self::TITLE;
         $subTitle = 'Detail Data';
 
-        $row = RusunPenghuni::with([
-            'rusuns',
-            'rusun_details',
-            'rusun_unit_details',
-            'rusun_penghuni_dokumens'
-        ])->findOrFail($id);
+        $row = RusunPenghuni::findOrFail($id);
 
         $row->rusun_penghuni_dokumens = $row->rusun_penghuni_dokumens->map(function ($rusun_penghuni_dokumen) {
             $rusun_penghuni_dokumen->dokumens = $rusun_penghuni_dokumen->dokumens()->first();
