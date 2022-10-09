@@ -5,10 +5,11 @@ namespace App\Policies;
 use App\Models\PengelolaKontak;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Notifications\Notifiable;
 
 class PengelolaKontakPolicy
 {
-    use HandlesAuthorization;
+    use HandlesAuthorization, Notifiable;
 
     /**
      * Determine whether the user can view any models.

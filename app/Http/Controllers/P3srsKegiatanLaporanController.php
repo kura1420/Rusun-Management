@@ -8,6 +8,7 @@ use App\Models\P3srsKegiatanJadwal;
 use App\Models\P3srsKegiatanLaporan;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class P3srsKegiatanLaporanController extends Controller
 {
@@ -123,11 +124,13 @@ class P3srsKegiatanLaporanController extends Controller
             }
         }
 
-        $row = P3srsKegiatanLaporan::create($input);
+        DB::transaction(function () use ($input, $files, $insertDokumentasi) {
+            $row = P3srsKegiatanLaporan::create($input);
 
-        if (count($files)>0) {
-            $row->p3srs_kegiatan_dokumentasis()->createMany($insertDokumentasi);
-        }
+            if (count($files)>0) {
+                $row->p3srs_kegiatan_dokumentasis()->createMany($insertDokumentasi);
+            }
+        });
 
         return redirect()
             ->route(self::URL . 'show', $p3srs_kegiatan_jadwal->id)

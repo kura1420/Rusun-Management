@@ -4,6 +4,7 @@ use App\Http\Controllers\ApiManagementController;
 use App\Http\Controllers\DokumenController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\InformasiHalamanController;
+use App\Http\Controllers\KomplainController;
 use App\Http\Controllers\P3srsJabatanController;
 use App\Http\Controllers\P3srsKegiatanAnggotaController;
 use App\Http\Controllers\P3srsKegiatanController;
@@ -212,6 +213,9 @@ Route::middleware(['auth'])->group(function () {
         'p3srs-kegiatan-anggota' => P3srsKegiatanAnggotaController::class,
         'p3srs-kegiatan-laporan' => P3srsKegiatanLaporanController::class,
     ]);
+
+    // komplain
+    Route::resource('komplain', KomplainController::class);
 
     // public
     Route::prefix('faq')->group(function () {

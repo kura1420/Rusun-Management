@@ -433,11 +433,11 @@ return [
             'submenu' => [
                 [
                     'text' => 'Tulis',
-                    'url'  => '#',
+                    'route'  => 'komplain.create',
                 ],
                 [
                     'text' => 'Daftar',
-                    'url'  => '#',
+                    'route'  => 'komplain.index',
                     'label' => 0,
                     'label_color' => 'danger',
                 ],
