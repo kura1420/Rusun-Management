@@ -218,6 +218,18 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('komplain', KomplainController::class);
 
     // public
+    Route::prefix('komplain')->group(function () {
+        Route::controller(KomplainController::class)->group(function () {
+            Route::get('rest/search', 'apiList')->name('komplain.apiList');
+        });
+    });
+
+    Route::prefix('pengelola')->group(function () {
+        Route::controller(PengelolaController::class)->group(function () {
+            Route::get('rest/search', 'apiList')->name('pengelola.apiList');
+        });
+    });
+
     Route::prefix('faq')->group(function () {
         Route::controller(FaqController::class)->group(function () {
             Route::get('helps/users', 'helps')->name('faq.helps');

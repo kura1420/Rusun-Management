@@ -11,14 +11,17 @@ class KomplaintNotification extends Notification
 {
     use Queueable;
 
+    protected $komplain;
+
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($komplain)
     {
         //
+        $this->komplain = $komplain;
     }
 
     /**
@@ -41,7 +44,7 @@ class KomplaintNotification extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-                    ->subject($notifiable->judul)
+                    ->subject($this->komplain->judul)
                     ->line('The introduction to the notification.')
                     ->action('Notification Action', url('/'))
                     ->line('Thank you for using our application!');

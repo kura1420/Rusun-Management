@@ -21,6 +21,17 @@ class KomplainController extends Controller
     const FOLDER_VIEW = 'komplain.';
     const FOLDER_UPLOAD = 'komplain';
     const URL = 'komplain.';
+
+    protected $sessionUser;
+
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            $this->sessionUser = auth()->user();
+
+            return $next($request);
+        });
+    }
     
     /**
      * Display a listing of the resource.
@@ -36,7 +47,7 @@ class KomplainController extends Controller
         $rows = Komplain::orderBy('created_at', 'desc')
             ->get();
 
-        return view(self::FOLDER_VIEW . 'index', compact('title', 'subTitle'));
+        return view(self::FOLDER_VIEW . 'index', compact('title', 'subTitle', 'rows'));
     }
 
     /**
@@ -49,11 +60,28 @@ class KomplainController extends Controller
         //
         $title = self::TITLE;
         $subTitle = 'List Data';
-        
-        $pengelolas = \App\Models\Pengelola::orderBy('nama')->get();
-        $rusuns = \App\Models\Rusun::orderBy('nama')->get();
 
-        return view(self::FOLDER_VIEW . 'create', compact('title', 'subTitle', 'pengelolas', 'rusuns'));
+        $user = $this->sessionUser;
+        
+        $rusuns = \App\Models\Rusun::orderBy('nama')
+            ->when($user, function ($query, $user) {
+                if ($user->level == 'rusun') {
+                    $sessionData = session()->get('rusun');
+
+                    $query->where('id', $sessionData->id);
+                }
+
+                if ($user->level == 'pemda') {
+                    $sessionData = session()->get('pemda');
+
+                    $query
+                        ->where('province_id', $sessionData->province_id)
+                        ->where('regencie_id', $sessionData->regencie_id);
+                }
+            })
+            ->get();
+
+        return view(self::FOLDER_VIEW . 'create', compact('title', 'subTitle', 'rusuns'));
     }
 
     /**
@@ -91,10 +119,10 @@ class KomplainController extends Controller
             }
         }
 
-        $rusun = \App\Models\Rusun::where('id', $request->rusun)->firstOrFail();
+        $rusun = \App\Models\Rusun::where('id', $request->rusun_id)->firstOrFail();
         $pengelola = \App\Models\Pengelola::where('id', $request->pengelola_id)->firstOrFail();
 
-        $input['kode'] = Str::random(6);
+        $input['kode'] = strtoupper(Str::random(6));
         $input['status'] = 0;
         $input['tanggal_dibuat'] = Carbon::now();
         $input['komplain_user_id'] = auth()->user()->id;
@@ -116,26 +144,12 @@ class KomplainController extends Controller
             return $komplain;
         });
 
-        $receiver = [];
+        $rusun->notify(new KomplaintNotification($result));
 
-        if (isset($rusun->email)) {
-            array_push($receiver, $rusun->email);
-        }
+        $pengelola->notify(new KomplaintNotification($result));
+        $pengelolaKontaks = \App\Models\PengelolaKontak::where('pengelola_id', $request->pengelola_id)->get();
 
-        if ($pengelola->pengelola_kontaks) {
-            foreach ($pengelola->pengelola_kontaks->get() as $key => $pengelola_kontak) {
-                if (isset($pengelola_kontak->email)) {
-                    array_push($receiver, $pengelola_kontak->email);
-                }
-            }
-        }
-
-        if (count($receiver) > 0) {
-            $result->rusun = $rusun;
-            $result->pengelola = $pengelola;
-
-            Notification::send($receiver, new KomplaintNotification($result));
-        }
+        Notification::send($pengelolaKontaks, new KomplaintNotification($result));
 
         return redirect()
             ->route(self::URL . 'show', $result->id)
@@ -180,12 +194,12 @@ class KomplainController extends Controller
     public function update(UpdateKomplainRequest $request, Komplain $komplain)
     {
         //
-        $komplain->update([
-            'status' => 1,
-            'tanggal_diselesaikan' => Carbon::now(),
-        ]);
+        // $komplain->update([
+        //     'status' => 1,
+        //     'tanggal_diselesaikan' => Carbon::now(),
+        // ]);
 
-        return response()->json('Success');
+        // return response()->json('Success');
     }
 
     /**
@@ -252,10 +266,6 @@ class KomplainController extends Controller
             }
         }
 
-        $row = $komplain;
-        $row->rusun = $komplain->rusun;
-        $row->pengelola = $komplain->pengelola;
-
         DB::transaction(function () use ($input, $attachments, $insertAttachment, $komplain) {
             $komplain->update([
                 'tanggal_ditanggapi' => Carbon::now(),
@@ -267,30 +277,28 @@ class KomplainController extends Controller
                 $komplain_tanggapan->komplain_files()->createMany($insertAttachment);
             }
         });
-
-        $row->penjelasan = $input['penjelasan'];
-        $row->attachment = $insertAttachment;
-
-        $receiver = [];
-
-        if ($row->rusun->email) {
-            array_push($receiver, $row->rusun->email);
-        }
-
-        if (count($pengelolaKontaks) > 0) {
-            foreach ($pengelolaKontaks as $key => $pengelolaKontak) {
-                if (isset($pengelolaKontak->email)) {
-                    array_push($receiver, $pengelolaKontak->email);
-                }
-            }
-        }
-
-        if (count($receiver) > 0) {
-            Notification::send($receiver, new KomplaintNotification($row));
-        }
+        
+        Notification::send($komplain->rusun, new KomplaintNotification($komplain));
+        Notification::send($komplain->pengelola, new KomplaintNotification($komplain));
+        Notification::send($pengelolaKontaks, new KomplaintNotification($komplain));
 
         return redirect()
             ->route(self::URL . 'show', $id)
             ->with('success', 'Komplain sudah ditanggapi, terimakasih...');
+    }
+
+    public function apiList(Request $request)
+    {
+        $search = $request->search ?? NULL;
+
+        $rows = Komplain::orderBy('created_at')
+            ->when($search, function ($query, $search) {
+                $query
+                    ->where('kode', 'like', "%{$search}%")
+                    ->orWhere('judul', 'like', "%{$search}%");
+            })
+            ->get();
+
+        return response()->json($rows);
     }
 }

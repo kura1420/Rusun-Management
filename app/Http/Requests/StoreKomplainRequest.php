@@ -27,6 +27,7 @@ class StoreKomplainRequest extends FormRequest
             //
             'judul' => 'required|string|max:255',
             'penjelasan' => 'required|string',
+            'tingkat' => 'required|numeric',
             'pengelola_id' => 'required|string',
             'rusun_id' => 'required|string',
             'attachments' => 'nullable|array|max:5',

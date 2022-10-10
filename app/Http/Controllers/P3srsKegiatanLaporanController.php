@@ -165,11 +165,17 @@ class P3srsKegiatanLaporanController extends Controller
 
         $terpilihs = \App\Models\P3srsKegiatanKanidat::where('p3srs_kegiatan_jadwal_id', $id)
             ->where('terpilih', 1)
-            ->get();
+            ->get()
+            ->map(function ($terpilih) {
+                $terpilih->profile = $terpilih->pemilik_penghuni_profile;
+                $terpilih->p3srs_jabatans = $terpilih->p3srs_jabatans;
+
+                return $terpilih;
+            });
 
         $groupTerpilih = collect($terpilihs)->unique('grup_nama')->first();
 
-        return view(self::FOLDER_VIEW . 'show', compact('title', 'subTitle', 'row', 'groupKanidats', 'groupTerpilih'));        
+        return view(self::FOLDER_VIEW . 'show', compact('title', 'subTitle', 'row', 'groupKanidats', 'groupTerpilih', 'terpilihs'));
     }
 
     /**

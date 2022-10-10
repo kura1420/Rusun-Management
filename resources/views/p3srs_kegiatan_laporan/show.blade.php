@@ -92,8 +92,8 @@
             <div>
                 <i class="fas fa-check bg-success"></i>
                 <div class="timeline-item">
-                    <span class="time"><i class="fas fa-clock"></i> 5 mins ago</span>
-                    <h3 class="timeline-header card-success card-outline">Grup <a href="#">{{$groupTerpilih->grup_nama}} </a> Telah Terpilih</h3>
+                    <span class="time"><i class="fas fa-clock"></i> {{$groupTerpilih->updated_at}}</span>
+                    <h3 class="timeline-header card-success card-outline">Grup <a href="javascript:void(0)" id="btnModalTerpilih">{{$groupTerpilih->grup_nama}} </a> Telah Terpilih</h3>
                 </div>
             </div>
             @else
@@ -152,6 +152,35 @@
         <x-adminlte-button theme="danger" label="Tutup" data-dismiss="modal"/>
     </x-slot>
 </x-adminlte-modal>
+
+<x-adminlte-modal id="modalTerpilih" title="Group Terpilih" theme="primary" size='lg' static-backdrop v-centered>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th style="width: 10px;">#</th>
+                <th>Nama</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Unit</th>
+                <th>Jabatan</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if ($terpilihs)
+                @foreach ($terpilihs as $key => $terpilih)
+                <tr>
+                    <td>{{$loop->iteration}}.</td>
+                    <td>{{$terpilih->profile->nama}}</td>
+                    <td>{{$terpilih->profile->email}}</td>
+                    <td>{{$terpilih->profile->phone}}</td>
+                    <td>{{$terpilih->profile->unit}}</td>
+                    <td>{{$terpilih->p3srs_jabatans->nama}}</td>
+                </tr>
+                @endforeach
+            @endif
+        </tbody>
+    </table>
+</x-adminlte-modal>
 @stop
 
 @section('css')
@@ -166,6 +195,12 @@ $(document).ready(function () {
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
         }
+    });
+
+    $('#btnModalTerpilih').click(function (e) { 
+        e.preventDefault();
+        
+        $('#modalTerpilih').modal('show');
     });
 
     $('#btnAccept').click(function (e) { 

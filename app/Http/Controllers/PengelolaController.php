@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StorePengelolaRequest;
 use App\Http\Requests\UpdatePengelolaRequest;
 use App\Models\Pengelola;
+use Illuminate\Http\Request;
 
 class PengelolaController extends Controller
 {
@@ -185,5 +186,32 @@ class PengelolaController extends Controller
         $row->delete();
 
         return response()->json('Success');
+    }
+
+    public function apiList(Request $request)
+    {
+        $rusun_id = $request->rusun_id ?? NULL;
+        $search = $request->search ?? NULL;
+
+        $user = $this->sessionUser;
+
+        $rusunPengelolas = \App\Models\RusunPengelola::where('rusun_id', $rusun_id)
+            ->pluck('pengelola_id');
+
+        $rows = Pengelola::orderBy('nama')
+            ->whereIn('id', $rusunPengelolas)
+            ->when($user, function ($query, $user) {
+                if ($user->level == 'pengelola') {
+                    $sessionData = session()->get('pengelola');
+
+                    $query->where('id', $sessionData->id);
+                }
+            })
+            ->when($search, function ($query, $search) {
+                $query->where('nama', 'like', "%{$search}%");
+            })
+            ->get();
+
+        return response()->json($rows);
     }
 }

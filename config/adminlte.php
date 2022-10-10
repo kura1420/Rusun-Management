@@ -436,10 +436,11 @@ return [
                     'route'  => 'komplain.create',
                 ],
                 [
-                    'text' => 'Daftar',
+                    'text' => 'Kotak Masuk',
                     'route'  => 'komplain.index',
                     'label' => 0,
                     'label_color' => 'danger',
+                    'id' => 'komplain_daftar',
                 ],
                 [
                     'text' => 'Laporan',
