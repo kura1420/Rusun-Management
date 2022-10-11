@@ -66,7 +66,7 @@
 </div>
 @endsection
 
-@section('komplain_create')
+@section('komplain_js')
 <script>
 $(document).ready(function () {
     $.ajaxSetup({

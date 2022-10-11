@@ -111,7 +111,9 @@
         $(document).ready(function () {
             $.get("{{route('komplain.apiList')}}", 
                 function (data, textStatus, jqXHR) {
-                    $('#komplain_daftar').find('.badge').text(data.length);
+                    const {noReply} = data;
+
+                    $('#komplain_daftar').find('.badge').text(noReply);
                 },
                 "json"
             );

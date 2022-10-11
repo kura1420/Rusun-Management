@@ -38,16 +38,99 @@ class KomplainController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         //
+        $status = $request->status ?? NULL;
+        $tingkat = $request->tingkat ?? NULL;
+
+        if ($status !== 'noreply' && $status !== 'reply' && $status !== 'undone' && $status !== 'done') {
+            return abort(404);
+        }
+
+        if (isset($tingkat)) {
+            if ($tingkat !== 'high' && $tingkat !== 'medium' && $tingkat !== 'low') {
+                return abort(404);
+            }
+        }
+
+        return $this->generatePage($status, $tingkat);
+    }
+
+    public function pages(Request $request)
+    {
+        $status = $request->status ?? NULL;
+        $tingkat = $request->tingkat ?? NULL;
+
+        if ($status !== 'noreply' && $status !== 'reply' && $status !== 'undone' && $status !== 'done') {
+            return abort(404);
+        }
+
+        if (isset($tingkat)) {
+            if ($tingkat !== 'high' && $tingkat !== 'medium' && $tingkat !== 'low') {
+                return abort(404);
+            }
+        }
+        
+        return $this->generatePage($status, $tingkat);
+    }
+
+    protected function generatePage($status, $tingkat)
+    {
+        $params = new \stdClass;
+        $params->status = $status;
+        $params->tingkat = $tingkat;
+
         $title = self::TITLE;
         $subTitle = 'List Data';
         
         $rows = Komplain::orderBy('created_at', 'desc')
-            ->get();
+            ->whereYear('tanggal_dibuat', date('Y'))
+            ->when($params, function ($query, $params) {
+                $status = $params->status ?? NULL;
+                $tingkat = $params->tingkat ?? NULL;
+                
+                if ($status == 'noreply') {
+                    $query->where('sudah_dijawab', 0);
+                }
 
-        return view(self::FOLDER_VIEW . 'index', compact('title', 'subTitle', 'rows'));
+                if ($status == 'reply') {
+                    $query->where('sudah_dijawab', 1);
+                }
+
+                if ($status == 'undone') {
+                    $query->where('status', 3);
+                }
+
+                if ($status == 'done') {
+                    $query->where('status', 1);
+                }
+
+                if (isset($tingkat)) {
+                    if ($tingkat == 'high') {
+                        $query->where('tingkat', 3);
+                    }
+
+                    if ($tingkat == 'medium') {
+                        $query->where('tingkat', 2);
+                    }
+
+                    if ($tingkat == 'low') {
+                        $query->where('tingkat', 1);
+                    }
+                }
+            })
+            ->paginate(10);
+
+        $path = '/page/q?status=' . $status;
+        
+        if (isset($tingkat)) {
+            $path .= '&tingkat=' . $tingkat;
+        }
+
+        $rows->withPath($path);
+
+        return view(self::FOLDER_VIEW . 'index', compact('title', 'subTitle', 'rows', 'status'));
     }
 
     /**
@@ -144,7 +227,7 @@ class KomplainController extends Controller
             return $komplain;
         });
 
-        $rusun->notify(new KomplaintNotification($result));
+        // $rusun->notify(new KomplaintNotification($result));
 
         $pengelola->notify(new KomplaintNotification($result));
         $pengelolaKontaks = \App\Models\PengelolaKontak::where('pengelola_id', $request->pengelola_id)->get();
@@ -162,15 +245,21 @@ class KomplainController extends Controller
      * @param  \App\Models\Komplain  $komplain
      * @return \Illuminate\Http\Response
      */
-    public function show(Komplain $komplain)
+    public function show(Request $request, Komplain $komplain)
     {
         //
+        $status = $request->status ?? NULL;
+
+        if (!$status) {
+            return abort(404);
+        }
+
         $title = self::TITLE;
         $subTitle = 'Detail Data';
 
         $row = $komplain;
 
-        return view(self::FOLDER_VIEW . 'show', compact('title', 'subTitle', 'row'));        
+        return view(self::FOLDER_VIEW . 'show', compact('title', 'subTitle', 'row', 'status'));        
     }
 
     /**
@@ -278,7 +367,8 @@ class KomplainController extends Controller
             }
         });
         
-        Notification::send($komplain->rusun, new KomplaintNotification($komplain));
+        // Notification::send($komplain->rusun, new KomplaintNotification($komplain));
+
         Notification::send($komplain->pengelola, new KomplaintNotification($komplain));
         Notification::send($pengelolaKontaks, new KomplaintNotification($komplain));
 
@@ -297,8 +387,31 @@ class KomplainController extends Controller
                     ->where('kode', 'like', "%{$search}%")
                     ->orWhere('judul', 'like', "%{$search}%");
             })
+            ->whereYear('tanggal_dibuat', date('Y'))
             ->get();
 
-        return response()->json($rows);
+        $collect = collect($rows);
+
+        // status
+        $noReply = $collect->where('sudah_dijawab', 0)->count();
+        $reply = $collect->where('sudah_dijawab', 1)->count();
+        $undone = $collect->where('status', 3)->count();
+        $done = $collect->where('status', 1)->count();
+
+        // tingkat
+        $high = $collect->where('tingkat', 3)->count();
+        $medium = $collect->where('tingkat', 2)->count();
+        $low = $collect->where('tingkat', 1)->count();
+
+        return [
+            'noReply' => $noReply,
+            'reply' => $reply,
+            'undone' => $undone,
+            'done' => $done,
+
+            'high' => $high,
+            'medium' => $medium,
+            'low' => $low,
+        ];
     }
 }

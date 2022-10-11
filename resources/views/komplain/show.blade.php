@@ -4,6 +4,9 @@
 <div class="card card-primary card-outline">
     <div class="card-header">
         <h3 class="card-title">Kode: <strong>{{$row->kode}}</strong></h3>
+        <div class="float-right">
+            <button type="button" onclick="window.history.back()" class="btn btn-sm btn-secondary"><i class="fas fa-angle-left"></i> Kembali</button>
+        </div>
     </div>
 
     <div class="card-body p-0">
@@ -34,7 +37,7 @@
         </div>
     </div>
 
-    <div class="card-footer bg-white">
+    <!-- <div class="card-footer bg-white">
         <ul class="mailbox-attachments d-flex align-items-stretch clearfix">
             <li>
                 <span class="mailbox-attachment-icon"><i class="far fa-file-pdf"></i></span>
@@ -57,7 +60,7 @@
                 </div>
             </li>
         </ul>
-    </div>
+    </div> -->
 
     <div class="card-footer">
         <div class="float-right">
@@ -69,6 +72,6 @@
 </div>
 @endsection
 
-@section('komplain_create')
+@section('komplain_js')
 
 @endsection

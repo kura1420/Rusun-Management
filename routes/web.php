@@ -221,6 +221,7 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('komplain')->group(function () {
         Route::controller(KomplainController::class)->group(function () {
             Route::get('rest/search', 'apiList')->name('komplain.apiList');
+            Route::get('page/q', 'pages')->name('komplain.pages');
         });
     });
 
