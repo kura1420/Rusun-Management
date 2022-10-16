@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\Uuid;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -13,6 +14,11 @@ class P3srsKegiatanLaporan extends Model
     public $incrementing = false;
 
     protected $guarded = [];
+
+    public function getCreatedFormatAttribute()
+    {
+        return Carbon::parse($this->created_at)->diffForHumans();
+    }
 
     public function p3srs_kegiatan_jadwals()
     {

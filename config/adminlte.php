@@ -433,11 +433,11 @@ return [
             'submenu' => [
                 [
                     'text' => 'Tulis',
-                    'route'  => 'komplain.create',
+                    'route'  => ['komplain.create', ['status=noreply']],
                 ],
                 [
                     'text' => 'Kotak Masuk',
-                    'route'  => 'komplain.index',
+                    'route'  => ['komplain.index', ['status=noreply']],
                     'label' => 0,
                     'label_color' => 'danger',
                     'id' => 'komplain_daftar',

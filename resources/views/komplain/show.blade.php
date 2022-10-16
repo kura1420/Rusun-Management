@@ -22,7 +22,7 @@
                 <button type="button" class="btn btn-default btn-sm" data-container="body" title="Reply">
                     <i class="fas fa-reply"></i>
                 </button>
-                <button type="button" class="btn btn-default btn-sm" data-container="body" title="Forward">
+                <button type="button" class="btn btn-default btn-sm btnMelihat" data-container="body" title="Show">
                     <i class="fas fa-eye"></i>
                 </button>
             </div>
@@ -65,13 +65,44 @@
     <div class="card-footer">
         <div class="float-right">
             <button type="button" class="btn btn-default"><i class="fas fa-reply"></i> Menjawab</button>
-            <button type="button" class="btn btn-default"><i class="fas fa-eye"></i> Yang Melihat</button>
+            <button type="button" class="btn btn-default btnMelihat"><i class="fas fa-eye"></i> Yang Melihat</button>
         </div>
         <button type="button" class="btn btn-default"><i class="fas fa-print"></i> Print</button>
     </div>
 </div>
+
+<x-adminlte-modal id="modalUserView" title="User Melihat" theme="secondary" size='lg' v-centered static-backdrop scrollable>
+    <div class="table-responsive">
+        <table class="table table-hover text-nowrap">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>User</th>
+                    <th>Waktu</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($row->komplain_user_bukas()->get() as $key => $komplain_user_buka)
+                <tr>
+                    <td>{{$loop->iteration}}.</td>
+                    <td>{{$komplain_user_buka->user->name}}</td>
+                    <td>{{$komplain_user_buka->waktu_format}}</td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+</x-adminlte-modal>
 @endsection
 
 @section('komplain_js')
-
+<script>
+$(document).ready(function () {
+    $('.btnMelihat').click(function (e) { 
+        e.preventDefault();
+        
+        $('#modalUserView').modal('show');
+    });
+});
+</script>
 @endsection

@@ -6,8 +6,8 @@
         <h3 class="card-title">Kotak Masuk</h3>
         <div class="card-tools">
             <div class="input-group input-group-sm">
-                <input type="text" class="form-control" placeholder="Cari Data" />
-                <div class="input-group-append">
+                <input type="text" class="form-control" id="text_search" placeholder="Cari Data" />
+                <div class="input-group-append" id="btnSearch">
                     <div class="btn btn-primary">
                         <i class="fas fa-search"></i>
                     </div>
@@ -108,11 +108,55 @@
 @section('komplain_js')
 <script>
 $(document).ready(function () {
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+        }
+    });
+
+    const params = {{Js::from($params)}};
+
     $('.btnReload').click(function (e) { 
         e.preventDefault();
         
         window.location.reload();
     });
+
+    $('#text_search').keyup(function (e) { 
+        e.preventDefault();
+
+        if (e.keyCode === 13) {
+            let value = $(this).val();
+
+            ajaxSearch(value);
+        }
+    });
+
+    $('#btnSearch').click(function (e) { 
+        e.preventDefault();
+        
+        let value = $('#text_search').val();
+
+        ajaxSearch(value);
+    });
+
+    const ajaxSearch = value => {
+        if (value !== '' && value !== null) {
+            params.search = value;
+        } else {
+            params.search = null;
+        }
+
+        $.each(params, function (index, value) { 
+            if (! value) {
+                delete params[index];
+            }
+        });
+        
+        const u = new URLSearchParams(params).toString();
+
+        window.location.href = '{{route("komplain.index")}}?' + u;
+    }
 });
 </script>
 @endsection

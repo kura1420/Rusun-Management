@@ -24,6 +24,11 @@ class Komplain extends Model
         return $this->hasMany(KomplainFile::class);
     }
 
+    public function komplain_user_bukas()
+    {
+        return $this->hasMany(KomplainUserBuka::class);
+    }
+
     public function pengelola()
     {
         return $this->belongsTo(Pengelola::class);

@@ -43,6 +43,7 @@ class KomplainController extends Controller
         //
         $status = $request->status ?? NULL;
         $tingkat = $request->tingkat ?? NULL;
+        $search = $request->search ?? NULL;
 
         if ($status !== 'noreply' && $status !== 'reply' && $status !== 'undone' && $status !== 'done') {
             return abort(404);
@@ -54,13 +55,14 @@ class KomplainController extends Controller
             }
         }
 
-        return $this->generatePage($status, $tingkat);
+        return $this->generatePage($status, $tingkat, $search);
     }
 
     public function pages(Request $request)
     {
         $status = $request->status ?? NULL;
         $tingkat = $request->tingkat ?? NULL;
+        $search = $request->search ?? NULL;
 
         if ($status !== 'noreply' && $status !== 'reply' && $status !== 'undone' && $status !== 'done') {
             return abort(404);
@@ -72,14 +74,15 @@ class KomplainController extends Controller
             }
         }
         
-        return $this->generatePage($status, $tingkat);
+        return $this->generatePage($status, $tingkat, $search);
     }
 
-    protected function generatePage($status, $tingkat)
+    protected function generatePage($status, $tingkat, $search)
     {
         $params = new \stdClass;
         $params->status = $status;
         $params->tingkat = $tingkat;
+        $params->search = $search;
 
         $title = self::TITLE;
         $subTitle = 'List Data';
@@ -89,6 +92,7 @@ class KomplainController extends Controller
             ->when($params, function ($query, $params) {
                 $status = $params->status ?? NULL;
                 $tingkat = $params->tingkat ?? NULL;
+                $search = $params->search ?? NULL;
                 
                 if ($status == 'noreply') {
                     $query->where('sudah_dijawab', 0);
@@ -119,6 +123,11 @@ class KomplainController extends Controller
                         $query->where('tingkat', 1);
                     }
                 }
+
+                if (isset($search)) {
+                    $query->where('kode', 'like', "%{$search}%")
+                        ->orWhere('judul', 'like', "%{$search}%");
+                }
             })
             ->paginate(10);
 
@@ -130,7 +139,7 @@ class KomplainController extends Controller
 
         $rows->withPath($path);
 
-        return view(self::FOLDER_VIEW . 'index', compact('title', 'subTitle', 'rows', 'status'));
+        return view(self::FOLDER_VIEW . 'index', compact('title', 'subTitle', 'rows', 'status', 'params'));
     }
 
     /**
@@ -138,11 +147,24 @@ class KomplainController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
         //
         $title = self::TITLE;
         $subTitle = 'List Data';
+
+        $status = $request->status ?? NULL;
+        $tingkat = $request->tingkat ?? NULL;
+
+        if ($status !== 'noreply' && $status !== 'reply' && $status !== 'undone' && $status !== 'done') {
+            return abort(404);
+        }
+
+        if (isset($tingkat)) {
+            if ($tingkat !== 'high' && $tingkat !== 'medium' && $tingkat !== 'low') {
+                return abort(404);
+            }
+        }
 
         $user = $this->sessionUser;
         
@@ -164,7 +186,7 @@ class KomplainController extends Controller
             })
             ->get();
 
-        return view(self::FOLDER_VIEW . 'create', compact('title', 'subTitle', 'rusuns'));
+        return view(self::FOLDER_VIEW . 'create', compact('title', 'subTitle', 'rusuns', 'status', 'tingkat'));
     }
 
     /**
@@ -253,6 +275,19 @@ class KomplainController extends Controller
         if (!$status) {
             return abort(404);
         }
+
+        $komplain->komplain_user_bukas()
+            ->updateOrCreate(
+                [
+                    'user_id' => auth()->user()->id,
+                    'komplain_id' => $komplain->id,
+                    'pengelola_id' => $komplain->pengelola_id,
+                    'rusun_id' => $komplain->rusun_id,
+                ],
+                [
+                    'waktu' => Carbon::now(),
+                ]
+            );
 
         $title = self::TITLE;
         $subTitle = 'Detail Data';
