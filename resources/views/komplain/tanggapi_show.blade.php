@@ -3,7 +3,7 @@
 @section('komplain_content')
 <div class="card card-primary card-outline" id="printArea">
     <div class="card-header">
-        <h3 class="card-title">Kode: <strong>{{$row->kode}}</strong></h3>
+        <h3 class="card-title">Jawaban</h3>
         <div class="float-right">
             <button type="button" onclick="window.history.back()" class="btn btn-sm btn-secondary"><i class="fas fa-angle-left"></i> Kembali</button>
         </div>
@@ -11,15 +11,15 @@
 
     <div class="card-body p-0">
         <div class="mailbox-read-info">
-            <h5>{{$row->judul}}</h5>
+            <h5>{{$row->komplain->judul}}</h5>
             <h6>
-                Dari: <a href="#" class="__cf_email__">{{$row->user->name}}</a> <span class="mailbox-read-time float-right">{{$row->created_at}}</span>
+                Yang Menjawab: <a href="#" class="__cf_email__">{{$row->user->name}}</a> <span class="mailbox-read-time float-right">{{$row->created_at}}</span>
             </h6>
         </div>
 
         <div class="mailbox-controls with-border text-center">
             <div class="btn-group">
-                <a href="{{route('komplain.tanggapi', [$row->id, 'status=' . $status])}}" class="btn btn-default btn-sm" title="Reply">
+                <a href="{{route('komplain.tanggapiKembali', [$row->id, 'status=reply'])}}" class="btn btn-default btn-sm" title="Reply">
                     <i class="fas fa-reply"></i>
                 </a>
 
@@ -79,9 +79,8 @@
 
     <div class="card-footer">
         <div class="float-right">
-            <a href="{{route('komplain.tanggapi', [$row->id, 'status=' . $status])}}" class="btn btn-default" title="Reply">
-                    <i class="fas fa-reply"></i>
-                    Tanggapi
+            <a href="{{route('komplain.tanggapiKembali', [$row->id, 'status=reply'])}}" class="btn btn-default" title="Reply">
+                <i class="fas fa-reply"></i> Tanggapi
             </a>
             <button type="button" class="btn btn-default btnMelihat"><i class="fas fa-eye"></i> Yang Melihat</button>
         </div>
@@ -89,49 +88,52 @@
     </div>
 </div>
 
-<div class="row">
-    <div class="col-12">
-        <div class="card card-info card-outline">
-            <div class="card-header">
-                <h3 class="card-title">Tanggapan</h3>
-                <div class="card-tools">
-                    
-                </div>
-            </div>
+<x-adminlte-card theme="success" title="Penjelasan Yang Ditanggapi" theme-mode="outline">
+    Yang menjelaskan sebelumnya: <strong>{{$parent->user->name}}</strong> <br>
 
-            <div class="card-body table-responsive">
-                <table class="table table-hover text-nowrap" id="tableTanggapan">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>User Menanggapi</th>
-                            <th>Waktu</th>
-                            <th>User</th>
-                            <th>Penjelasan</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($row->komplain_tanggapans as $key => $komplain_tanggapan)
-                        <tr>
-                            <td>{{$loop->iteration}}.</td>
-                            <td>{{$komplain_tanggapan->parent_type}}</td>
-                            <td>{{$komplain_tanggapan->created_at}}</td>
-                            <td>{{$komplain_tanggapan->user->name}}</td>
-                            <td>{{substr(strip_tags($komplain_tanggapan->penjelasan), 0, 20)}}...</td>
-                            <td>
-                                <a href="{{route('komplain.tanggapiShow', [ $komplain_tanggapan->parent ?? $row->id, $komplain_tanggapan->id, 'status=reply'])}}" class="btn btn-xs btn-warning">
-                                    <i class="fa fa-eye"></i> Lihat
-                                </a>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        </div>
+    <div class="direct-chat-text">
+        @php echo $parent->penjelasan; @endphp
     </div>
-</div>
+
+    <div class="card-footer bg-white">
+        <ul class="mailbox-attachments d-flex align-items-stretch clearfix">
+            @foreach ($parent->komplain_files as $key => $komplain_file)
+                @switch($komplain_file->tipe)
+                    @case('pdf')
+                        <li>
+                            <span class="mailbox-attachment-icon"><i class="far fa-file-pdf text-danger"></i></span>
+                            <div class="mailbox-attachment-info">
+                                <a href="{{route('komplain.view_file', [$komplain_file->id, $komplain_file->filename, 'type=preview'])}}" class="mailbox-attachment-name" target="_blank"><i class="fas fa-paperclip"></i> {{$komplain_file->filename}}</a>
+                                <span class="mailbox-attachment-size clearfix mt-1">
+                                    <a href="{{route('komplain.view_file', [$komplain_file->id, $komplain_file->filename, 'type=download'])}}" class="btn btn-default btn-sm float-right"><i class="fas fa-cloud-download-alt"></i></a>
+                                </span>
+                            </div>
+                        </li>
+                        @break
+                
+                    @case('png')
+                    @case('jpg')
+                    @case('jpeg')
+                        <li>
+                            <span class="mailbox-attachment-icon has-img"><img src="{{route('komplain.view_file', [$komplain_file->id, $komplain_file->filename, 'type=preview'])}}" alt="Attachment" /></span>
+                            <div class="mailbox-attachment-info">
+                                <a href="{{route('komplain.view_file', [$komplain_file->id, $komplain_file->filename, 'type=preview'])}}" class="mailbox-attachment-name" target="_blank"><i class="fas fa-camera"></i> {{$komplain_file->filename}}</a>
+                                <span class="mailbox-attachment-size clearfix mt-1">
+                                    <a href="{{route('komplain.view_file', [$komplain_file->id, $komplain_file->filename, 'type=download'])}}" class="btn btn-default btn-sm float-right"><i class="fas fa-cloud-download-alt"></i></a>
+                                </span>
+                            </div>
+                        </li>
+                        @break
+                
+                    @default
+                        Default case...
+                @endswitch
+            
+            
+            @endforeach
+        </ul>
+    </div>
+</x-adminlte-card>
 
 <x-adminlte-modal id="modalUserView" title="User Melihat" theme="secondary" size='lg' v-centered static-backdrop scrollable>
     <div class="table-responsive">

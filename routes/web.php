@@ -222,6 +222,13 @@ Route::middleware(['auth'])->group(function () {
         Route::controller(KomplainController::class)->group(function () {
             Route::get('rest/search', 'apiList')->name('komplain.apiList');
             Route::get('page/q', 'pages')->name('komplain.pages');
+            Route::get('/{id}/view-file/{file}', 'view_file')->name('komplain.view_file');
+            Route::get('/{id}/tanggapi', 'tanggapi')->name('komplain.tanggapi');
+            Route::get('/{fk}/{id}/tanggapi', 'tanggapiShow')->name('komplain.tanggapiShow');
+            Route::get('/{id}/ditanggapi-kembali', 'tanggapiKembali')->name('komplain.tanggapiKembali');
+
+            Route::post('/{id}/tanggapi', 'tanggapiStore')->name('komplain.tanggapiStore');
+            Route::post('/{id}/ditanggapi-kembali', 'tanggapiKembaliStore')->name('komplain.tanggapiKembaliStore');
         });
     });
 

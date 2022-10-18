@@ -20,9 +20,12 @@ class RestController extends Controller
 
         $rows = [];
         if (!$search) {
-            $rows = Provinsi::orderBy('name', 'asc')->get();
+            $rows = Provinsi::orderBy('name', 'asc')
+                ->where('id', 31)
+                ->get();
         } else {
             $rows = Provinsi::orderBy('name', 'asc')
+                ->where('id', 31)
                 ->where('name', 'like', "%$search%")
                 ->get();
         }

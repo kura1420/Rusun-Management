@@ -16,7 +16,8 @@ class Komplain extends Model
 
     public function komplain_tanggapans()
     {
-        return $this->hasMany(KomplainTanggapan::class);
+        return $this->hasMany(KomplainTanggapan::class)
+            ->orderBy('created_at');
     }
 
     public function komplain_files()

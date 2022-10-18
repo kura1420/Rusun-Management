@@ -5,12 +5,14 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreKomplainRequest;
 use App\Http\Requests\UpdateKomplainRequest;
 use App\Models\Komplain;
+use App\Models\KomplainFile;
 use App\Models\KomplainTanggapan;
 use App\Notifications\KomplaintNotification;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
@@ -217,7 +219,7 @@ class KomplainController extends Controller
 
                 $insertAttachment[] = [
                     'filename' => $filename,
-                    'type' => $type,
+                    'tipe' => $type,
                     'pengelola_id' => $request->pengelola_id,
                     'rusun_id' => $request->rusun_id,
                 ];
@@ -251,13 +253,13 @@ class KomplainController extends Controller
 
         // $rusun->notify(new KomplaintNotification($result));
 
-        $pengelola->notify(new KomplaintNotification($result));
-        $pengelolaKontaks = \App\Models\PengelolaKontak::where('pengelola_id', $request->pengelola_id)->get();
+        // $pengelola->notify(new KomplaintNotification($result));
+        // $pengelolaKontaks = \App\Models\PengelolaKontak::where('pengelola_id', $request->pengelola_id)->get();
 
-        Notification::send($pengelolaKontaks, new KomplaintNotification($result));
+        // Notification::send($pengelolaKontaks, new KomplaintNotification($result));
 
         return redirect()
-            ->route(self::URL . 'show', $result->id)
+            ->route(self::URL . 'show', [$result->id, 'status=noreply'],)
             ->with('success', 'Komplain sudah masuk, mohon menunggu updatenya...');
     }
 
@@ -276,18 +278,19 @@ class KomplainController extends Controller
             return abort(404);
         }
 
-        $komplain->komplain_user_bukas()
-            ->updateOrCreate(
-                [
-                    'user_id' => auth()->user()->id,
-                    'komplain_id' => $komplain->id,
-                    'pengelola_id' => $komplain->pengelola_id,
-                    'rusun_id' => $komplain->rusun_id,
-                ],
-                [
-                    'waktu' => Carbon::now(),
-                ]
-            );
+        if ($komplain->komplain_user_id !== auth()->user()->id) {
+            $komplain->komplain_user_bukas()
+                ->firstOrCreate(
+                    [
+                        'user_id' => auth()->user()->id,
+                        'pengelola_id' => $komplain->pengelola_id,
+                        'rusun_id' => $komplain->rusun_id,
+                    ],
+                    [
+                        'waktu' => Carbon::now(),
+                    ]
+                );
+        }
 
         $title = self::TITLE;
         $subTitle = 'Detail Data';
@@ -337,14 +340,27 @@ class KomplainController extends Controller
         //
     }
 
-    public function tanggapi($id)
+    public function tanggapi(Request $request, $id)
     {
         $title = self::TITLE;
         $subTitle = 'Tanggapi';
 
         $row = Komplain::findOrFail($id);
 
-        return view(self::FOLDER_VIEW . 'tanggapi', compact('title', 'subTitle', 'row'));        
+        $status = $request->status ?? NULL;
+        $tingkat = $request->tingkat ?? NULL;
+
+        if ($status !== 'noreply' && $status !== 'reply' && $status !== 'undone' && $status !== 'done') {
+            return abort(404);
+        }
+
+        if (isset($tingkat)) {
+            if ($tingkat !== 'high' && $tingkat !== 'medium' && $tingkat !== 'low') {
+                return abort(404);
+            }
+        }
+
+        return view(self::FOLDER_VIEW . 'tanggapi_create', compact('title', 'subTitle', 'row', 'status', 'tingkat'));
     }
 
     public function tanggapiStore(Request $request, $id)
@@ -361,10 +377,10 @@ class KomplainController extends Controller
         unset($input['files'], $input['attachments']);
 
         $komplain = Komplain::findOrFail($id);
-        $pengelolaKontaks = \App\Models\PengelolaKontak::where('pengelola_id', $komplain->pengelola_id)->get();
+        // $pengelolaKontaks = \App\Models\PengelolaKontak::where('pengelola_id', $komplain->pengelola_id)->get();
 
         $input['ditanggapi_user_id'] = auth()->user()->id;
-        $input['komplain_id'] = $id;
+        $input['komplain_id'] = $komplain->id;
         $input['pengelola_id'] = $komplain->pengelola_id;
         $input['rusun_id'] = $komplain->rusun_id;
 
@@ -393,6 +409,7 @@ class KomplainController extends Controller
         DB::transaction(function () use ($input, $attachments, $insertAttachment, $komplain) {
             $komplain->update([
                 'tanggal_ditanggapi' => Carbon::now(),
+                'sudah_dijawab' => 1,
             ]);
 
             $komplain_tanggapan = KomplainTanggapan::create($input);
@@ -404,14 +421,190 @@ class KomplainController extends Controller
         
         // Notification::send($komplain->rusun, new KomplaintNotification($komplain));
 
-        Notification::send($komplain->pengelola, new KomplaintNotification($komplain));
-        Notification::send($pengelolaKontaks, new KomplaintNotification($komplain));
+//        Notification::send($komplain->user, new KomplaintNotification($komplain));
+        // Notification::send($komplain->pengelola, new KomplaintNotification($komplain));
+        // Notification::send($pengelolaKontaks, new KomplaintNotification($komplain));
 
         return redirect()
-            ->route(self::URL . 'show', $id)
+            ->route(self::URL . 'show', [$id, 'status=reply'])
             ->with('success', 'Komplain sudah ditanggapi, terimakasih...');
     }
 
+    public function tanggapiShow(Request $request, $fk, $id)
+    {
+        $title = self::TITLE;
+        $subTitle = 'Tanggapi Detail';
+
+        $row = KomplainTanggapan::findOrFail($id);
+
+        if ($row->ditanggapi_user_id !== auth()->user()->id) {
+            $row->komplain_user_bukas()
+                ->firstOrCreate(
+                    [
+                        'user_id' => auth()->user()->id,
+                        'komplain_id' => $fk,
+                        'pengelola_id' => $row->pengelola_id,
+                        'rusun_id' => $row->rusun_id,
+                    ],
+                    [
+                        'waktu' => Carbon::now(),
+                    ]
+                );
+        }
+
+        if ($row->parent) {
+            $parent = KomplainTanggapan::where('id', $row->parent)->first();
+        } else {
+            $parent = $row->komplain;
+        }
+
+        $status = $request->status ?? NULL;
+        $tingkat = $request->tingkat ?? NULL;
+
+        if ($status !== 'noreply' && $status !== 'reply' && $status !== 'undone' && $status !== 'done') {
+            return abort(404);
+        }
+
+        if (isset($tingkat)) {
+            if ($tingkat !== 'high' && $tingkat !== 'medium' && $tingkat !== 'low') {
+                return abort(404);
+            }
+        }
+
+        $user = $this->sessionUser;
+
+        $rusuns = \App\Models\Rusun::orderBy('nama')
+            ->when($user, function ($query, $user) {
+                if ($user->level == 'rusun') {
+                    $sessionData = session()->get('rusun');
+
+                    $query->where('id', $sessionData->id);
+                }
+
+                if ($user->level == 'pemda') {
+                    $sessionData = session()->get('pemda');
+
+                    $query
+                        ->where('province_id', $sessionData->province_id)
+                        ->where('regencie_id', $sessionData->regencie_id);
+                }
+            })
+            ->get();
+
+        return view(self::FOLDER_VIEW . 'tanggapi_show', compact('title', 'subTitle', 'row', 'rusuns', 'status', 'tingkat', 'parent'));
+    }
+
+    public function tanggapiKembali(Request $request, $id)
+    {
+        $title = self::TITLE;
+        $subTitle = 'Ditanggapi Kembali';
+
+        $row = KomplainTanggapan::findOrFail($id);
+
+        if ($row->parent) {
+            $parent = KomplainTanggapan::where('id', $row->parent)->first();
+        } else {
+            $parent = $row->komplain;
+        }
+
+        $status = $request->status ?? NULL;
+        $tingkat = $request->tingkat ?? NULL;
+
+        if ($status !== 'noreply' && $status !== 'reply' && $status !== 'undone' && $status !== 'done') {
+            return abort(404);
+        }
+
+        if (isset($tingkat)) {
+            if ($tingkat !== 'high' && $tingkat !== 'medium' && $tingkat !== 'low') {
+                return abort(404);
+            }
+        }
+
+        return view(self::FOLDER_VIEW . 'ditanggapi_kembali', compact('title', 'subTitle', 'row', 'status', 'tingkat'));
+    }
+
+    public function tanggapiKembaliStore(Request $request, $id)
+    {
+        Validator::make($request->all(), [
+            'penjelasan' => 'required|string',
+            'attachments' => 'nullable|array|max:5',
+            'attachments.*' => 'nullable|max:1024|mimes:jpeg,bmp,png,gif,svg,pdf'
+        ])->validate();
+
+        $input = $request->all();
+        $attachments = $input['attachments'] ?? [];
+
+        unset($input['files'], $input['attachments']);
+
+        $komplainTanggapan = KomplainTanggapan::findOrFail($id);
+
+        $input['ditanggapi_user_id'] = auth()->user()->id;
+        $input['komplain_id'] = $komplainTanggapan->komplain_id;
+        $input['pengelola_id'] = $komplainTanggapan->pengelola_id;
+        $input['rusun_id'] = $komplainTanggapan->rusun_id;
+        $input['parent'] = $komplainTanggapan->id;
+
+        $insertAttachment = [];
+        if (count($attachments)) {
+            for ($i=0; $i < count($attachments); $i++) { 
+                $type = $attachments[$i]->extension();
+                $filename = md5(uniqid()) . '.' . $type;
+
+                $attachments[$i]->storeAs(
+                    self::FOLDER_UPLOAD,
+                    $filename,
+                    'local',
+                );
+
+                $insertAttachment[] = [
+                    'filename' => $filename,
+                    'type' => $type,
+                    'pengelola_id' => $komplainTanggapan->pengelola_id,
+                    'rusun_id' => $komplainTanggapan->rusun_id,
+                    'komplain_id' => $id,
+                ];
+            }
+        }
+
+        DB::transaction(function () use ($input, $attachments, $insertAttachment) {
+            $komplainDitanggapiKembali = KomplainTanggapan::create($input);
+
+            if (count($attachments) > 0) {
+                $komplainDitanggapiKembali->komplain_files()->createMany($insertAttachment);
+            }
+        });
+
+        return redirect()
+            ->route(self::URL . 'show', [$komplainTanggapan->komplain_id, 'status=reply'])
+            ->with('success', 'Komplain sudah ditanggapi kembali, terimakasih...');
+    }
+
+    public function view_file(Request $request, $id, $filename)
+    {
+        $komplainFile = KomplainFile::where([
+            ['id', $id],
+            ['filename', $filename]
+        ])->firstOrFail();
+
+        $type = $request->type ?? NULL;
+        switch ($type) {
+            case 'preview':
+                $file = Storage::path(self::FOLDER_UPLOAD . '/' . $komplainFile->filename);
+
+                return response()->file($file);
+                break;
+
+            case 'download':
+                return Storage::download(self::FOLDER_UPLOAD . '/' . $komplainFile->filename);
+                break;
+
+            default:
+                return abort(404);
+                break;
+        }
+    }
+
+    // api
     public function apiList(Request $request)
     {
         $search = $request->search ?? NULL;

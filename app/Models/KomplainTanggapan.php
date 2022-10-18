@@ -14,6 +14,11 @@ class KomplainTanggapan extends Model
 
     protected $guarded = [];
 
+    public function getParentTypeAttribute()
+    {
+        return $this->parent ? 'Client' : 'Support';
+    }
+
     public function komplain()
     {
         return $this->belongsTo(Komplain::class);
@@ -22,6 +27,11 @@ class KomplainTanggapan extends Model
     public function komplain_files()
     {
         return $this->hasMany(KomplainFile::class);
+    }
+
+    public function komplain_user_bukas()
+    {
+        return $this->hasMany(KomplainUserBuka::class);
     }
 
     public function pengelola()

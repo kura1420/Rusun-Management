@@ -7,6 +7,12 @@
 @stop
 
 @section('content')
+@if (session()->has('success'))
+<x-adminlte-alert theme="primary" title="Information" dismissable>
+    {{session()->get('success')}}
+</x-adminlte-alert>
+@endif
+
 <section class="content">
     <div class="container-fluid">
         <div class="row">

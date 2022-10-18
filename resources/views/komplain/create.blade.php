@@ -6,6 +6,16 @@
         <h3 class="card-title">Buat Pesan Baru</h3>
     </div>
 
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     <form action="{{route('komplain.store')}}" method="post" enctype="multipart/form-data">
         @csrf
     <div class="card-body">
@@ -51,7 +61,7 @@
         <div class="form-group">
             <div class="btn btn-default btn-file">
                 <i class="fas fa-paperclip"></i> Attachment
-                <input type="file" name="attachments[]" id="attachments" />
+                <input type="file" name="attachments[]" id="attachments" multiple />
             </div>
             <p class="help-block">Max. 5MB</p>
         </div>
