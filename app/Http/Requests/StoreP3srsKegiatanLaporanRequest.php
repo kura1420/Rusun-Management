@@ -30,7 +30,7 @@ class StoreP3srsKegiatanLaporanRequest extends FormRequest
             'penjelasan' => 'required|string',
             'p3srs_kegiatan_jadwal_id' => 'required|string',
             'dokumentasis' => 'nullable|array|max:5',
-            'dokumentasis.*' => 'nullable|size:15000|mimes:jpeg,bmp,png,gif,svg,pdf'
+            'dokumentasis.*' => 'nullable|mimes:jpeg,bmp,png,gif,svg,pdf|max:15000'
         ];
     }
 }

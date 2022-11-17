@@ -25,7 +25,7 @@ class UpdatePengelolaDokumenRequest extends FormRequest
     {
         return [
             //
-            'file' => 'nullable|size:15000|mimes:pdf',
+            'file' => 'nullable|mimes:pdf|max:15000',
             'keterangan' => 'nullable|string|max:255',
             'dokumen_id' => 'required|string',
             'pengelola_id' => 'required|string|max:255',

@@ -31,7 +31,7 @@ class StoreKomplainRequest extends FormRequest
             'pengelola_id' => 'required|string',
             'rusun_id' => 'required|string',
             'attachments' => 'nullable|array|max:5',
-            'attachments.*' => 'nullable|size:15000|mimes:jpeg,bmp,png,gif,svg,pdf'
+            'attachments.*' => 'nullable|mimes:jpeg,bmp,png,gif,svg,pdf|max:15000'
         ];
     }
 

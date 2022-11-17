@@ -25,7 +25,7 @@ class UpdateRusunPemilikDokumenRequest extends FormRequest
     {
         return [
             //
-            'file' => 'nullable|mimes:pdf|size:150000',
+            'file' => 'nullable|mimes:pdf|max:15000',
             'keterangan' => 'nullable|string|max:255',
             'dokumen_id' => 'required|string',
             'rusun_unit_detail_id' => 'required|string',

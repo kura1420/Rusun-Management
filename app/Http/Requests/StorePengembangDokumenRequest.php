@@ -26,7 +26,7 @@ class StorePengembangDokumenRequest extends FormRequest
     {
         return [
             //
-            'file' => 'nullable|mimes:pdf|' . File::image()->smallerThan(5000),
+            'file' => 'nullable|mimes:pdf|max:15000',
             'keterangan' => 'nullable|string|max:255',
             'dokumen_id' => 'required|string',
             'pengembang_id' => 'required|string',
