@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\File;
 
 class StorePengembangDokumenRequest extends FormRequest
 {
@@ -25,7 +26,7 @@ class StorePengembangDokumenRequest extends FormRequest
     {
         return [
             //
-            'file' => 'nullable|size:15000|mimes:pdf',
+            'file' => 'nullable|mimes:pdf|' . File::image()->smallerThan(5000),
             'keterangan' => 'nullable|string|max:255',
             'dokumen_id' => 'required|string',
             'pengembang_id' => 'required|string',
