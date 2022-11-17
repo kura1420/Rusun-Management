@@ -57,6 +57,8 @@ class SyncRusunOutstandingPenghuniCommand extends Command
                     $object = $res->object();
 
                     DB::transaction(function () use ($object, $row) {
+                        $adalah_pemilik = 0;
+                        
                         foreach ($object as $key => $value) {
                             $tower = RusunDetail::firstOrCreate([
                                 'nama_tower' => $value->tower,
@@ -181,7 +183,7 @@ class SyncRusunOutstandingPenghuniCommand extends Command
 
             $this->info('Done...');
         } catch (\Exception $e) {
-            Log::error('SyncRusunTarifCommand: ' . $e->getMessage());
+            Log::error('SyncRusunOutStandingPenghuni: ' . $e->getMessage());
             
             $this->error($e->getMessage());
         }
