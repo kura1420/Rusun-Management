@@ -25,7 +25,7 @@ class StoreRusunPenghuniDokumenRequest extends FormRequest
     {
         return [
             //
-            'file' => 'required||mimes:pdf|max:150000',
+            'file' => 'required||mimes:pdf|size:150000',
             'keterangan' => 'nullable|string|max:255',
             'dokumen_id' => 'required|string',
             'rusun_penghuni_id' => 'required|string',

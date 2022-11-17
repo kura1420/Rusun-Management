@@ -27,7 +27,7 @@ class UpdatePengembangDokumenRequest extends FormRequest
 
         return [
             //
-            'file' => 'nullable|file|size:5120',
+            'file' => 'nullable|file|size:15000',
             'keterangan' => 'nullable|string|max:255',
             'dokumen_id' => 'required|string|max:255',
             'pengembang_id' => 'required|string|max:255',

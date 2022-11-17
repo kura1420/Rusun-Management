@@ -25,7 +25,7 @@ class StorePengelolaDokumenRequest extends FormRequest
     {
         return [
             //
-            'file' => 'nullable|max:15000|mimes:pdf',
+            'file' => 'nullable|size:15000|mimes:pdf',
             'keterangan' => 'nullable|string|max:255',
             'dokumen_id' => 'required|string',
             'pengelola_id' => 'required|string',
