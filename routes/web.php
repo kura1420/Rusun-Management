@@ -103,16 +103,18 @@ Route::middleware(['auth'])->group(function () {
             'informasi-halaman' => InformasiHalamanController::class,
         ]);
 
+        Route::prefix('api-manage')
+            ->as('api-manage.')
+            ->controller(ApiManagementController::class)
+            ->group(function () {
+                Route::get('/list/data', 'listData')->name('list-data');
+                Route::get('/{id}/sync-manual', 'syncManual')->name('sync-manual');
+            });
+
         Route::prefix('informasi-halaman')->group(function () {
             Route::controller(InformasiHalamanController::class)->group(function () {
                 Route::get('{id}/copy', 'copy')->name('informasi-halaman.copy');
                 Route::get('/{id}/view-file/{file}', 'view_file')->name('informasi-halaman.view_file');
-            });
-        });
-
-        Route::prefix('api-manage')->group(function () {
-            Route::controller(ApiManagementController::class)->group(function () {
-                Route::get('{id}/test-endpoint', 'testEndpoint')->name('api-manage.testEndpoint');
             });
         });
     });

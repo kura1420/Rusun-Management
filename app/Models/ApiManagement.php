@@ -14,8 +14,8 @@ class ApiManagement extends Model
 
     protected $guarded = [];
 
-    public function getReffTextAttribute()
+    public function getReffIDRelationAttribute()
     {
-        return \App\Models\Rusun::where('id', $this->reff_id)->first()->nama;
+        return \App\Models\Rusun::where('id', $this->reff_id)->first();
     }
 }

@@ -664,6 +664,7 @@ class RusunController extends Controller
         ->get()
         ->map(function ($row) {
             $row->file = route('pengelola-dokumen.view_file', [$row->id, $row->file]);
+            $row->dokumens;
 
             return $row;
         });
@@ -689,6 +690,7 @@ class RusunController extends Controller
         ->get()
         ->map(function ($row) {
             $row->file = route('pengembang-dokumen.view_file', [$row->id, $row->file]);
+            $row->dokumens;
 
             return $row;
         });

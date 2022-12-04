@@ -312,45 +312,17 @@ return [
             'route' => 'home',
             'icon' => 'fas fa-fw fa-tachometer-alt',
         ],
-
         [
-            'text'    => 'Pengembang',
-            'icon'    => 'fas fa-fw fa-building',
+            'text' => 'Pengembang',
+            'route'  => 'pengembang.index',
+            'icon' => 'fas fa-fw fa-building',
             'can' => ['Root', 'Admin', 'Pengembang'],
-            'submenu' => [
-                [
-                    'text' => 'List',
-                    'route'  => 'pengembang.index',
-                ],
-                [
-                    'text' => 'Kontak',
-                    'route'  => 'pengembang-kontak.index',
-                ],
-                [
-                    'text' => 'Dokumen',
-                    'route'  => 'pengembang-dokumen.index',
-                ],
-            ],
         ],
-
         [
-            'text'    => 'Pengelola',
-            'icon'    => 'fas fa-fw fa-user-friends',
+            'text' => 'Pengelola',
+            'route'  => 'pengelola.index',
+            'icon' => 'fas fa-fw fa-laptop-house',
             'can' => ['Root', 'Admin', 'Pengelola'],
-            'submenu' => [
-                [
-                    'text' => 'List',
-                    'route'  => 'pengelola.index',
-                ],
-                [
-                    'text' => 'Kontak',
-                    'route'  => 'pengelola-kontak.index',
-                ],
-                [
-                    'text' => 'Dokumen',
-                    'route'  => 'pengelola-dokumen.index',
-                ],
-            ],
         ],
 
         [
@@ -519,12 +491,12 @@ return [
                     'route'  => 'api-manage.index',
                     'can' => ['Root', 'Admin'],
                 ],
-                [
-                    'text' => 'Role',
-                    'icon_color' => 'primary',
-                    'route'  => 'role.index',
-                    'can' => ['Root'],
-                ],
+                // [
+                //     'text' => 'Role',
+                //     'icon_color' => 'primary',
+                //     'route'  => 'role.index',
+                //     'can' => ['Root'],
+                // ],
                 // [
                 //     'text' => 'Permission',
                 //     'icon_color' => 'warning',

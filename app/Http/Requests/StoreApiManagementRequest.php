@@ -25,12 +25,25 @@ class StoreApiManagementRequest extends FormRequest
     {
         return [
             //
-            'table' => 'required|string|max:100',
             'reff_id' => 'required|string|max:100',
-            'keterangan' => 'nullable|string',
             'username' => 'required|string|max:255',
             'password' => 'required|string|max:255',
-            'endpoint' => 'required|string|max:255|url',
+
+            'table_rusun_details' => 'nullable|string|max:100',
+            'endpoint_rusun_details' => 'nullable|string|url|max:255',
+            'keterangan_rusun_details' => 'nullable|string',
+
+            'table_rusun_tarifs' => 'nullable|string|max:100',
+            'endpoint_rusun_tarifs' => 'nullable|string|url|max:255',
+            'keterangan_rusun_tarifs' => 'nullable|string',
+
+            'table_rusun_outstanding_penghunis' => 'nullable|string|max:100',
+            'endpoint_rusun_outstanding_penghunis' => 'nullable|string|url|max:255',
+            'keterangan_rusun_outstanding_penghunis' => 'nullable|string',
+
+            'table_rusun_pemiliks' => 'nullable|string|max:100',
+            'endpoint_rusun_pemiliks' => 'nullable|string|url|max:255',
+            'keterangan_rusun_pemiliks' => 'nullable|string',
         ];
     }
 
@@ -38,6 +51,18 @@ class StoreApiManagementRequest extends FormRequest
     {
         return [
             'reff_id' => 'rusun',
+            
+            'endpoint_rusun_details' => 'endpoint tower',
+            'keterangan_rusun_details' => 'keterangan tower',
+
+            'endpoint_rusun_tarifs' => 'endpoint tarif',
+            'keterangan_rusun_tarifs' => 'keterangan tarif',
+
+            'endpoint_rusun_outstanding_penghunis' => 'endpoint outstanding penghuni',
+            'keterangan_rusun_outstanding_penghunis' => 'keterangan outstanding penghuni',
+
+            'endpoint_rusun_pemiliks' => 'endpoint pemilik & penghuni',
+            'keterangan_rusun_pemiliks' => 'keterangan pemilik & penghuni',
         ];
     }
 }

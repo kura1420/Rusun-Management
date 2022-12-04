@@ -528,7 +528,7 @@ $(function () {
 
                     $('#modalPengembang').modal('show');
                 } else {
-                    Swal.fire('Data tidak sudah tersedia.');
+                    Swal.fire('Data tidak tersedia.');
                 }
             },
             error: function (xhr) {
@@ -575,7 +575,7 @@ $(function () {
 
                     $('#modalPengelola').modal('show');
                 } else {
-                    Swal.fire('Data tidak sudah tersedia.');
+                    Swal.fire('Data tidak tersedia.');
                 }
             },
             error: function (xhr) {
