@@ -31,7 +31,7 @@
             <x-adminlte-input name="jumlah_lantai" label="Jumlah Lantai" placeholder="Jumlah Lantai" fgroup-class="col-md-2" value="{{old('jumlah_lantai')}}" />
             <x-adminlte-input name="ukuran_paling_kecil" label="Ukuran Paling Kecil" placeholder="Ukuran Paling Kecil" fgroup-class="col-md-2" value="{{old('ukuran_paling_kecil')}}" />
             <x-adminlte-input name="ukuran_paling_besar" label="Ukuran Paling Besar" placeholder="Ukuran Paling Besar" fgroup-class="col-md-2" value="{{old('ukuran_paling_besar')}}" />
-            <x-adminlte-input-file name="foto" label="Foto" fgroup-class="col-md-2" value="{{old('foto')}}" />
+            <x-adminlte-input type="file" name="foto" label="Foto" fgroup-class="col-md-2" value="{{old('foto')}}" />
             <x-adminlte-input name="keterangan" label="Keterangan" placeholder="Keterangan" fgroup-class="col-md-12" value="{{old('keterangan')}}" />
         </div>
 

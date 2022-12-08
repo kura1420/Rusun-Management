@@ -63,12 +63,12 @@ return [
     |
     */
 
-    'logo' => '<b>Rusun</b> KT',
+    'logo' => '<b>Rusun</b> Kita',
     'logo_img' => 'logo.png',
     'logo_img_class' => 'brand-image img-circle elevation-3',
     'logo_img_xl' => null,
     'logo_img_xl_class' => 'brand-image-xs',
-    'logo_img_alt' => 'Admin Logo',
+    'logo_img_alt' => 'Rusun Kita',
 
     /*
     |--------------------------------------------------------------------------
@@ -110,7 +110,7 @@ return [
         'enabled' => true,
         'img' => [
             'path' => 'logo.png',
-            'alt' => 'AdminLTE Preloader Image',
+            'alt' => 'Rusun Kita Preloader Image',
             'effect' => 'animation__shake',
             'width' => 60,
             'height' => 60,
@@ -334,18 +334,18 @@ return [
                     'text' => 'List',
                     'route'  => 'rusun.index',
                 ],
-                [
-                    'text' => 'Detail',
-                    'route'  => 'rusun-detail.index',
-                ],
-                [
-                    'text' => 'Unit',
-                    'route'  => 'rusun-unit-detail.index',
-                ],
-                [
-                    'text' => 'Fasilitas',
-                    'route'  => 'rusun-fasilitas.index',
-                ],
+                // [
+                //     'text' => 'Detail',
+                //     'route'  => 'rusun-detail.index',
+                // ],
+                // [
+                //     'text' => 'Unit',
+                //     'route'  => 'rusun-unit-detail.index',
+                // ],
+                // [
+                //     'text' => 'Fasilitas',
+                //     'route'  => 'rusun-fasilitas.index',
+                // ],
                 [
                     'text' => 'Pemilik',
                     'route'  => 'rusun-pemilik.index',

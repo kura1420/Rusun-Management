@@ -49,7 +49,7 @@ class StorePengelolaRequest extends FormRequest
             'province_id' => 'provinsi',
             'regencie_id' => 'kota',
             'district_id' => 'kecamatan',
-            'village_id' => 'desa',
+            'village_id' => 'kelurahan',
         ];
     }
 }

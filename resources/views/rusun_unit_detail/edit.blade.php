@@ -29,7 +29,7 @@
         <x-adminlte-input name="keterangan" id="keterangan" label="Keterangan" placeholder="Keterangan" fgroup-class="col-md-6" value="{{$row->keterangan}}" />
         <x-adminlte-input name="ukuran" id="ukuran" label="Ukuran" placeholder="Ukuran" fgroup-class="col-md-2" value="{{$row->ukuran}}" />
         <x-adminlte-input name="jumlah" id="jumlah" label="Jumlah" placeholder="Jumlah" fgroup-class="col-md-2" value="{{$row->jumlah}}" />
-        <x-adminlte-input-file name="foto" id="foto" label="Foto" fgroup-class="col-md-2" />
+        <x-adminlte-input type="file" name="foto" id="foto" label="Foto" fgroup-class="col-md-2" />
     </div>
 
     <x-slot name="footerSlot">

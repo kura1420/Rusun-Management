@@ -3,11 +3,9 @@
 namespace App\Console\Commands;
 
 use App\Helpers\ApiService;
+use App\Helpers\SyncData;
 use App\Models\ApiManagement;
-use App\Models\RusunTarif;
-use Carbon\Carbon;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class SyncRusunTarifCommand extends Command
@@ -52,23 +50,7 @@ class SyncRusunTarifCommand extends Command
                 if ($res->ok()) {
                     $object = $res->object();
 
-                    DB::transaction(function () use ($object, $row) {
-                        foreach ($object as $key => $value) {
-                            RusunTarif::updateOrCreate(
-                                [
-                                    'rusun_id' => $row->reff_id,
-                                    'item' => $value->item,
-                                ],
-                                [
-                                    'tarif' => $value->tarif,
-                                ]
-                            );
-                        }
-
-                        $row->update([
-                            'last_sync' => Carbon::now(),
-                        ]);
-                    });
+                    SyncData::tarif($row, $object);
                 }
             }
 

@@ -36,6 +36,7 @@ use App\Http\Controllers\UserPemilikController;
 use App\Http\Controllers\UserPengelolaController;
 use App\Http\Controllers\UserPengembangController;
 use App\Http\Controllers\UserPenghuniController;
+use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\UserRusunController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -79,6 +80,14 @@ Auth::routes(['register' => false]);
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::middleware(['auth'])->group(function () {
+    Route::prefix('profile')
+        ->as('profile.')
+        ->controller(UserProfileController::class)
+        ->group(function () {
+            Route::get('/{username}', 'edit')->name('edit');
+            Route::put('/{username}', 'update')->name('update');
+        });
+
     Route::middleware(['role:Root'])->group(function () {
         Route::resources([
             'role' => RoleController::class,

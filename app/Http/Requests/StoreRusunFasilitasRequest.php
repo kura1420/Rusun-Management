@@ -30,7 +30,7 @@ class StoreRusunFasilitasRequest extends FormRequest
             'keterangan' => 'nullable|string',
             'foto' => 'nullable|image',
             'rusun_id' => 'required|string',
-            'rusun_detail_id' => 'required|string',
+            'rusun_detail_id' => 'nullable',
         ];
     }
 

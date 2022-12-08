@@ -5,7 +5,8 @@
 @section('content_header')
     <h1>
         {{$subTitle}}
-        <a href="{{route('rusun-detail.index')}}" class="btn btn-xs btn-dark"> <i class="fa fa-arrow-left"></i> Kembali </a>
+        
+        <button type="button" onclick="window.history.back()" class="btn btn-xs btn-dark"><i class="fas fa-angle-left"></i> Kembali</button>
     </h1>
 @stop
 

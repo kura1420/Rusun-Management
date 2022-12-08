@@ -29,7 +29,7 @@
             <p>
                 <strong>Rusun:</strong> {{$row->rusuns->nama}} <br>
                 <strong>Tower:</strong> {{$row->rusun_details->nama_tower}} <br>
-                <strong>Jumlah:</strong> {{$row->rusun_unit_details->jumlah}}
+                <!-- <strong>Jumlah:</strong> {{$row->rusun_unit_details->jumlah}} -->
             </p>
             <p>{{$row->keterangan}}</p>
         </div>

@@ -3,11 +3,9 @@
 namespace App\Console\Commands;
 
 use App\Helpers\ApiService;
+use App\Helpers\SyncData;
 use App\Models\ApiManagement;
-use App\Models\RusunDetail;
-use Carbon\Carbon;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class SyncRusunDetailCommand extends Command
@@ -52,29 +50,7 @@ class SyncRusunDetailCommand extends Command
                 if ($res->ok()) {
                     $object = $res->object();
 
-                    DB::transaction(function () use ($object, $row) {
-                        foreach ($object as $key => $value) {
-                            RusunDetail::updateOrCreate(
-                                [
-                                    'nama_tower' => $value->tower,
-                                    'rusun_id' => $row->reff_id,
-                                ],
-                                [
-                                    'jumlah_unit' => $value->unit,
-                                    // 'jumlah_jenis_unit' => 0,
-                                    // 'foto' => NULL,
-                                    // 'jumlah_lantai' => 0,
-                                    // 'keterangan' => NULL,
-                                    // 'ukuran_paling_kecil' => NULL,
-                                    // 'ukuran_paling_besar' => NULL,
-                                ]
-                            );
-                        }
-
-                        $row->update([
-                            'last_sync' => Carbon::now(),
-                        ]);
-                    });
+                    SyncData::rusunDetail($row, $object);
                 }
             }
 

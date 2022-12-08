@@ -146,8 +146,17 @@ class RusunFasilitasController extends Controller
                     'local',
                 );
         }
-        
-        RusunFasilitas::create($input);
+
+        if ($request->rusun_detail_id) {
+            $rusun_details = explode(',', $request->rusun_detail_id);
+            for ($i=0; $i < count($rusun_details); $i++) { 
+                $input['rusun_detail_id'] = $rusun_details[$i];
+
+                RusunFasilitas::create($input);
+            }
+        } else {
+            RusunFasilitas::create($input);
+        }
 
         return response()->json('Success');
     }

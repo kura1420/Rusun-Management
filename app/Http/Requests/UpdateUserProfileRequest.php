@@ -2,9 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateRusunFasilitasRequest extends FormRequest
+class UpdateUserProfileRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,28 +24,24 @@ class UpdateRusunFasilitasRequest extends FormRequest
      */
     public function rules()
     {
+        $username = request('username');
+
+        $row = User::where('username', $username)->firstOrFail();
+
         return [
             //
-            'nama' => 'required|string|max:255',
-            'jumlah' => 'required|numeric',
-            'keterangan' => 'nullable|string',
-            'foto' => 'nullable|image',
-            'rusun_id' => 'required|string',
-            'rusun_detail_id' => 'nullable',
+            'name' => 'required|string|max:255',
+            'picture' => 'nullable|image',
+            // 'username' => 'required|string|max:100|alpha_num|unique:users',
+            'email' => 'required|string|max:255|email|unique:users,email,' . $row->id,
+            'password' => 'nullable|string|min:6',
         ];
     }
 
-    /**
-     * Get custom attributes for validator errors.
-     *
-     * @return array
-     */
     public function attributes()
     {
         return [
-            'nama' => 'fasilitas',
-            'rusun_id' => 'rusun',
-            'rusun_detail_id' => 'tower',
+            'name' => 'nama',
         ];
     }
 }

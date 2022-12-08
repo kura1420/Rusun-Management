@@ -39,7 +39,7 @@
             @endif
         </x-adminlte-select2>
 
-        <x-adminlte-select2 name="village_id" id="village_id" label="Desa" fgroup-class="col-md-6">
+        <x-adminlte-select2 name="village_id" id="village_id" label="Kelurahan" fgroup-class="col-md-6">
             @if($row->desas)
             <option value="{{$row->desas->id}}">{{$row->desas->name}}</option>
             @endif
@@ -47,8 +47,8 @@
 
         <x-adminlte-input name="alamat" id="alamat" label="Alamat" placeholder="Alamat" fgroup-class="col-md-6" value="{{$row->alamat}}" />
         <x-adminlte-input name="kode_pos" id="kode_pos" label="Kodepos" placeholder="Kodepos" fgroup-class="col-md-2" value="{{$row->kode_pos}}" />
-        <x-adminlte-input name="total_tower" id="total_tower" label="Total Tower" placeholder="Total Tower" fgroup-class="col-md-2" value="{{$row->total_tower}}" />
-        <x-adminlte-input name="total_unit" id="total_unit" label="Total Unit" placeholder="Total Unit" fgroup-class="col-md-2" value="{{$row->total_unit}}" />
+        <!-- <x-adminlte-input name="total_tower" id="total_tower" label="Total Tower" placeholder="Total Tower" fgroup-class="col-md-2" value="{{$row->total_tower}}" />
+        <x-adminlte-input name="total_unit" id="total_unit" label="Total Unit" placeholder="Total Unit" fgroup-class="col-md-2" value="{{$row->total_unit}}" /> -->
         <x-adminlte-input name="website" id="website" label="Website" placeholder="Website" fgroup-class="col-md-3" value="{{$row->website}}" />
         <x-adminlte-input name="facebook" id="facebook" label="Facebook" placeholder="Facebook" fgroup-class="col-md-3" value="{{$row->facebook}}" />
         <x-adminlte-input name="instgram" id="instgram" label="Instgram" placeholder="Instgram" fgroup-class="col-md-3" value="{{$row->instgram}}" />
@@ -57,9 +57,9 @@
         <x-adminlte-input name="latitude" id="latitude" label="Latitude" placeholder="Latitude" fgroup-class="col-md-2" value="{{$row->latitude}}" />
         <x-adminlte-input name="longitude" id="longitude" label="Longitude" placeholder="Longitude" fgroup-class="col-md-2" value="{{$row->longitude}}" />
 
-        <x-adminlte-input-file name="foto_1" id="foto_1" label="Foto 1" fgroup-class="col-md-6" />
-        <x-adminlte-input-file name="foto_2" id="foto_2" label="Foto 2" fgroup-class="col-md-6" />
-        <x-adminlte-input-file name="foto_3" id="foto_3" label="Foto 3" fgroup-class="col-md-6" />
+        <x-adminlte-input type="file" name="foto_1" id="foto_1" label="Foto 1" fgroup-class="col-md-4" />
+        <x-adminlte-input type="file" name="foto_2" id="foto_2" label="Foto 2" fgroup-class="col-md-4" />
+        <x-adminlte-input type="file" name="foto_3" id="foto_3" label="Foto 3" fgroup-class="col-md-4" />
     </div>
 
     {{-- <div class="row">
@@ -569,7 +569,7 @@ $(function () {
     });
 
     $('#village_id').select2({
-        placeholder: 'Desa',
+        placeholder: 'Kelurahan',
         allowClear: true,
         ajax: {
             url: '{{route("rest.desas")}}',
@@ -649,8 +649,8 @@ $(function () {
         formData.append('kode_pos', $('#kode_pos').val());
         formData.append('latitude', $('#latitude').val());
         formData.append('longitude', $('#longitude').val());
-        formData.append('total_tower', $('#total_tower').val());
-        formData.append('total_unit', $('#total_unit').val());
+        // formData.append('total_tower', $('#total_tower').val());
+        // formData.append('total_unit', $('#total_unit').val());
         formData.append('website', $('#website').val());
         formData.append('facebook', $('#facebook').val());
         formData.append('instgram', $('#instgram').val());

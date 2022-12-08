@@ -20,7 +20,7 @@
             @endforeach
         </x-adminlte-select2>
 
-        <x-adminlte-select2 name="rusun_detail_id" id="rusun_detail_id" label="Tower" fgroup-class="col-md-6" disabled />
+        <x-adminlte-select2 name="rusun_detail_id" id="rusun_detail_id" label="Tower" fgroup-class="col-md-6" disabled multiple />
 
         <x-adminlte-select2 name="nama" id="nama" label="Fasilitas" fgroup-class="col-md-3" :config="[
             'placeholder' => 'Pilih Fasilitas',
@@ -35,7 +35,7 @@
 
         <x-adminlte-input name="keterangan" id="keterangan" label="Keterangan" placeholder="Keterangan" fgroup-class="col-md-5" />
         <x-adminlte-input name="jumlah" id="jumlah" label="Jumlah" placeholder="Jumlah" fgroup-class="col-md-2" />
-        <x-adminlte-input-file name="foto" id="foto" label="Foto" fgroup-class="col-md-2" />
+        <x-adminlte-input type="file" name="foto" id="foto" label="Foto" fgroup-class="col-md-2" />
     </div>
 
     <x-slot name="footerSlot">

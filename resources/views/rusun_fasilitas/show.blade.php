@@ -5,7 +5,7 @@
 @section('content_header')
     <h1>
         {{$subTitle}}
-        <a href="{{route('rusun-fasilitas.index')}}" class="btn btn-xs btn-dark"> <i class="fa fa-arrow-left"></i> Kembali </a>
+        <x-adminlte-button label="Kembali" theme="dark" icon="fa fa-arrow-left" class="btn btn-xs btn-secondary" onClick="history.back()" />
     </h1>
 @stop
 

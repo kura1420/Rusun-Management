@@ -32,8 +32,8 @@ class UpdateRusunRequest extends FormRequest
             'kode_pos' => 'required|string|max:10',
             'latitude' => 'nullable|string|max:255',
             'longitude' => 'nullable|string|max:255',
-            'total_tower' => 'required|numeric',
-            'total_unit' => 'required|numeric',
+            'total_tower' => 'nullable|numeric',
+            'total_unit' => 'nullable|numeric',
             'foto_1' => 'nullable|image',
             'foto_2' => 'nullable|image',
             'foto_3' => 'nullable|image',
@@ -61,7 +61,7 @@ class UpdateRusunRequest extends FormRequest
             'province_id' => 'provinsi',
             'regencie_id' => 'kota',
             'district_id' => 'kecamatan',
-            'village_id' => 'desa',
+            'village_id' => 'kelurahan',
         ];
     }
 }

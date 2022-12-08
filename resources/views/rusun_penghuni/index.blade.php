@@ -15,7 +15,7 @@
 
 <x-adminlte-card theme="primary" theme-mode="outline" title="{{$subTitle}}">  
     <x-slot name="toolsSlot">
-        Last Update: {{$lastUpdate[9] ?? '-'}}
+        Last Update: {{$lastUpdate[7] ?? '-'}}
     </x-slot>
 
     <x-adminlte-datatable id="table2" :heads="$heads" head-theme="dark" :config="$config" striped hoverable bordered beautify />

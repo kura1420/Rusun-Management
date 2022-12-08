@@ -39,7 +39,7 @@
             @endif
         </x-adminlte-select2>
 
-        <x-adminlte-select2 name="village_id" id="village_id" label="Desa" fgroup-class="col-md-6">
+        <x-adminlte-select2 name="village_id" id="village_id" label="Kelurahan" fgroup-class="col-md-6">
             @if($row->desas)
             <option value="{{$row->desas->id}}">{{$row->desas->name}}</option>
             @endif
@@ -161,7 +161,7 @@ $(function () {
     });
 
     $('#village_id').select2({
-        placeholder: 'Desa',
+        placeholder: 'Kelurahan',
         allowClear: true,
         ajax: {
             url: '{{route("rest.desas")}}',
