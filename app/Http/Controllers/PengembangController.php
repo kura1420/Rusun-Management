@@ -53,7 +53,7 @@ class PengembangController extends Controller
                 '<nobr>' .
                     '<a href="'.route(self::URL .'show', $row->id).'" class="btn btn-success btn-sm" title="Show"><i class="fas fa-folder"></i> Detail</a> ' . 
                     '<a href="'.route(self::URL .'edit', $row->id).'" class="btn btn-info btn-sm" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a> ' . 
-                    // '<button type="button" class="btn btn-danger btn-sm btnDelete" value="'.$row->id.'" id="'.route(self::URL . 'destroy', $row->id).'"><i class="fas fa-trash"></i> Hapus</button>' .
+                    '<button type="button" class="btn btn-danger btn-sm btnDelete" value="'.$row->id.'" id="'.route(self::URL . 'destroy', $row->id).'"><i class="fas fa-trash"></i> Hapus</button>' .
                 '</nobr>',
             ]);
 
@@ -176,14 +176,24 @@ class PengembangController extends Controller
     public function destroy($id)
     {
         //
-        $row = Pengembang::findOrFail($id)->delete();
+        $row = Pengembang::findOrFail($id);
 
         if (! $this->sessionUser->can('delete', $row)) {
             return abort(403, "User does not have the right roles");
         }
 
-        $row->delete();
+        $kontaks = $row->pengembang_kontaks->count();
+        $dokumens = $row->pengembang_dokumens->count();
 
-        return response()->json('OK');
+        if (
+            empty($kontaks) &&
+            empty($dokumens)
+        ) {
+            $row->delete();
+
+            return response()->json('OK', 200);
+        } else {
+            return response()->json('Data tidak bisa di hapus, karena sudah mempunyai hubungan dibawahnya.', 403);
+        }
     }
 }

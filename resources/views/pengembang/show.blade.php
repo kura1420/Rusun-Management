@@ -84,7 +84,7 @@
                                     <td>{{$pengembang_kontak->posisi}}</td>
                                     <td>
                                         <a href="{{route('pengembang-kontak.edit', $pengembang_kontak->id)}}?pengembang_id={{$row->id}}" class="btn btn-info btn-xs" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a>
-                                        <!-- <button type="button" class="btn btn-danger btn-xs btnDeleteKontak" value="{{$pengembang_kontak->id}}" id="{{route('pengembang-kontak.destroy', $pengembang_kontak->id)}}"><i class="fas fa-trash"></i> Hapus</button> -->
+                                        <button type="button" class="btn btn-danger btn-xs btnDeleteKontak" value="{{$pengembang_kontak->id}}" id="{{route('pengembang-kontak.destroy', $pengembang_kontak->id)}}"><i class="fas fa-trash"></i> Hapus</button>
                                     </td>
                                 </tr>
                             @endforeach
@@ -107,7 +107,7 @@
                                     <td>
                                         <a href="{{route('pengembang-dokumen.show', $pengembang_dokumen->id)}}?pengembang_id={{$row->id}}" class="btn btn-success btn-xs" title="Show"><i class="fas fa-eye"></i> Detail</a>
                                         <a href="{{route('pengembang-dokumen.edit', $pengembang_dokumen->id)}}?pengembang_id={{$row->id}}" class="btn btn-info btn-xs" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a>
-                                        <!-- <button type="button" class="btn btn-danger btn-xs btnDeleteDokumen" value="{{$pengembang_dokumen->id}}" id="{{route('pengembang-dokumen.destroy', $pengembang_dokumen->id)}}"><i class="fas fa-trash"></i> Hapus</button> -->
+                                        <button type="button" class="btn btn-danger btn-xs btnDeleteDokumen" value="{{$pengembang_dokumen->id}}" id="{{route('pengembang-dokumen.destroy', $pengembang_dokumen->id)}}"><i class="fas fa-trash"></i> Hapus</button>
                                     </td>
                                 </tr>
                             @endforeach
@@ -175,13 +175,15 @@ $(function () {
                         
                     },
                     error: function (xhr) {
-                        const {responseJSON, status, statusText} = xhr;
+                        const {status, statusText, responseText, responseJSON} = xhr;
 
                         switch (status) {
                             case 500:
+                            case 419:
+                            case 403:
                                 Swal.fire({
-                                    title: 'Error',
-                                    text: statusText,
+                                    title: statusText,
+                                    text: responseText,
                                 });                        
                                 break;
                         
@@ -234,13 +236,15 @@ $(function () {
                         
                     },
                     error: function (xhr) {
-                        const {responseJSON, status, statusText} = xhr;
+                        const {status, statusText, responseText, responseJSON} = xhr;
 
                         switch (status) {
                             case 500:
+                            case 419:
+                            case 403:
                                 Swal.fire({
-                                    title: 'Error',
-                                    text: statusText,
+                                    title: statusText,
+                                    text: responseText,
                                 });                        
                                 break;
                         

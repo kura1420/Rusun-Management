@@ -7,6 +7,7 @@ use App\Http\Requests\UpdatePengembangDokumenRequest;
 use App\Models\PengembangDokumen;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class PengembangDokumenController extends Controller
 {
@@ -260,13 +261,17 @@ class PengembangDokumenController extends Controller
             return abort(403, "User does not have the right roles");
         }
 
-        if ($row->file) {
-            Storage::delete(self::FOLDER_FILE . '/' . $row->file);
+        if ($row->status == 0) {
+            if ($row->file) {
+                Storage::delete(self::FOLDER_FILE . '/' . $row->file);
+            }
+    
+            $row->delete();
+    
+            return response()->json('Success');
+        } else {
+            return response()->json('Data sudah dicek atau sedang dalam proses cek', 403);
         }
-
-        $row->delete();
-
-        return response()->json('Success');
     }
 
     public function view_file($id, $filename)
@@ -278,5 +283,22 @@ class PengembangDokumenController extends Controller
         $file = storage_path('app/' . self::FOLDER_FILE . '/' . $row->file);
 
         return response()->file($file);
+    }
+
+    public function verifUpdate(Request $request, $id)
+    {
+        Validator::make($request->all(), [
+            'keterangan_ditolak' => 'nullable|string',
+        ])->validate();
+
+        $pengembangDokumen = PengembangDokumen::findOrFail($id);
+
+        $input = $request->all();
+
+        $pengembangDokumen->update($input);
+
+        return redirect()
+            ->route(self::URL . 'show', $id)
+            ->with('success', 'Data berhasil disimpan');
     }
 }

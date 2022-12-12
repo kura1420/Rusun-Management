@@ -22,11 +22,11 @@ class PengembangDokumen extends Model
                 break;
 
             case 1:
-                return "Sudah di verifikasi";
+                return "Diterima";
                 break;
 
             case 2:
-                return "Dokumen ditolak";
+                return "Ditolak";
                 break;
             
             default:

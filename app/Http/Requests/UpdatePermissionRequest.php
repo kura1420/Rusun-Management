@@ -27,7 +27,7 @@ class UpdatePermissionRequest extends FormRequest
 
         return [
             //
-            'name' => 'required|string|max:255|unique:roles,name,' . $id
+            'name' => 'required|string|max:255|unique:permissions,name,' . $id
         ];
     }
 

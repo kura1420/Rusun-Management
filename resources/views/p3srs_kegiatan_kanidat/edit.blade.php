@@ -223,10 +223,11 @@ $(function () {
                             
                         },
                         error: function (xhr) {
-                            const {responseJSON, status, statusText} = xhr;
+                            const {status, statusText, responseText, responseJSON} = xhr;
 
                             switch (status) {
                                 case 500:
+                                case 419:
                                 case 403:
                                     Swal.fire({
                                         title: 'Error',
@@ -283,10 +284,11 @@ $(function () {
                         window.location.href = '{{route("p3srs-jadwal.show", $p3srsKegiatanJadwal->id)}}';
                     },
                     error: function (xhr) {
-                        const {responseJSON, status, statusText} = xhr;
+                        const {status, statusText, responseText, responseJSON} = xhr;
 
                         switch (status) {
                             case 500:
+                            case 419:
                             case 403:
                             Swal.fire({
                                 title: 'Error',
@@ -331,7 +333,7 @@ $(function () {
                 );
             },
             error: function (xhr) {
-                const {responseJSON, status, statusText} = xhr;
+                const {status, statusText, responseText, responseJSON} = xhr;
 
                 switch (status) {
                     case 422:
@@ -351,6 +353,8 @@ $(function () {
                         break;
 
                     case 500:
+case 419:
+case 403:
                     case 419:
                         Swal.fire({
                             title: 'Error',

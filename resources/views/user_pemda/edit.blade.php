@@ -37,8 +37,13 @@
             </x-adminlte-select2>
             
             <x-adminlte-input name="name" label="Nama" placeholder="Nama" fgroup-class="col-md-6" value="{{$row->name}}" />
-            <x-adminlte-input name="username" label="Username" placeholder="Username" fgroup-class="col-md-6" value="{{$row->username}}" />
             <x-adminlte-input type="email" name="email" label="Email" placeholder="Email" fgroup-class="col-md-6" value="{{$row->email}}" />
+            <x-adminlte-input name="username" label="Username" placeholder="Username" fgroup-class="col-md-6" value="{{$row->username}}" />
+
+            <x-adminlte-select name="permission" label="Permission" fgroup-class="col-md-6">
+                <option value="">Pilih</option>
+                <option value="Verif Dokumen" {{ $row->hasPermissionTo('Verif Dokumen') ? 'selected' : '' }}>Verif Dokumen</option>
+            </x-adminlte-select>
         </div>
 
         <x-slot name="footerSlot">

@@ -32,7 +32,7 @@ class DokumenController extends Controller
                 $row->kepada_label,
                 '<nobr>' . 
                     '<a href="'.route(self::URL .'edit', $row->id).'" class="btn btn-info btn-sm" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a> ' .
-                    // '<button type="button" class="btn btn-danger btn-sm btnDelete" value="'.$row->id.'" id="'.route(self::URL . 'destroy', $row->id).'"><i class="fas fa-trash"></i> Hapus</button>' . 
+                    '<button type="button" class="btn btn-danger btn-sm btnDelete" value="'.$row->id.'" id="'.route(self::URL . 'destroy', $row->id).'"><i class="fas fa-trash"></i> Hapus</button>' . 
                 '</nobr>',
             ]);
 
@@ -142,8 +142,24 @@ class DokumenController extends Controller
     public function destroy($id)
     {
         //
-        Dokumen::findOrFail($id)->delete();
+        $row = Dokumen::findOrFail($id);
 
-        return response()->json('Success');
+        $pengelolas = $row->pengelola_dokumens->count();
+        $pengembangs = $row->pengembang_dokumens->count();
+        $rusunPemiliks = $row->rusun_pemilik_dokumens->count();
+        $rusunPenghunis = $row->rusun_penghuni_dokumens->count();
+
+        if (
+            empty($pengelolas) &&
+            empty($pengembangs) &&
+            empty($rusunPemiliks) &&
+            empty($rusunPenghunis)
+        ) {
+            $row->delete();
+
+            return response()->json('Success');
+        } else {
+            return response()->json('Data tidak bisa di hapus, karena sudah mempunyai hubungan dibawahnya.', 403);
+        }
     }
 }

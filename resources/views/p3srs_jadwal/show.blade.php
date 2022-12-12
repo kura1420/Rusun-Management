@@ -176,14 +176,15 @@ $(document).ready(function () {
                         $('#cardTableAnggota').remove();
                     },
                     error: function (xhr) {
-                        const {responseJSON, status, statusText} = xhr;
+                        const {status, statusText, responseText, responseJSON} = xhr;
 
                         switch (status) {
                             case 500:
+                            case 419:
                             case 403:
                                 Swal.fire({
-                                    title: 'Error',
-                                    text: statusText,
+                                    title: statusText,
+                                    text: responseText,
                                 });                        
                                 break;
                         

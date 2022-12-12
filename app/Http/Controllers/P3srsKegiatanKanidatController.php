@@ -265,7 +265,7 @@ class P3srsKegiatanKanidatController extends Controller
     public function destroy($id)
     {
         //
-        P3srsKegiatanKanidat::findOrFail($id)->delete();
+        P3srsKegiatanKanidat::findOrFail($id);
 
         return response()->json('Success');
     }

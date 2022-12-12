@@ -112,6 +112,10 @@ class UserPemdaController extends Controller
                 ]);
 
             $user->assignRole('Pemda');
+            
+            if ($request->permission) {
+                $user->givePermissionTo($request->permission);
+            }
                 
             // $user->notify(new UserVerifiedNotification($token));
         });
@@ -178,6 +182,18 @@ class UserPemdaController extends Controller
                     'province_id' => $request->provinsi,
                     'regencie_id' => $request->kota,
                 ]);
+
+            $permission = $request->permission ?? NULL;
+
+            if ($permission) {
+                $row->syncPermissions($permission);
+            } else {
+                $checkPermissionUser = $row->hasPermissionTo('Verif Dokumen');
+
+                if ($checkPermissionUser) {
+                    $row->revokePermissionTo('Verif Dokumen');
+                }
+            }
 
             $row->update([
                 'name' => $request->name,

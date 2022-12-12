@@ -186,7 +186,7 @@
                                     <td>
                                         <a href="{{route('rusun-fasilitas.show', $rusun_fasilitas->id)}}?rusun_id={{$row->id}}" class="btn btn-success btn-xs" title="Show"><i class="fas fa-eye"></i> Detail</a>
                                         <a href="{{route('rusun-fasilitas.edit', $rusun_fasilitas->id)}}?rusun_id={{$row->id}}" class="btn btn-info btn-xs" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a>
-                                        <!-- <button type="button" class="btn btn-danger btn-xs btnDeleteFasilitas" value="{{$rusun_fasilitas->id}}" id="{{route('rusun-fasilitas.destroy', $rusun_fasilitas->id)}}"><i class="fas fa-trash"></i> Hapus</button>                                         -->
+                                        <button type="button" class="btn btn-danger btn-xs btnDeleteFasilitas" value="{{$rusun_fasilitas->id}}" id="{{route('rusun-fasilitas.destroy', $rusun_fasilitas->id)}}"><i class="fas fa-trash"></i> Hapus</button>                                        
                                     </td>
                                 </tr>
                             @endforeach
@@ -272,8 +272,8 @@
             <thead>
                 <tr>
                     <th>Dokumen</th>
-                    <th>Keterangan</th>
-                    <th>File</th>
+                    <th>Status</th>
+                    <th>Lihat</th>
                 </tr>
             </thead>
             <tbody id="listDokumenPengembang">
@@ -290,8 +290,8 @@
             <thead>
                 <tr>
                     <th>Dokumen</th>
-                    <th>Keterangan</th>
-                    <th>File</th>
+                    <th>Status</th>
+                    <th>Lihat</th>
                 </tr>
             </thead>
             <tbody id="listDokumenPengelola">
@@ -326,7 +326,10 @@ $(function () {
     const tableUnit = $('#tableUnit').DataTable();
     const tableFasilitas = $('#tableFasilitas').DataTable();
 
-    const buttonViewFile = url => `<a href="${url}" class="btn btn-sm btn-info" target="_blank">Lihat</a>`;
+    const buttonViewFile = (urlDocument, urlShow) => {
+        return `<a href="${urlDocument}" class="btn btn-sm btn-info" target="_blank">Dokumen</a> 
+            <a href="${urlShow}" class="btn btn-sm btn-success" target="_blank">Detail</a>`;
+    }
 
     $('body').on('click', '.btnDeleteTower', function (e) {
         e.preventDefault();
@@ -367,13 +370,15 @@ $(function () {
                         
                     },
                     error: function (xhr) {
-                        const {responseJSON, status, statusText} = xhr;
+                        const {status, statusText, responseText, responseJSON} = xhr;
 
                         switch (status) {
                             case 500:
+                            case 419:
+                            case 403:
                                 Swal.fire({
-                                    title: 'Error',
-                                    text: statusText,
+                                    title: statusText,
+                                    text: responseText,
                                 });                        
                                 break;
                         
@@ -425,13 +430,15 @@ $(function () {
                         
                     },
                     error: function (xhr) {
-                        const {responseJSON, status, statusText} = xhr;
+                        const {status, statusText, responseText, responseJSON} = xhr;
 
                         switch (status) {
                             case 500:
+                            case 419:
+                            case 403:
                                 Swal.fire({
-                                    title: 'Error',
-                                    text: statusText,
+                                    title: statusText,
+                                    text: responseText,
                                 });                        
                                 break;
                         
@@ -483,13 +490,15 @@ $(function () {
                         
                     },
                     error: function (xhr) {
-                        const {responseJSON, status, statusText} = xhr;
+                        const {status, statusText, responseText, responseJSON} = xhr;
 
                         switch (status) {
                             case 500:
+                            case 419:
+                            case 403:
                                 Swal.fire({
-                                    title: 'Error',
-                                    text: statusText,
+                                    title: statusText,
+                                    text: responseText,
                                 });                        
                                 break;
                         
@@ -518,11 +527,13 @@ $(function () {
                 if (response.length > 0) {
                     $('#listDokumenPengembang').html('');
 
-                    $.each(response, function (index, value) { 
+                    $.each(response, function (index, value) {
+                        var urlShow = '{{url("pengembang-dokumen")}}/' + value.id;
+
                         $('#listDokumenPengembang').append(`<tr>
                             <td>${value.dokumens.nama}</td>
-                            <td>${value.keterangan}</td>
-                            <td>${buttonViewFile(value.file)}</td>
+                            <td>${value.status}</td>
+                            <td>${buttonViewFile(value.file, urlShow)}</td>
                         </tr>`);
                     });
 
@@ -532,10 +543,12 @@ $(function () {
                 }
             },
             error: function (xhr) {
-                const {responseJSON, status, statusText} = xhr;
+                const {status, statusText, responseText, responseJSON} = xhr;
 
                 switch (status) {
                     case 500:
+case 419:
+case 403:
                         Swal.fire({
                             title: 'Error',
                             text: statusText,
@@ -566,10 +579,12 @@ $(function () {
                     $('#listDokumenPengelola').html('');
 
                     $.each(response, function (index, value) { 
+                        var urlShow = '{{route("pengelola-dokumen.index")}}/' + value.id;
+
                         $('#listDokumenPengelola').append(`<tr>
                             <td>${value.dokumens.nama}</td>
-                            <td>${value.keterangan}</td>
-                            <td>${buttonViewFile(value.file)}</td>
+                            <td>${value.status}</td>
+                            <td>${buttonViewFile(value.file, urlShow)}</td>
                         </tr>`);
                     });
 
@@ -579,10 +594,12 @@ $(function () {
                 }
             },
             error: function (xhr) {
-                const {responseJSON, status, statusText} = xhr;
+                const {status, statusText, responseText, responseJSON} = xhr;
 
                 switch (status) {
                     case 500:
+case 419:
+case 403:
                         Swal.fire({
                             title: 'Error',
                             text: statusText,

@@ -69,7 +69,11 @@ class PermissionController extends Controller
     public function store(StorePermissionRequest $request)
     {
         //
-        Permission::create($request->all());
+        $input = $request->all();
+
+        $input['guard_name'] = 'web';
+
+        Permission::create($input);
 
         return redirect()
             ->route(self::URL . 'index')

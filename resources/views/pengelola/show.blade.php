@@ -84,7 +84,7 @@
                                     <td>{{$pengelola_kontak->posisi}}</td>
                                     <td>
                                         <a href="{{route('pengelola-kontak.edit', $pengelola_kontak->id)}}?pengelola_id={{$row->id}}" class="btn btn-info btn-xs" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a>
-                                        <!-- <button type="button" class="btn btn-danger btn-xs btnDeleteKontak" value="{{$pengelola_kontak->id}}" id="{{route('pengelola-kontak.destroy', $pengelola_kontak->id)}}"><i class="fas fa-trash"></i> Hapus</button> -->
+                                        <button type="button" class="btn btn-danger btn-xs btnDeleteKontak" value="{{$pengelola_kontak->id}}" id="{{route('pengelola-kontak.destroy', $pengelola_kontak->id)}}"><i class="fas fa-trash"></i> Hapus</button>
                                     </td>
                                 </tr>
                             @endforeach
@@ -95,7 +95,7 @@
                             'Rusun',
                             'Dokumen',
                             'Tersedia',
-                            'Keterangan',
+                            'Status',
                             ['label' => 'Aksi', 'no-export' => true, 'width' => 15],
                         ]">
                             @foreach($row->pengelola_dokumens as $pengelola_dokumen)
@@ -103,11 +103,11 @@
                                     <td>{{$pengelola_dokumen->rusun->nama}}</td>
                                     <td>{{$pengelola_dokumen->dokumen->nama}}</td>
                                     <td>{{$pengelola_dokumen->tersedia ? 'Ya' : 'Tidak'}}</td>
-                                    <td>{{$pengelola_dokumen->keterangan}}</td>
+                                    <td>{{$pengelola_dokumen->status_text}}</td>
                                     <td>
                                         <a href="{{route('pengelola-dokumen.show', $pengelola_dokumen->id)}}?pengelola_id={{$row->id}}" class="btn btn-success btn-xs" title="Show"><i class="fas fa-eye"></i> Detail</a>
                                         <a href="{{route('pengelola-dokumen.edit', $pengelola_dokumen->id)}}?pengelola_id={{$row->id}}" class="btn btn-info btn-xs" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a>
-                                        <!-- <button type="button" class="btn btn-danger btn-xs btnDeleteDokumen" value="{{$pengelola_dokumen->id}}" id="{{route('pengelola-dokumen.destroy', $pengelola_dokumen->id)}}"><i class="fas fa-trash"></i> Hapus</button> -->
+                                        <button type="button" class="btn btn-danger btn-xs btnDeleteDokumen" value="{{$pengelola_dokumen->id}}" id="{{route('pengelola-dokumen.destroy', $pengelola_dokumen->id)}}"><i class="fas fa-trash"></i> Hapus</button>
                                     </td>
                                 </tr>
                             @endforeach
@@ -175,13 +175,15 @@ $(function () {
                         
                     },
                     error: function (xhr) {
-                        const {responseJSON, status, statusText} = xhr;
+                        const {status, statusText, responseText, responseJSON} = xhr;
 
                         switch (status) {
                             case 500:
+                            case 419:
+                            case 403:
                                 Swal.fire({
-                                    title: 'Error',
-                                    text: statusText,
+                                    title: statusText,
+                                    text: responseText,
                                 });                        
                                 break;
                         
@@ -234,13 +236,15 @@ $(function () {
                         
                     },
                     error: function (xhr) {
-                        const {responseJSON, status, statusText} = xhr;
+                        const {status, statusText, responseText, responseJSON} = xhr;
 
                         switch (status) {
                             case 500:
+                            case 419:
+                            case 403:
                                 Swal.fire({
-                                    title: 'Error',
-                                    text: statusText,
+                                    title: statusText,
+                                    text: responseText,
                                 });                        
                                 break;
                         

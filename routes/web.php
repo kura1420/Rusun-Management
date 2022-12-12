@@ -91,7 +91,7 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['role:Root'])->group(function () {
         Route::resources([
             'role' => RoleController::class,
-            // 'permission' => PermissionController::class,
+            'permission' => PermissionController::class,
         ]);
     });
 
@@ -132,29 +132,39 @@ Route::middleware(['auth'])->group(function () {
         Route::resources([
             'pengembang' => PengembangController::class,
             'pengembang-kontak' => PengembangKontakController::class,
-            'pengembang-dokumen' => PengembangDokumenController::class,
         ]);
 
-        Route::prefix('pengembang-dokumen')->group(function () {
-            Route::controller(PengembangDokumenController::class)->group(function () {
-                Route::get('{id}/view-file/{filename}', 'view_file')->name('pengembang-dokumen.view_file');
-            });
-        });
+        Route::resource('pengembang-dokumen', PengembangDokumenController::class)->except('show');
     });
+
+    Route::prefix('pengembang-dokumen')
+        ->as('pengembang-dokumen.')
+        ->controller(PengembangDokumenController::class)
+        ->middleware(['role_or_permission:Root|Admin|Pengelola|Verif Dokumen'])
+        ->group(function () {
+            Route::get('{id}', 'show')->name('show');
+            Route::get('{id}/view-file/{filename}', 'view_file')->name('view_file');
+            Route::put('{id}/verif', 'verifUpdate')->name('verif');
+        });
 
     Route::middleware(['role:Root|Admin|Pengelola'])->group(function () {
         Route::resources([
             'pengelola' => PengelolaController::class,
             'pengelola-kontak' => PengelolaKontakController::class,
-            'pengelola-dokumen' => PengelolaDokumenController::class,
         ]);
 
-        Route::prefix('pengelola-dokumen')->group(function () {
-            Route::controller(PengelolaDokumenController::class)->group(function () {
-                Route::get('{id}/view-file/{filename}', 'view_file')->name('pengelola-dokumen.view_file');
-            });
-        });
+        Route::resource('pengelola-dokumen', PengelolaDokumenController::class)->except('show');
     });
+
+    Route::prefix('pengelola-dokumen')
+            ->as('pengelola-dokumen.')
+            ->controller(PengelolaDokumenController::class)
+            ->middleware(['role_or_permission:Root|Admin|Pengelola|Verif Dokumen'])
+            ->group(function () {
+                Route::get('{id}', 'show')->name('show');
+                Route::get('{id}/view-file/{filename}', 'view_file')->name('view_file');
+                Route::put('{id}/verif', 'verifUpdate')->name('verif');
+            });
 
     Route::middleware(['role:Root|Admin|Pemda|Rusun'])->group(function () {
         Route::resources([
@@ -163,17 +173,6 @@ Route::middleware(['auth'])->group(function () {
             'rusun-unit-detail' => RusunUnitDetailController::class,
             'rusun-fasilitas' => RusunFasilitasController::class,
             'rusun-pembayaran-ipl' => RusunPembayaranIplController::class,
-            
-            // pemilik: can update
-            // rusun: can review
-            'pemilik' => PemilikController::class,
-            'rusun-pemilik' => RusunPemilikController::class,
-            'rusun-pemilik-dokumen' => RusunPemilikDokumenController::class,
-    
-            // penghuni: can update
-            // rusun: can review
-            'rusun-penghuni' => RusunPenghuniController::class,
-            'rusun-penghuni-dokumen' => RusunPenghuniDokumenController::class,
         ]);
 
         Route::prefix('rusun')->group(function () {
@@ -201,19 +200,75 @@ Route::middleware(['auth'])->group(function () {
                 Route::post('/{id}', 'updateAsStore')->name('rusun-fasilitas.updateAsStore');
             });
         });
-
-        Route::prefix('pemilik')->group(function () {
-            Route::controller(PemilikController::class)->group(function () {
-                Route::get('/{id}/view-file/{file}', 'view_file')->name('pemilik.view_file');
-            });
-        });
-
-        Route::prefix('rusun-penghuni')->group(function () {
-            Route::controller(RusunPenghuniController::class)->group(function () {
-                Route::get('/{id}/view-file/{file}', 'view_file')->name('rusun-penghuni.view_file');
-            });
-        });
     });
+
+    // pemilik
+    Route::prefix('pemilik')
+        ->as('pemilik.')
+        ->controller(PemilikController::class)
+        ->group(function () {
+            Route::get('/', 'index')->name('index')->middleware(['role:Root|Admin|Pemda|Rusun|Pemilik']);
+            Route::get('/{id}', 'show')->name('show')->middleware(['role:Root|Admin|Pemda|Rusun|Pemilik']);
+            Route::get('/{id}/edit', 'edit')->name('edit')->middleware(['role:Root|Admin|Pemilik']);
+            Route::get('/{id}/view-file/{file}', 'view_file')->name('view_file');
+
+            Route::put('/{id}', 'update')->name('update')->middleware(['role:Root|Admin|Pemilik']);
+        });
+    
+    Route::prefix('rusun-pemilik')
+        ->as('rusun-pemilik.')
+        ->controller(RusunPemilikController::class)
+        ->group(function () {
+            Route::get('/', 'index')->name('index')->middleware(['role:Root|Admin|Pemda|Rusun|Pemilik']);
+            Route::get('/{id}', 'show')->name('show')->middleware(['role:Root|Admin|Pemda|Rusun|Pemilik']);
+            Route::get('/{id}/edit', 'edit')->name('edit')->middleware(['role:Root|Admin|Pemilik']);
+            Route::get('/{id}/view-file/{file}', 'view_file')->name('view_file');
+
+            Route::put('/{id}', 'update')->name('update')->middleware(['role:Root|Admin|Pemilik']);
+        });
+
+    Route::prefix('rusun-pemilik-dokumen')
+        ->as('rusun-pemilik-dokumen.')
+        ->controller(RusunPemilikDokumenController::class)
+        ->group(function () {
+            Route::get('/create', 'create')->name('create')->middleware(['role:Root|Admin|Pemilik']);
+            Route::get('/{id}', 'show')->name('show')->middleware(['role:Root|Admin|Pemda|Rusun|Pemilik']);
+            Route::get('/{id}/edit', 'edit')->name('edit')->middleware(['role:Root|Admin|Pemilik']);
+            
+            Route::post('/', 'store')->name('store')->middleware(['role:Root|Admin|Pemilik']);
+            
+            Route::put('/{id}', 'update')->name('update')->middleware(['role:Root|Admin|Pemilik']);
+
+            Route::delete('/{id}', 'destroy')->name('destroy')->middleware(['role:Root|Admin|Pemilik']);
+        });
+
+    // pemilik
+    Route::prefix('rusun-penghuni')
+        ->as('rusun-penghuni.')
+        ->controller(RusunPenghuniController::class)
+        ->group(function () {
+            Route::get('/', 'index')->name('index')->middleware(['role:Root|Admin|Pemda|Rusun|Penghuni']);
+            Route::get('/{id}', 'show')->name('show')->middleware(['role:Root|Admin|Pemda|Rusun|Penghuni']);
+            Route::get('/{id}/edit', 'edit')->name('edit')->middleware(['role:Root|Admin|Penghuni']);
+            Route::get('/{id}/view-file/{file}', 'view_file')->name('view_file');
+
+            Route::put('/{id}', 'update')->name('update')->middleware(['role:Root|Admin|Penghuni']);
+        });
+
+    Route::prefix('rusun-penghuni-dokumen')
+        ->as('rusun-penghuni-dokumen.')
+        ->controller(RusunPenghuniDokumenController::class)
+        ->group(function () {
+            Route::get('/create', 'create')->name('create')->middleware(['role:Root|Admin|Penghuni']);
+            Route::get('/{id}', 'show')->name('show')->middleware(['role:Root|Admin|Pemda|Rusun|Penghuni']);
+            Route::get('/{id}/edit', 'edit')->name('edit')->middleware(['role:Root|Admin|Penghuni']);
+            
+            Route::post('/', 'store')->name('store')->middleware(['role:Root|Admin|Penghuni']);
+            
+            Route::put('/{id}', 'update')->name('update')->middleware(['role:Root|Admin|Penghuni']);
+
+            Route::delete('/{id}', 'destroy')->name('destroy')->middleware(['role:Root|Admin|Penghuni']);
+        });
 
     // p3srs
     Route::resources([
@@ -279,17 +334,16 @@ Route::middleware(['auth'])->group(function () {
         });
     });
 
-    Route::group(['prefix' => 'rest', 'as' => 'rest.'],
-        function () {
-            Route::controller(RestController::class)->group(function () {
-                Route::get('provinsi', 'provinsis')->name('provinsis');
-                Route::get('kotas', 'kotas')->name('kotas');
-                Route::get('kecamatans', 'kecamatans')->name('kecamatans');
-                Route::get('desas', 'desas')->name('desas');
-                Route::get('rusun-details', 'rusun_details')->name('rusun_details');
-                Route::get('pengembangs', 'pengembangs')->name('pengembangs');
-                Route::get('pengelolas', 'pengelolas')->name('pengelolas');
-            });
-        }
-    );
+    Route::prefix('rest')
+        ->as('rest.')
+        ->controller(RestController::class)
+        ->group(function () {
+            Route::get('provinsi', 'provinsis')->name('provinsis');
+            Route::get('kotas', 'kotas')->name('kotas');
+            Route::get('kecamatans', 'kecamatans')->name('kecamatans');
+            Route::get('desas', 'desas')->name('desas');
+            Route::get('rusun-details', 'rusun_details')->name('rusun_details');
+            Route::get('pengembangs', 'pengembangs')->name('pengembangs');
+            Route::get('pengelolas', 'pengelolas')->name('pengelolas');
+        });
 });

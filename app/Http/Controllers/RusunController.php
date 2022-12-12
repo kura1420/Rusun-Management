@@ -68,7 +68,7 @@ class RusunController extends Controller
                 '<nobr>' . 
                     '<a href="'.route(self::URL .'show', $row->id).'" class="btn btn-success btn-sm" title="Detail"><i class="fas fa-folder"></i> Detail</a> ' .
                     '<a href="'.route(self::URL .'edit', $row->id).'" class="btn btn-info btn-sm" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a> ' .
-                    // '<button type="button" class="btn btn-danger btn-sm btnDelete" value="'.$row->id.'" id="'.route(self::URL . 'destroy', $row->id).'"><i class="fas fa-trash"></i> Hapus</button>' . 
+                    '<button type="button" class="btn btn-danger btn-sm btnDelete" value="'.$row->id.'" id="'.route(self::URL . 'destroy', $row->id).'"><i class="fas fa-trash"></i> Hapus</button>' . 
                 '</nobr>',
             ]);
 
@@ -429,9 +429,29 @@ class RusunController extends Controller
             return abort(403, "User does not have the right roles");
         }
 
-        $row->delete();
-        
-        return response()->json('Success');
+        $details = $row->rusun_details->count();
+        $unitDetails = $row->rusun_unit_details->count();
+        $fasilitas = $row->rusun_fasilitas->count();
+        $pengelolas = $row->rusun_pengelolas->count();
+        $pengembangs = $row->rusun_pengembangs->count();
+        $tarifs = $row->rusun_tarifs->count();
+        $outstandings = $row->rusun_outstanding_penghunis->count();
+
+        if (
+            empty($details) &&
+            empty($unitDetails) &&
+            empty($fasilitas) &&
+            empty($pengelolas) &&
+            empty($pengembangs) &&
+            empty($tarifs) &&
+            empty($outstandings)
+        ) {
+            $row->delete();
+
+            return response()->json('Success');
+        } else {
+            return response()->json('Data tidak bisa di hapus, karena sudah mempunyai hubungan dibawahnya.', 403);
+        }
     }
 
     public function view_file($id, $filename)
@@ -447,7 +467,7 @@ class RusunController extends Controller
 
     public function pengelolaDestroy($id)
     {
-        \App\Models\RusunPengelola::findOrFail($id)->delete();
+        \App\Models\RusunPengelola::findOrFail($id);
 
         return response()->json('Success');
     }
@@ -464,6 +484,7 @@ class RusunController extends Controller
         ->map(function ($row) {
             $row->file = route('pengelola-dokumen.view_file', [$row->id, $row->file]);
             $row->dokumens;
+            $row->status = $row->status_text;
 
             return $row;
         });
@@ -473,7 +494,7 @@ class RusunController extends Controller
 
     public function pengembangDestroy($id)
     {
-        \App\Models\RusunPengembang::findOrFail($id)->delete();
+        \App\Models\RusunPengembang::findOrFail($id);
 
         return response()->json('Success');        
     }
@@ -490,6 +511,7 @@ class RusunController extends Controller
         ->map(function ($row) {
             $row->file = route('pengembang-dokumen.view_file', [$row->id, $row->file]);
             $row->dokumens;
+            $row->status = $row->status_text;
 
             return $row;
         });

@@ -14,6 +14,27 @@ class PengelolaDokumen extends Model
 
     protected $guarded = [];
 
+    public function getStatusTextAttribute()
+    {
+        switch ($this->status) {
+            case 0:
+                return "Belum di verifikasi";
+                break;
+
+            case 1:
+                return "Diterima";
+                break;
+
+            case 2:
+                return "Ditolak";
+                break;
+            
+            default:
+                return "No defined";
+                break;
+        }
+    }
+
     public function pengelolas()
     {
         return $this->belongsTo(Pengelola::class, 'pengelola_id');

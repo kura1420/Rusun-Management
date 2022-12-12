@@ -18,4 +18,24 @@ class Dokumen extends Model
     {
         return ucfirst($this->kepada);
     }
+
+    public function pengelola_dokumens()
+    {
+        return $this->hasMany(PengelolaDokumen::class);
+    }
+
+    public function pengembang_dokumens()
+    {
+        return $this->hasMany(PengembangDokumen::class);
+    }
+
+    public function rusun_pemilik_dokumens()
+    {
+        return $this->hasMany(RusunPemilikDokumen::class);
+    }
+
+    public function rusun_penghuni_dokumens()
+    {
+        return $this->hasMany(RusunPenghuniDokumen::class);
+    }
 }

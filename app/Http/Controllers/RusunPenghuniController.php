@@ -48,6 +48,10 @@ class RusunPenghuniController extends Controller
 
                     $query->where('rusun_id', $sessionData->id);
                 }
+
+                if ($user->level == 'penghuni') {
+                    $query->where('nama', $user->name);
+                }
             });
 
         if ($user->level == 'pemda') {
@@ -159,13 +163,13 @@ class RusunPenghuniController extends Controller
      * @param  \App\Models\RusunPenghuni  $rusunPenghuni
      * @return \Illuminate\Http\Response
      */
-    public function edit(RusunPenghuni $rusunPenghuni)
+    public function edit(RusunPenghuni $rusunPenghuni, $id)
     {
         //
         $title = self::TITLE;
         $subTitle = 'Edit Data';
 
-        $row = $rusunPenghuni;
+        $row = RusunPenghuni::findOrFail($id);
 
         return view(self::FOLDER_VIEW . 'edit', compact('title', 'subTitle', 'row',));
     }
@@ -177,10 +181,12 @@ class RusunPenghuniController extends Controller
      * @param  \App\Models\RusunPenghuni  $rusunPenghuni
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateRusunPenghuniRequest $request, RusunPenghuni $rusunPenghuni)
+    public function update(UpdateRusunPenghuniRequest $request, RusunPenghuni $rusunPenghuni, $id)
     {
         //
         $input = $request->all();
+
+        $rusunPenghuni = RusunPenghuni::findOrFail($id);
 
         $identitas_file = $rusunPenghuni->identitas_file;
         if ($request->identitas_file) {
