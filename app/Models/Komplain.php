@@ -14,6 +14,27 @@ class Komplain extends Model
 
     protected $guarded = [];
 
+    public function getTingkatTextAttribute()
+    {
+        switch ($this->tingkat) {
+            case 1:
+                return 'Low';
+                break;
+
+            case 2:
+                return 'Medium';
+                break;
+
+            case 3:
+                return 'High';
+                break;
+            
+            default:
+                return 'No defined';
+                break;
+        }
+    }
+
     public function komplain_tanggapans()
     {
         return $this->hasMany(KomplainTanggapan::class)

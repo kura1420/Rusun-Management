@@ -1,44 +1,23 @@
 @extends('komplain.main')
 
 @section('komplain_content')
-<div class="card card-primary card-outline" id="printArea">
+<div class="card card-widget" id="printArea">
     <div class="card-header">
-        <h3 class="card-title">Kode: <strong>{{$row->kode}}</strong></h3>
-        <div class="float-right">
-            <button type="button" onclick="window.history.back()" class="btn btn-sm btn-secondary"><i class="fas fa-angle-left"></i> Kembali</button>
+        <div class="user-block">
+            <img class="img-circle" src="{{asset('images/blank.png')}}" alt="User Image" />
+            <span class="username"><a href="#">{{$row->judul}}</a></span>
+            <span class="description">{{$row->user->name}} - {{$row->created_at}}</span>
+        </div>
+
+        <div class="card-tools">
+            Kode: <strong>{{$row->kode}}</strong> | 
+            Level: <strong>{{$row->tingkat_text}}</strong>
         </div>
     </div>
 
-    <div class="card-body p-0">
-        <div class="mailbox-read-info">
-            <h5>{{$row->judul}}</h5>
-            <h6>
-                Dari: <a href="#" class="__cf_email__">{{$row->user->name}}</a> <span class="mailbox-read-time float-right">{{$row->created_at}}</span>
-            </h6>
-        </div>
+    <div class="card-body">
+        @php echo $row->penjelasan; @endphp
 
-        <div class="mailbox-controls with-border text-center">
-            <div class="btn-group">
-                <a href="{{route('komplain.tanggapi', [$row->id, 'status=' . $status])}}" class="btn btn-default btn-sm" title="Reply">
-                    <i class="fas fa-reply"></i>
-                </a>
-
-                <button type="button" class="btn btn-default btn-sm btnMelihat" data-container="body" title="Show">
-                    <i class="fas fa-eye"></i>
-                </button>
-            </div>
-
-            <button type="button" class="btn btn-default btn-sm" title="Print" onclick="printKeluhan('printArea')">
-                <i class="fas fa-print"></i>
-            </button>
-        </div>
-
-        <div class="mailbox-read-message">
-            @php echo $row->penjelasan; @endphp
-        </div>
-    </div>
-
-    <div class="card-footer bg-white">
         <ul class="mailbox-attachments d-flex align-items-stretch clearfix">
             @foreach ($row->komplain_files as $key => $komplain_file)
                 @switch($komplain_file->tipe)
@@ -75,60 +54,37 @@
             
             @endforeach
         </ul>
+
+        <button type="button" class="btn btn-default btn-sm btnMelihat"><i class="fas fa-eye"></i> Melihat</button>
+        <button type="button" class="btn btn-default btn-sm" onclick="printKeluhan('printArea')"><i class="fas fa-print"></i> Print</button>
+        <span class="float-right text-muted">{{$row->komplain_tanggapans->count()}} Dijawab</span>
     </div>
 
-    <div class="card-footer">
-        <div class="float-right">
-            <a href="{{route('komplain.tanggapi', [$row->id, 'status=' . $status])}}" class="btn btn-default" title="Reply">
-                    <i class="fas fa-reply"></i>
-                    Tanggapi
-            </a>
-            <button type="button" class="btn btn-default btnMelihat"><i class="fas fa-eye"></i> Yang Melihat</button>
+    <div class="card-footer card-comments">
+        @foreach ($row->komplain_tanggapans as $key => $komplain_tanggapan)
+        <div class="card-comment">
+            <img class="img-circle img-sm" src="{{asset('images/blank.png')}}" alt="User Image" />
+            <div class="comment-text">
+                <span class="username">
+                    {{$komplain_tanggapan->user->name}}
+                    <span class="text-muted float-right">{{$komplain_tanggapan->created_at}}</span>
+                </span>
+                {{substr(strip_tags($komplain_tanggapan->penjelasan), 0, 255)}}
+                
+                @if (strlen(strip_tags($komplain_tanggapan->penjelasan)) > 255)
+                <a href="{{route('komplain.tanggapiShow', [ $komplain_tanggapan->parent ?? $row->id, $komplain_tanggapan->id, 'status=reply'])}}" class="btn btn-xs btn-dark">
+                    Lihat Lebih Lanjut
+                </a>
+                @endif
+            </div>
         </div>
-        <button type="button" class="btn btn-default" onclick="printKeluhan('printArea')"><i class="fas fa-print"></i> Print</button>
-    </div>
-</div>
+        @endforeach
 
-<div class="row">
-    <div class="col-12">
-        <div class="card card-info card-outline">
-            <div class="card-header">
-                <h3 class="card-title">Tanggapan</h3>
-                <div class="card-tools">
-                    
-                </div>
-            </div>
-
-            <div class="card-body table-responsive">
-                <table class="table table-hover text-nowrap" id="tableTanggapan">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>User Menanggapi</th>
-                            <th>Waktu</th>
-                            <th>User</th>
-                            <th>Penjelasan</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($row->komplain_tanggapans as $key => $komplain_tanggapan)
-                        <tr>
-                            <td>{{$loop->iteration}}.</td>
-                            <td>{{$komplain_tanggapan->parent_type}}</td>
-                            <td>{{$komplain_tanggapan->created_at}}</td>
-                            <td>{{$komplain_tanggapan->user->name}}</td>
-                            <td>{{substr(strip_tags($komplain_tanggapan->penjelasan), 0, 20)}}...</td>
-                            <td>
-                                <a href="{{route('komplain.tanggapiShow', [ $komplain_tanggapan->parent ?? $row->id, $komplain_tanggapan->id, 'status=reply'])}}" class="btn btn-xs btn-warning">
-                                    <i class="fa fa-eye"></i> Lihat
-                                </a>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
+        <div class="card-comment" style="margin-top: 10px;">
+            <a href="{{route('komplain.tanggapi', [$row->id, 'status=' . $status])}}" class="btn btn-warning btn-block" title="Reply">
+                <i class="fas fa-reply"></i>
+                Tanggapi
+            </a>
         </div>
     </div>
 </div>
@@ -166,8 +122,6 @@
 @section('komplain_js')
 <script>
 $(document).ready(function () {
-    const tableTanggapan = $('#tableTanggapan').DataTable();
-
     $('.btnMelihat').click(function (e) { 
         e.preventDefault();
         
