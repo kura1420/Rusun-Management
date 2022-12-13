@@ -417,6 +417,7 @@ return [
                 [
                     'text' => 'Laporan',
                     'url'  => '#',
+                    'can' => ['Root', 'Admin', 'Pembda'],
                 ],
                 [
                     'text' => 'FAQ',

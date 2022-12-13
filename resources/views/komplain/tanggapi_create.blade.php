@@ -23,7 +23,7 @@
             <x-adminlte-input name="rusun_id" id="rusun_id" placeholder="Rusun" value="{{$row->rusun->nama}}" disabled />
         </div>
         <div class="form-group">
-            <x-adminlte-input name="pengelola_id" id="pengelola_id" placeholder="Pengelola" value="{{$row->pengelola->nama}}" disabled />
+            <x-adminlte-input name="pengelola_id" id="pengelola_id" placeholder="Pengelola" value="{{$row->pengelola ? $row->pengelola->nama : NULL}}" disabled />
         </div>
         <div class="form-group">
             <div class="row">

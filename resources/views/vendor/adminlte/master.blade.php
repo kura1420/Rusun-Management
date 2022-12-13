@@ -107,6 +107,7 @@
     {{-- Custom Scripts --}}
     @yield('adminlte_js')
 
+    @if (auth()->check())
     <script>
         $(document).ready(function () {
             $.get("{{route('komplain.apiList')}}", 
@@ -119,6 +120,7 @@
             );
         });
     </script>
+    @endif
 </body>
 
 </html>

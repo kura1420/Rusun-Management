@@ -13,7 +13,7 @@ class UpdateKomplainRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return auth()->check();
     }
 
     /**
@@ -25,6 +25,7 @@ class UpdateKomplainRequest extends FormRequest
     {
         return [
             //
+            'status' => 'required|string',
         ];
     }
 }

@@ -89,7 +89,7 @@ class KomplainController extends Controller
         $title = self::TITLE;
         $subTitle = 'List Data';
         
-        $rows = Komplain::orderBy('created_at', 'desc')
+        $rows = $this->getDataKomplain()
             ->whereYear('tanggal_dibuat', date('Y'))
             ->when($params, function ($query, $params) {
                 $status = $params->status ?? NULL;
@@ -97,11 +97,16 @@ class KomplainController extends Controller
                 $search = $params->search ?? NULL;
                 
                 if ($status == 'noreply') {
-                    $query->where('sudah_dijawab', 0);
+                    $query
+                        ->where('sudah_dijawab', 0)
+                        ->where('status', '!=', '1')
+                        ->where('status', '!=', '3');
                 }
 
                 if ($status == 'reply') {
-                    $query->where('sudah_dijawab', 1);
+                    $query->where('sudah_dijawab', 1)
+                        ->where('status', '!=', '1')
+                        ->where('status', '!=', '3');
                 }
 
                 if ($status == 'undone') {
@@ -167,26 +172,8 @@ class KomplainController extends Controller
                 return abort(404);
             }
         }
-
-        $user = $this->sessionUser;
         
-        $rusuns = \App\Models\Rusun::orderBy('nama')
-            ->when($user, function ($query, $user) {
-                if ($user->level == 'rusun') {
-                    $sessionData = session()->get('rusun');
-
-                    $query->where('id', $sessionData->id);
-                }
-
-                if ($user->level == 'pemda') {
-                    $sessionData = session()->get('pemda');
-
-                    $query
-                        ->where('province_id', $sessionData->province_id)
-                        ->where('regencie_id', $sessionData->regencie_id);
-                }
-            })
-            ->get();
+        $rusuns = $this->getRusun();
 
         return view(self::FOLDER_VIEW . 'create', compact('title', 'subTitle', 'rusuns', 'status', 'tingkat'));
     }
@@ -227,7 +214,10 @@ class KomplainController extends Controller
         }
 
         $rusun = \App\Models\Rusun::where('id', $request->rusun_id)->firstOrFail();
-        $pengelola = \App\Models\Pengelola::where('id', $request->pengelola_id)->firstOrFail();
+
+        if ($request->pengelola_id) {
+            $pengelola = \App\Models\Pengelola::where('id', $request->pengelola_id)->firstOrFail();
+        }
 
         $input['kode'] = strtoupper(Str::random(6));
         $input['status'] = 0;
@@ -251,12 +241,15 @@ class KomplainController extends Controller
             return $komplain;
         });
 
-        // $rusun->notify(new KomplaintNotification($result));
+        $rusun->notify(new KomplaintNotification($result));
 
-        // $pengelola->notify(new KomplaintNotification($result));
-        // $pengelolaKontaks = \App\Models\PengelolaKontak::where('pengelola_id', $request->pengelola_id)->get();
+        if (isset($pengelola)) {
+            $pengelolaKontaks = \App\Models\PengelolaKontak::where('pengelola_id', $request->pengelola_id)->get();
 
-        // Notification::send($pengelolaKontaks, new KomplaintNotification($result));
+            // $pengelola->notify(new KomplaintNotification($result));
+
+            // Notification::send($pengelolaKontaks, new KomplaintNotification($result));
+        }
 
         return redirect()
             ->route(self::URL . 'show', [$result->id, 'status=noreply'],)
@@ -321,12 +314,17 @@ class KomplainController extends Controller
     public function update(UpdateKomplainRequest $request, Komplain $komplain)
     {
         //
-        // $komplain->update([
-        //     'status' => 1,
-        //     'tanggal_diselesaikan' => Carbon::now(),
-        // ]);
-
-        // return response()->json('Success');
+        $status = $request->status ?? NULL;
+        if ($status == 'done' || $status == 'undone') {
+            $komplain->update([
+                'status' => $status == 'done' ? 1 : 3,
+                'tanggal_diselesaikan' => Carbon::now(),
+            ]);
+    
+            return response()->json('Success');
+        } else {
+            return abort(403, 'Statuts tutup komplain tidak ditemukan');
+        }
     }
 
     /**
@@ -377,7 +375,10 @@ class KomplainController extends Controller
         unset($input['files'], $input['attachments']);
 
         $komplain = Komplain::findOrFail($id);
-        // $pengelolaKontaks = \App\Models\PengelolaKontak::where('pengelola_id', $komplain->pengelola_id)->get();
+
+        if ($komplain->pengelola_id) {
+            $pengelolaKontaks = \App\Models\PengelolaKontak::where('pengelola_id', $komplain->pengelola_id)->get();
+        }
 
         $input['ditanggapi_user_id'] = auth()->user()->id;
         $input['komplain_id'] = $komplain->id;
@@ -420,10 +421,15 @@ class KomplainController extends Controller
         });
         
         // Notification::send($komplain->rusun, new KomplaintNotification($komplain));
+        // Notification::send($komplain->user, new KomplaintNotification($komplain));
 
-//        Notification::send($komplain->user, new KomplaintNotification($komplain));
-        // Notification::send($komplain->pengelola, new KomplaintNotification($komplain));
-        // Notification::send($pengelolaKontaks, new KomplaintNotification($komplain));
+        if (isset($komplain->pengelola)) {
+            // Notification::send($komplain->pengelola, new KomplaintNotification($komplain));
+
+            if ($pengelolaKontaks) {
+                // Notification::send($pengelolaKontaks, new KomplaintNotification($komplain));
+            }
+        }
 
         return redirect()
             ->route(self::URL . 'show', [$id, 'status=reply'])
@@ -473,23 +479,7 @@ class KomplainController extends Controller
 
         $user = $this->sessionUser;
 
-        $rusuns = \App\Models\Rusun::orderBy('nama')
-            ->when($user, function ($query, $user) {
-                if ($user->level == 'rusun') {
-                    $sessionData = session()->get('rusun');
-
-                    $query->where('id', $sessionData->id);
-                }
-
-                if ($user->level == 'pemda') {
-                    $sessionData = session()->get('pemda');
-
-                    $query
-                        ->where('province_id', $sessionData->province_id)
-                        ->where('regencie_id', $sessionData->regencie_id);
-                }
-            })
-            ->get();
+        $rusuns = $this->getRusun();
 
         return view(self::FOLDER_VIEW . 'tanggapi_show', compact('title', 'subTitle', 'row', 'rusuns', 'status', 'tingkat', 'parent'));
     }
@@ -609,20 +599,20 @@ class KomplainController extends Controller
     {
         $search = $request->search ?? NULL;
 
-        $rows = Komplain::orderBy('created_at')
-            ->when($search, function ($query, $search) {
-                $query
-                    ->where('kode', 'like', "%{$search}%")
-                    ->orWhere('judul', 'like', "%{$search}%");
-            })
+        $rows = $this->getDataKomplain()
+            // ->when($search, function ($query, $search) {
+            //     $query
+            //         ->where('kode', 'like', "%{$search}%")
+            //         ->orWhere('judul', 'like', "%{$search}%");
+            // })
             ->whereYear('tanggal_dibuat', date('Y'))
             ->get();
 
         $collect = collect($rows);
 
         // status
-        $noReply = $collect->where('sudah_dijawab', 0)->count();
-        $reply = $collect->where('sudah_dijawab', 1)->count();
+        $noReply = $collect->where('sudah_dijawab', 0)->where('status', '!=', '1')->where('status', '!=', '3')->count();
+        $reply = $collect->where('sudah_dijawab', 1)->where('status', '!=', '1')->where('status', '!=', '3')->count();
         $undone = $collect->where('status', 3)->count();
         $done = $collect->where('status', 1)->count();
 
@@ -641,5 +631,79 @@ class KomplainController extends Controller
             'medium' => $medium,
             'low' => $low,
         ];
+    }
+
+    // query
+    protected function getDataKomplain()
+    {
+        $user = $this->sessionUser;
+
+        return Komplain::orderBy('created_at', 'desc')
+            ->when($user, function ($query, $user) {
+                if ($user->level == 'pemilik') {
+                    $sessionData = session()->get('pemilik');
+                    $rusunPemiliks = \App\Models\RusunPemilik::where('pemilik_id', $sessionData->id)->pluck('rusun_id');
+
+                    $query->where('komplain_user_id', $user->id);
+                    $query->whereIn('rusun_id', $rusunPemiliks);
+                }
+
+                if ($user->level == 'penghuni') {
+                    $sessionData = session()->get('rusun_penghuni');
+
+                    $query->where('komplain_user_id', $user->id);
+                    $query->where('rusun_id', $sessionData->rusun_id);
+                }
+
+                if ($user->level == 'rusun') {
+                    $sessionData = session()->get('rusun');
+
+                    $query->where('id', $sessionData->id);
+                }
+
+                if ($user->level == 'pemda') {
+                    $sessionData = session()->get('pemda');
+
+                    $query
+                        ->where('province_id', $sessionData->province_id)
+                        ->where('regencie_id', $sessionData->regencie_id);
+                }
+            });
+    }
+
+    protected function getRusun()
+    {
+        $user = $this->sessionUser;
+
+        return \App\Models\Rusun::orderBy('nama')
+            ->when($user, function ($query, $user) {
+                if ($user->level == 'pemilik') {
+                    $sessionData = session()->get('pemilik');
+                    $rusunPemiliks = \App\Models\RusunPemilik::where('pemilik_id', $sessionData->id)->pluck('rusun_id');
+
+                    $query->whereIn('id', $rusunPemiliks);
+                }
+
+                if ($user->level == 'penghuni') {
+                    $sessionData = session()->get('rusun_penghuni');
+
+                    $query->where('id', $sessionData->rusun_id);
+                }
+
+                if ($user->level == 'rusun') {
+                    $sessionData = session()->get('rusun');
+
+                    $query->where('id', $sessionData->id);
+                }
+
+                if ($user->level == 'pemda') {
+                    $sessionData = session()->get('pemda');
+
+                    $query
+                        ->where('province_id', $sessionData->province_id)
+                        ->where('regencie_id', $sessionData->regencie_id);
+                }
+            })
+            ->get();
     }
 }
