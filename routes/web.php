@@ -1,16 +1,12 @@
 <?php
 
 use App\Http\Controllers\ApiManagementController;
+use App\Http\Controllers\BlogController;
 use App\Http\Controllers\DokumenController;
 use App\Http\Controllers\FaqController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InformasiHalamanController;
 use App\Http\Controllers\KomplainController;
-use App\Http\Controllers\P3srsJabatanController;
-use App\Http\Controllers\P3srsKegiatanAnggotaController;
-use App\Http\Controllers\P3srsKegiatanController;
-use App\Http\Controllers\P3srsKegiatanJadwalController;
-use App\Http\Controllers\P3srsKegiatanKanidatController;
-use App\Http\Controllers\P3srsKegiatanLaporanController;
 use App\Http\Controllers\PemilikController;
 use App\Http\Controllers\PengelolaController;
 use App\Http\Controllers\PengelolaDokumenController;
@@ -19,7 +15,13 @@ use App\Http\Controllers\PengembangController;
 use App\Http\Controllers\PengembangDokumenController;
 use App\Http\Controllers\PengembangKontakController;
 use App\Http\Controllers\PermissionController;
-use App\Http\Controllers\RestController;
+use App\Http\Controllers\ProgramController;
+use App\Http\Controllers\ProgramDokumenController;
+use App\Http\Controllers\ProgramJabatanController;
+use App\Http\Controllers\ProgramKanidatController;
+use App\Http\Controllers\ProgramKanidatDokumenController;
+use App\Http\Controllers\ProgramKegiatanController;
+use App\Http\Controllers\ProgramLaporanController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\RusunController;
 use App\Http\Controllers\RusunDetailController;
@@ -54,6 +56,14 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index']);
 
+Route::prefix('blog')
+    ->as('blog.')
+    ->controller(BlogController::class)
+    ->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/program/{slug}', 'programShow')->name('program-show');
+    });
+
 Route::get('/verify/{id}/{token}', function (Request $request) {
     if (auth()->check()) {
         return abort(404);
@@ -80,6 +90,12 @@ Auth::routes(['register' => false]);
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::middleware(['auth'])->group(function () {
+    Route::controller(HomeController::class)
+        ->as('beranda.')
+        ->group(function () {
+            Route::get('/penghuni', 'penghuni')->name('penghuni');
+        });
+
     Route::prefix('profile')
         ->as('profile.')
         ->controller(UserProfileController::class)
@@ -251,6 +267,7 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/{id}', 'show')->name('show')->middleware(['role:Root|Admin|Pemda|Rusun|Penghuni']);
             Route::get('/{id}/edit', 'edit')->name('edit')->middleware(['role:Root|Admin|Penghuni']);
             Route::get('/{id}/view-file/{file}', 'view_file')->name('view_file');
+            Route::get('/list/data', 'listData')->name('list-data');
 
             Route::put('/{id}', 'update')->name('update')->middleware(['role:Root|Admin|Penghuni']);
         });
@@ -270,15 +287,41 @@ Route::middleware(['auth'])->group(function () {
             Route::delete('/{id}', 'destroy')->name('destroy')->middleware(['role:Root|Admin|Penghuni']);
         });
 
-    // p3srs
+    // program & kegiatan
     Route::resources([
-        'p3srs-jabatan' => P3srsJabatanController::class,
-        'p3srs-kegiatan' => P3srsKegiatanController::class,
-        'p3srs-jadwal' => P3srsKegiatanJadwalController::class,
-        'p3srs-kegiatan-kanidat' => P3srsKegiatanKanidatController::class,
-        'p3srs-kegiatan-anggota' => P3srsKegiatanAnggotaController::class,
-        'p3srs-kegiatan-laporan' => P3srsKegiatanLaporanController::class,
+        'program' => ProgramController::class,
+        'program-jabatan' => ProgramJabatanController::class,
+        'program-dokumen' => ProgramDokumenController::class,
+        'program-kanidat' => ProgramKanidatController::class,
+        'program-kanidat-dokumen' => ProgramKanidatDokumenController::class,
+        'program-kegiatan' => ProgramKegiatanController::class,
+        'program-laporan' => ProgramLaporanController::class,
     ]);
+
+    Route::prefix('program-kanidat')
+        ->as('program-kanidat.')
+        ->controller(ProgramKanidatController::class)
+        ->group(function () {
+            Route::get('/list/data', 'listData')->name('list-data');
+            Route::get('/{programId}/{grupId}/detail', 'showDetail')->name('show-detail');
+            Route::get('/register/{id}', 'register')->name('register');
+
+            Route::put('/status/{id}', 'updateStatus')->name('update-status');
+        });
+
+    Route::prefix('program-kanidat-dokumen')
+        ->as('program-kanidat-dokumen.')
+        ->controller(ProgramKanidatDokumenController::class)
+        ->group(function () {
+            Route::get('view-file/{id}/{file}', 'view_file')->name('view_file');
+        });
+
+    Route::prefix('program-laporan')
+        ->as('program-laporan.')
+        ->controller(ProgramLaporanController::class)
+        ->group(function () {
+            Route::get('/{id}/view-file/{filename}', 'dokumentasiViewFile')->name('view-file');
+        });
 
     // komplain
     Route::resource('komplain', KomplainController::class);
@@ -304,46 +347,6 @@ Route::middleware(['auth'])->group(function () {
         });
     });
 
-    Route::prefix('faq')->group(function () {
-        Route::controller(FaqController::class)->group(function () {
-            Route::get('helps/users', 'helps')->name('faq.helps');
-        });
-    });
-
-    Route::prefix('p3srs-kegiatan')->group(function () {
-        Route::controller(P3srsKegiatanController::class)->group(function () {
-            Route::get('{id}/copy', 'copy')->name('p3srs-kegiatan.copy');
-        });
-    });
-
-    Route::prefix('p3srs-jadwal')->group(function () {
-        Route::controller(P3srsKegiatanJadwalController::class)->group(function () {
-            Route::post('/grup/terpilih', 'groupTerpilih')->name('p3srs-jadwal.groupTerpilih');
-        });
-    });
-
-    Route::prefix('p3srs-kegiatan-laporan')->group(function () {
-        Route::controller(P3srsKegiatanLaporanController::class)->group(function () {
-            Route::get('view-file/{id}/{filename}', 'dokumentasiViewFile')->name('p3srs-kegiatan-laporan.dokumentasiViewFile');
-        });
-    });
-
-    Route::prefix('p3srs-kegiatan-kanidat')->group(function () {
-        Route::controller(P3srsKegiatanKanidatController::class)->group(function () {
-            Route::delete('grup-delete/{groupId}', 'destroyGroup')->name('p3srs-kegiatan-kanidat.destroyGroup');
-        });
-    });
-
-    Route::prefix('rest')
-        ->as('rest.')
-        ->controller(RestController::class)
-        ->group(function () {
-            Route::get('provinsi', 'provinsis')->name('provinsis');
-            Route::get('kotas', 'kotas')->name('kotas');
-            Route::get('kecamatans', 'kecamatans')->name('kecamatans');
-            Route::get('desas', 'desas')->name('desas');
-            Route::get('rusun-details', 'rusun_details')->name('rusun_details');
-            Route::get('pengembangs', 'pengembangs')->name('pengembangs');
-            Route::get('pengelolas', 'pengelolas')->name('pengelolas');
-        });
+    require_once '_public.php';
+    require_once '_rest.php';
 });

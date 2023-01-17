@@ -212,6 +212,8 @@ class InformasiHalamanController extends Controller
             'pengelola',
             'pemilik',
             'penghuni',
+            'program',
+            'kegiatan',
         ];
     }
 

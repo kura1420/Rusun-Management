@@ -17,16 +17,23 @@
         </x-slot>
         
         <div class="row">
-            <x-adminlte-input name="code" id="code" label="Kode" placeholder="Kode" fgroup-class="col-md-3" value="{{old('code')}}" />
+            <x-adminlte-input name="singkatan" id="singkatan" label="Singkatan" placeholder="Singkatan" fgroup-class="col-md-3" value="{{old('singkatan')}}" />
             <x-adminlte-input name="nama" id="nama" label="Nama" placeholder="Nama" fgroup-class="col-md-6" value="{{old('nama')}}" />
 
-            <x-adminlte-select name="kepada" label="Kepada" placeholder="Kepada" fgroup-class="col-md-3">
-                <option value="">Pilih</option>
-                <option value="pengelola" {{old('kepada') == 'pengelola' ? 'selected' : ''}}>Pengelola</option>
-                <option value="pengembang" {{old('kepada') == 'pengembang' ? 'selected' : ''}}>Pengembang</option>
-                <option value="pemilik" {{old('kepada') == 'pemilik' ? 'selected' : ''}}>Pemilik</option>
-                <option value="penghuni" {{old('kepada') == 'penghuni' ? 'selected' : ''}}>Penghuni</option>
-            </x-adminlte-select>
+            <div class="form-group col-md-3">
+                <label for="kepada">
+                    Ditujukan Kepada
+                </label>
+
+                <div class="input-group">
+                    <select id="kepada" name="kepada[]" class="form-control" placeholder="Ditujukan Kepada" multiple>
+                        <option value="pengelola">Pengelola</option>
+                        <option value="pengembang">Pengembang</option>
+                        <option value="pemilik">Pemilik</option>
+                        <option value="penghuni">Penghuni</option>
+                    </select>
+                </div>
+            </div>
 
             <x-adminlte-text-editor name="keterangan" id="keterangan" label="Keterangan" fgroup-class="col-md-12" :config="[
                 'height' => '300',
@@ -48,5 +55,9 @@
 @stop
 
 @section('js')
-
+<script>
+$(document).ready(function () {
+    $('#kepada').select2();
+});
+</script>
 @stop

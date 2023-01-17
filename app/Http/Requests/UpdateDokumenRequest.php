@@ -27,7 +27,7 @@ class UpdateDokumenRequest extends FormRequest
 
         return [
             //
-            'code' => 'required|string|max:50',
+            'singkatan' => 'required|string|max:50',
             'nama' => 'required|string|max:255',
             'keterangan' => 'nullable|string',
             'kepada' => 'required|string',

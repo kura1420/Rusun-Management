@@ -63,8 +63,7 @@ class RusunPemilikController extends Controller
                 $row->rusun_details->nama_tower ?? NULL,
                 $row->rusun_unit_details->jenis ?? NULL,
                 $row->pemiliks->nama ?? NULL,
-                $row->pemiliks->telp ?? NULL,
-                $row->pemiliks->email ?? NULL,
+                $row->status_text,
                 '<nobr>' . 
                     '<a href="'.route(self::URL .'show', $row->id).'" class="btn btn-success btn-sm" title="Detail"><i class="fas fa-folder"></i> Detail</a> ' .
                 '</nobr>',
@@ -75,8 +74,7 @@ class RusunPemilikController extends Controller
             'Tower',
             'Unit',
             'Nama',
-            'Telp',
-            'Email',
+            'Status',
             ['label' => 'Aksi', 'no-export' => true, 'width' => 10],
         ];
         

@@ -311,7 +311,7 @@ class ApiManagementController extends Controller
             case 'rusun_outstanding_penghunis':
                 $result = SyncData::rusunOutstandingPenghuni($row, $object);
 
-                return $result ? response()->json('OK', 200) : $result;
+                return $result;
                 break;
 
             case 'rusun_pemiliks':

@@ -14,6 +14,11 @@ class RusunPemilik extends Model
 
     protected $guarded = [];
 
+    public function getStatusTextAttribute()
+    {
+        return $this->status ? 'DPT' : 'DPS';
+    }
+
     public function rusuns()
     {
         return $this->belongsTo(Rusun::class, 'rusun_id');

@@ -187,7 +187,14 @@ $(function () {
                         'Informasi!',
                         'Data sudah diperbarui',
                         'success'
-                    );                    
+                    );
+                    break;
+
+                case 422:
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Data pemilik/penghuni tidak ditemukan',
+                    });
                     break;
 
                 case 500:

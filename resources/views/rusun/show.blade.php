@@ -245,16 +245,16 @@
                 </div>
                 <div class="tab-pane fade" id="outstanding" role="tabpanel" aria-labelledby="outstanding-tab">
                     <x-adminlte-datatable id="tableOutstanding" :heads="[
+                            'Unit',
                             'Penghuni',
                             'Tower',
-                            'Unit',
-                            'Total',
+                            'Outstanding',
                         ]">
                             @foreach($row->rusun_outstanding_penghunis as $rusun_outstanding_penghuni)
                                 <tr>
+                                    <td>{{$rusun_outstanding_penghuni->rusun_unit_details->jenis ?? '-'}}</td>
                                     <td>{{$rusun_outstanding_penghuni->pemilik_penghuni_text}}</td>
                                     <td>{{$rusun_outstanding_penghuni->rusun_details->nama_tower}}</td>
-                                    <td>{{$rusun_outstanding_penghuni->rusun_unit_details->jenis ?? '-'}}</td>
                                     <td>{{$rusun_outstanding_penghuni->total_format}}</td>
                                 </tr>
                             @endforeach
@@ -547,8 +547,8 @@ $(function () {
 
                 switch (status) {
                     case 500:
-case 419:
-case 403:
+                    case 419:
+                    case 403:
                         Swal.fire({
                             title: 'Error',
                             text: statusText,

@@ -27,7 +27,7 @@ class DokumenController extends Controller
         $rows = Dokumen::orderBy('created_at')
             ->get()
             ->map(fn($row) => [
-                $row->code,
+                $row->singkatan,
                 $row->nama,
                 $row->kepada_label,
                 '<nobr>' . 
@@ -37,7 +37,7 @@ class DokumenController extends Controller
             ]);
 
         $heads = [
-            'Kode',
+            'Singkatan',
             'Nama',
             'Kepada',
             ['label' => 'Aksi', 'no-export' => true, 'width' => 5],
@@ -77,7 +77,12 @@ class DokumenController extends Controller
 
         unset($input['files']);
 
-        Dokumen::create($input);
+        $kepadas = $request->kepada;
+        foreach ($kepadas as $kepada) {
+            $input['kepada'] = $kepada;
+
+            Dokumen::create($input);
+        }
 
         return redirect()
             ->route(self::URL . 'index')

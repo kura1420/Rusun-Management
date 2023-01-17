@@ -29,5 +29,6 @@ class DatabaseSeeder extends Seeder
         // ]);
 
         // \App\Models\RusunPenghuni::factory(30)->create();
+        // \App\Models\Program::factory(14)->create();
     }
 }

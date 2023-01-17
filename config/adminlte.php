@@ -371,30 +371,26 @@ return [
         ],
 
         [
-            'text'    => 'P3SRS',
+            'text'    => 'Program & Kegiatan',
             'icon'    => 'fas fa-fw fa-sitemap',
-            'submenu' => [                
+            'submenu' => [      
                 [
-                    'text'    => 'Kegiatan',
-                    'url'     => '#',
+                    'text' => 'Jabatan',
+                    'route'  => 'program-jabatan.index',
+                ],
+                [
+                    'text' => 'Program',
+                    'url'  => '#',
                     'submenu' => [
                         [
                             'text' => 'List',
-                            'route'  => 'p3srs-kegiatan.index',
-                        ],
-                        [
-                            'text' => 'Jadwal',
-                            'route'  => 'p3srs-jadwal.index',
+                            'route' => 'program.index',
                         ],
                         [
                             'text' => 'Laporan',
-                            'route'  => 'p3srs-kegiatan-laporan.index',
+                            'url' => '#',
                         ],
                     ],
-                ],
-                [
-                    'text' => 'Jabatan',
-                    'route'  => 'p3srs-jabatan.index',
                 ],
             ],
         ],
@@ -406,6 +402,7 @@ return [
                 [
                     'text' => 'Tulis',
                     'route'  => ['komplain.create', ['status=noreply']],
+                    'can' => ['Pemilik', 'Penghuni'],
                 ],
                 [
                     'text' => 'Kotak Masuk',
@@ -600,7 +597,7 @@ return [
                 [
                     'type' => 'js',
                     'asset' => false,
-                    'location' => '//cdn.jsdelivr.net/npm/sweetalert2@8',
+                    'location' => '//cdn.jsdelivr.net/npm/sweetalert2@11',
                 ],
             ],
         ],
@@ -661,6 +658,26 @@ return [
                     'type' => 'css',
                     'asset' => true,
                     'location' => 'vendor/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css',
+                ],
+            ],
+        ],
+        'DateRangePicker' => [
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'vendor/moment/moment.min.js',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'vendor/daterangepicker/daterangepicker.js',
+                ],
+                [
+                    'type' => 'css',
+                    'asset' => true,
+                    'location' => 'vendor/daterangepicker/daterangepicker.css',
                 ],
             ],
         ],

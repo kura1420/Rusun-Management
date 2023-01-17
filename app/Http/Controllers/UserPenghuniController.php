@@ -31,8 +31,8 @@ class UserPenghuniController extends Controller
             ->map(fn($row) => [
                 $row->name,
                 $row->username,
-                $row->email,
-                \App\Models\RusunPenghuni::where('id', $row->user_mapping->reff_id)->first()->nama,
+                // $row->email,
+                // \App\Models\RusunPenghuni::where('id', $row->user_mapping->reff_id)->first()->nama,
                 $row->active_text,
                 $row->last_login,
                 '<nobr>' . 
@@ -44,8 +44,8 @@ class UserPenghuniController extends Controller
         $heads = [
             'Name',
             'Username',
-            'Email',
-            'Penghuni',
+            // 'Email',
+            // 'Penghuni',
             'Aktif',
             'Terakhir Masuk',
             ['label' => 'Aksi', 'no-export' => true, 'width' => 5],

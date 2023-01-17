@@ -14,9 +14,14 @@ class RusunPenghuni extends Model
 
     protected $guarded = [];
 
-    public function getStatusLabelAttribute()
+    public function getStatusTextAttribute()
+    {
+        return $this->status ? 'DPT' : 'DPS';
+    }
+
+    public function getJenisTextAttribute()
     {    
-        switch ($this->status) {
+        switch ($this->jenis) {
             case 'SW':
                 $return = 'Sewa';
                 break;
@@ -30,7 +35,7 @@ class RusunPenghuni extends Model
                 break;
             
             default:
-                $return = NULL;
+                $return = '-';
                 break;
         }
 

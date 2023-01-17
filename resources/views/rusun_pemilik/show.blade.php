@@ -29,7 +29,7 @@
             <p>
                 <strong>Rusun:</strong> {{$row->rusuns->nama}} <br>
                 <strong>Tower:</strong> {{$row->rusun_details->nama_tower}} <br>
-                <!-- <strong>Jumlah:</strong> {{$row->rusun_unit_details->jumlah}} -->
+                <strong>Status:</strong> {{$row->status_text}}
             </p>
             <p>{{$row->keterangan}}</p>
         </div>
@@ -53,6 +53,7 @@
                         <x-adminlte-input name="phone" label="Phone" placeholder="Phone" fgroup-class="col-md-4" value="{{$row->pemiliks->phone}}" readonly />
                         <x-adminlte-input name="identitas_nomor" label="Identitas Nomor" placeholder="Identitas Nomor" fgroup-class="col-md-4" value="{{$row->pemiliks->identitas_nomor}}" readonly />
                         <x-adminlte-select name="identitas_tipe" label="Identitas Tipe" placeholder="Identitas Tipe" fgroup-class="col-md-4" readonly>
+                            <option {{$row->pemiliks->identitas_tipe == NULL ? 'selected' : ''}}></option>
                             <option value="KTP" {{$row->pemiliks->identitas_tipe == 'KTP' ? 'selected' : ''}}>KTP</option>
                             <option value="PASSPORT" {{$row->pemiliks->identitas_tipe == 'PASSPORT' ? 'selected' : ''}}>PASSPORT</option>
                         </x-adminlte-select>

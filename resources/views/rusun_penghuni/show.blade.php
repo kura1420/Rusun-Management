@@ -32,6 +32,7 @@
                 <h3 class="profile-username text-center">{{$row->nama}}</h3>
                 <p class="text-center"><a href="mailto:{{$row->email}}">{{$row->email}}</a></p>
                 <ul class="list-group list-group-unbordered mb-3">
+                    <li class="list-group-item"><b>Status</b> <a class="float-right">{{$row->status_text}}</a></li>
                     <li class="list-group-item"><b>Identitas Nomor</b> <a class="float-right">{{$row->identitas_nomor}}</a></li>
                     <li class="list-group-item"><b>Identitas Jenis</b> <a class="float-right">{{$row->identitas_tipe}}</a></li>
 

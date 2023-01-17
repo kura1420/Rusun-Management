@@ -18,10 +18,10 @@
         </x-slot>
         
         <div class="row">
-            <x-adminlte-input name="code" id="code" label="Kode" placeholder="Kode" fgroup-class="col-md-3" value="{{$row->code}}" />
+            <x-adminlte-input name="singkatan" id="singkatan" label="Singkatan" placeholder="Singkatan" fgroup-class="col-md-3" value="{{$row->singkatan}}" />
             <x-adminlte-input name="nama" id="nama" label="Nama" placeholder="Nama" fgroup-class="col-md-6" value="{{$row->nama}}" />
 
-            <x-adminlte-select name="kepada" label="Kepada" placeholder="Kepada" fgroup-class="col-md-3">
+            <x-adminlte-select name="kepada" label="Ditujukan Kepada" placeholder="Ditujukan Kepada" fgroup-class="col-md-3">
                 <option value="">Pilih</option>
                 <option value="pengelola" {{$row->kepada == 'pengelola' ? 'selected' : ''}}>Pengelola</option>
                 <option value="pengembang" {{$row->kepada == 'pengembang' ? 'selected' : ''}}>Pengembang</option>

@@ -2,10 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Jorenvh\Share\ShareFacade as Share;
 
 class HomeController extends Controller
 {
+
+    const TITLE = 'Beranda';
+    const FOLDER_VIEW = 'beranda.';
+    const URL = '/';
+
+    protected $sessionUser;
+
     /**
      * Create a new controller instance.
      *
@@ -14,6 +24,12 @@ class HomeController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+
+        $this->middleware(function ($request, $next) {
+            $this->sessionUser = auth()->user();
+
+            return $next($request);
+        });
     }
 
     /**
@@ -23,6 +39,146 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $title = self::TITLE;
+        $subTitle = NULL;
+
+        $userSession = $this->sessionUser;
+        if ($userSession->level == 'pemilik' || $userSession->level == 'penghuni') {
+            return redirect()->route('beranda.penghuni');
+        }
+
+        $programs = \App\Models\Program::where([
+            ['status', 2],
+            ['publish', 1]
+        ])
+        ->latest('publish_at')
+        ->get()
+        ->map(function ($program) {
+            $program->grups = $program->program_kanidats()->groupBy('grup_id')->get();
+            $program->keterangan = Str::limit($program->keterangan, 500);
+            $program->publish_at = Carbon::parse($program->publish_at)->diffForHumans();
+
+            $sharedLinks = Share::page(route('blog.program-show', $program->slug), $program->nama)
+                ->facebook()
+                ->twitter()
+                ->whatsapp()
+                ->telegram()
+                ->getRawLinks();
+            $program->shareds = $sharedLinks;
+
+            return $program;
+        });
+
+        $tickets = \App\Models\Komplain::latest('updated_at', 'desc')
+            ->where('sudah_dijawab', 0)
+            ->where('status', '!=', '1')
+            ->where('status', '!=', '3')
+            ->limit(7)
+            ->get();
+
+        return view('home', compact('title', 'subTitle', 'programs', 'tickets'));
+    }
+
+    public function penghuni()
+    {
+        $title = self::TITLE;
+        $subTitle = NULL;
+        $pemilik_penghuni_id = NULL;
+
+        $user = $this->sessionUser;
+
+        if ($user->level == 'pemilik') {
+            $pemilik = session()->get('pemilik');
+            $pemilik_penghuni_id = $pemilik->id;
+        }
+
+        if ($user->level == 'penghuni') {
+            $rusunPenghuni = session()->get('rusun_penghuni');
+            $pemilik_penghuni_id = $rusunPenghuni->id;
+        }
+
+        $programs = \App\Models\Program::where([
+            ['status', 2],
+            ['publish', 1]
+        ])
+        ->when($user, function ($query, $user) {
+            if ($user->level == 'pemilik') {
+                $pemilik = session()->get('pemilik');
+                
+                $rusuns = \App\Models\RusunPemilik::where('pemilik_id', $pemilik->id)->pluck('rusun_id');
+
+                $query->whereIn('rusun_id', $rusuns);
+            }
+
+            if ($user->level == 'penghuni') {
+                $rusunPenghuni = session()->get('rusun_penghuni');
+                
+                $query->where('rusun_id', $rusunPenghuni->rusun_id);
+            }
+        })
+        ->latest('publish_at')
+        ->get()
+        ->map(function ($program) use ($pemilik_penghuni_id) {
+            $programKanidat = $program->program_kanidats()
+                ->where('pemilik_penghuni_id', $pemilik_penghuni_id)
+                ->where('status', 4)
+                ->orWhere('pemilik_penghuni_id', $pemilik_penghuni_id)
+                ->where('status', 5)
+                ->first();
+
+            $programKanidatCheck = $program->program_kanidats()
+                ->where('pemilik_penghuni_id', $pemilik_penghuni_id)
+                ->where('status', '!=', 4)
+                ->orWhere('pemilik_penghuni_id', $pemilik_penghuni_id)
+                ->where('status', '!=', 5)
+                ->first();
+
+            $program->keterangan = Str::limit($program->keterangan, 500);
+            $program->publish_at = Carbon::parse($program->publish_at)->diffForHumans();
+            $program->undangan = $programKanidat ? route('program-kanidat-dokumen.index', ['program_kanidat_id' => $programKanidat->id]) : NULL;
+            $program->register = ! $programKanidatCheck ? TRUE : FALSE;
+
+            $sharedLinks = Share::page(route('blog.program-show', $program->slug), $program->nama)
+                ->facebook()
+                ->twitter()
+                ->whatsapp()
+                ->telegram()
+                ->getRawLinks();
+            $program->shareds = $sharedLinks;
+
+            return $program;
+        });
+
+        $programTeams = \App\Models\Program::where([
+            ['status', 2],
+            ['publish', 1]
+        ])
+        ->latest('publish_at')
+        ->get()
+        ->map(function ($program) use ($pemilik_penghuni_id) {
+            $programKanidat = $program->program_kanidats()
+                ->where('pemilik_penghuni_id', $pemilik_penghuni_id)
+                ->where('status', '!=', 6)
+                ->first();
+
+            $teams = [];
+            if ($programKanidat) {
+                $teams = $program->program_kanidats()
+                    ->where('grup_id', $programKanidat->grup_id)
+                    ->get()
+                    ->map(function ($team) {
+                        $team->profile = $team->pemilik_penghuni_profile;
+
+                        return $team;
+                    });
+            }
+
+            $program->teams = $teams;
+            $program->team_count = count($teams);
+
+            return $program;
+        });
+
+        return view(self::FOLDER_VIEW . 'penghuni', compact('title', 'subTitle', 'programs', 'programTeams'));
     }
 }

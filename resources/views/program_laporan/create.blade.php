@@ -1,0 +1,69 @@
+@extends('adminlte::page')
+
+@section('title', $title)
+
+@section('content_header')
+    <h1>{{$title}}</h1>
+@stop
+
+@section('content')
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
+<form action="{{route('program-laporan.store')}}" method="post" enctype="multipart/form-data">
+    @csrf
+    <x-adminlte-card theme="primary" theme-mode="outline" title="{{$subTitle}}">
+        <x-slot name="toolsSlot">
+            <a href="{{route('program-laporan.index', ['program_kegiatan_id' => $programKegiatan->id])}}" class="btn btn-sm btn-dark">
+                <i class="fa fa-arrow-left"></i> Kembali
+            </a>
+        </x-slot>
+        
+        <div class="row">
+            <input type="hidden" name="program_kegiatan_id" value="{{$programKegiatan->id}}">
+
+            <x-adminlte-input name="rusun" id="rusun" label="Rusun" placeholder="Rusun" fgroup-class="col-md-6" value="{{$programKegiatan->rusun->nama}}" disabled />
+            <x-adminlte-input name="program" id="program" label="Program" placeholder="Program" fgroup-class="col-md-6" value="{{$programKegiatan->program->nama}}" disabled />
+            <x-adminlte-input name="kegiatan" id="kegiatan" label="Kegiatan" placeholder="Kegiatan" fgroup-class="col-md-8" value="{{$programKegiatan->nama}}" disabled />
+            <x-adminlte-input name="tanggal_mulai" id="tanggal_mulai" label="Tanggal Mulai" placeholder="Tanggal Mulai" fgroup-class="col-md-2" value="{{date('d M Y', strtotime($programKegiatan->tanggal_mulai))}}" disabled />
+            <x-adminlte-input name="tanggal_berakhir" id="tanggal_berakhir" label="Tanggal Berakhir" placeholder="Tanggal Berakhir" fgroup-class="col-md-2" value="{{date('d M Y', strtotime($programKegiatan->tanggal_berakhir))}}" disabled />
+
+            <x-adminlte-input name="judul" id="judul" label="Judul" placeholder="Judul" fgroup-class="col-md-10" value="{{old('judul')}}" />
+            <x-adminlte-input-date name="tanggal" id="tanggal" label="Tanggal" placeholder="Tanggal" fgroup-class="col-md-2" :config="['format' => 'YYYY-MM-DD']" value="{{old('tanggal')}}" />
+
+            <x-adminlte-text-editor name="penjelasan" id="penjelasan" label="Penjelasan" fgroup-class="col-md-12" :config="[
+                'height' => '300',
+            ]">
+                @php echo old('penjelasan'); @endphp
+            </x-adminlte-text-editor>
+
+            <div class="form-group col-md-12">
+                <x-adminlte-input type="file" name="dokumentasis[]" id="dokumentasis" label="Dokumentasi File" placeholder="Dokumentasi File" multiple>
+                    <x-slot name="bottomSlot">
+                        <small class="text-lightblue">*Maksimul file hanya 5</small>
+                    </x-slot>
+                </x-adminlte-input>
+            </div>
+        </div>
+
+        <x-slot name="footerSlot">
+            <x-adminlte-button type="submit" class="btn-sm" label="Simpan" theme="primary" icon="fab fa-telegram-plane" />
+        </x-slot>
+    </x-adminlte-card>
+</form>
+@stop
+
+@section('css')
+
+@stop
+
+@section('js')
+
+@stop

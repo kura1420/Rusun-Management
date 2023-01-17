@@ -557,19 +557,7 @@ $(function () {
             contentType: false,
             processData: false,
             success: function (response) {
-                Swal.fire({
-                    title: 'Input detail rusun?',
-                    text: "Langkah ini anda bisa lewati, tapi anda tidak punya detail rusun!",
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Ya, input!',
-                    cancelButtonText: 'Tidak',
-                }).then((result) => {
-                    if (result.value) {
-                        window.location.href = '{{route("rusun-detail.create")}}';
-                    }
-                });
+                window.location.href = '{{route("rusun.index")}}';
                 
                 $this
                     .prop('disabled', false)
