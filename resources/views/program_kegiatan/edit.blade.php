@@ -33,7 +33,6 @@
                 <option value="">Pilih</option>
                 <option value="form_pendaftaran" {{$row->template == 'form_pendaftaran' ? 'selected' : ''}}>Form Pendaftaran Kanidat</option>
                 <option value="polling" {{$row->template == 'polling' ? 'selected' : ''}}>Polling</option>
-                <option value="laporan" {{$row->template == 'laporan' ? 'selected' : ''}}>Laporan</option>
             </x-adminlte-select>
 
             <x-adminlte-text-editor name="informasi" id="informasi" label="Informasi" fgroup-class="col-md-12" :config="[

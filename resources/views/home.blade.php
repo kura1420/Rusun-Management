@@ -148,6 +148,7 @@
         </div>
 
         @foreach ($programs as $program)
+        @if ($program->form_pendaftaran)
         <div class="card card-outline card-warning">
             <div class="card-header">
                 <h3 class="card-title">{{$program->nama}}</h3>
@@ -177,6 +178,7 @@
                 <a href="{{route('program-kanidat.index', ['program_id' => $grup->program_id])}}" class="uppercase">Lihat Semua</a>
             </div>
         </div>
+        @endif
         @endforeach
     </div>
 </div>

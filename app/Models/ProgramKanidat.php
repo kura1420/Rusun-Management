@@ -100,6 +100,24 @@ class ProgramKanidat extends Model
         }
     }
 
+    public function members($grup_id, $programDokumens)
+    {
+        return ProgramKanidat::where('grup_id', $grup_id)
+            ->get()
+            ->map(function ($row) use ($programDokumens) {
+                $kanidatDokumen = $row->program_kanidat_dokumens()->count();
+
+                $row->dokumen = $kanidatDokumen == count($programDokumens) ? 'Sudah Dipenuhi' : 'Belum Dipenuhi';
+                $row->profile = $row->pemilik_penghuni_profile;
+                $row->status = $row->status_text;
+                $row->rusun_detail;
+                $row->rusun_unit_detail;
+                $row->program_jabatan;
+
+                return $row;
+            });
+    }
+
     public function rusun()
     {
         return $this->belongsTo(Rusun::class);

@@ -321,6 +321,8 @@ Route::middleware(['auth'])->group(function () {
         ->controller(ProgramLaporanController::class)
         ->group(function () {
             Route::get('/{id}/view-file/{filename}', 'dokumentasiViewFile')->name('view-file');
+
+            Route::delete('/{id}/dokumentasi-delete', 'dokumentasiDestroy')->name('dokumentasi-delete');
         });
 
     // komplain

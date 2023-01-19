@@ -10,7 +10,7 @@
 <div class="row">
     <div class="col-md-8">
         @forelse ($programs as $program)
-        <div class="card card-outline card-primary card-widget collapsed-card">
+        <div class="card card-outline card-primary card-widget collapsed-card1">
             <div class="card-header">
                 <div class="user-block">
                     <img class="img-circle" src="{{asset('logo.png')}}" alt="User Image" />
@@ -43,6 +43,7 @@
                 <a href="{{asset('storage/program/' . $program->file)}}" target="_blank" class="btn btn-default btn-sm text-danger"><i class="fas fa-file"></i> Lampiran</a>
                 <a href="{{route('blog.program-show', $program->slug)}}" class="btn btn-default btn-sm text-info"><i class="fas fa-book-reader"></i> Lebih lengkap</a>
 
+            @if ($program->form_pendaftaran)
                 @if ($program->undangan)
                 <a href="{{$program->undangan}}" class="btn btn-default btn-sm text-secondary"><i class="fas fa-envelope-open-text"></i> Undangan</a>
                 @endif
@@ -50,6 +51,7 @@
                 @if ($program->register)
                 <a href="{{route('program-kanidat.register', $program->id)}}" class="btn btn-default btn-sm text-secondary"><i class="fas fa-pencil-alt"></i> Daftarkan Tim Anda</a>
                 @endif
+            @endif
             </div>
 
             <div class="card-footer">
@@ -91,36 +93,40 @@
             </div>
         </div>
 
-        @foreach ($programTeams as $key => $programTeam)
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">{{$programTeam->nama}}</h3>
-                <div class="card-tools">
-                    <span class="badge badge-danger">{{$programTeam->team_count}} Member</span>
+        @forelse ($programTeams as $key => $programTeam)
+            @if($programTeam)
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">{{$programTeam->nama}}</h3>
+                    <div class="card-tools">
+                        <span class="badge badge-danger">{{$programTeam->team_count}} Member</span>
+                    </div>
                 </div>
-            </div>
 
-            <div class="card-body p-0">
-                <ul class="users-list clearfix">
-                    @forelse ($programTeam->teams as $team)
-                    <li>
-                        <img src="{{asset('images/blank.png')}}" alt="{{$team->profile->nama}}" />
-                        <a class="users-list-name" href="#">{{$team->profile->nama}}</a>
-                        <span class="users-list-date">{{$team->status_text}}</span>
-                    </li>
-                    @empty
-                    <li>Tidak tersedia</li>
-                    @endforelse
-                </ul>
-            </div>
+                <div class="card-body p-0">
+                    <ul class="users-list clearfix">
+                        @forelse ($programTeam->teams as $team)
+                        <li>
+                            <img src="{{asset('images/blank.png')}}" alt="{{$team->profile->nama}}" />
+                            <a class="users-list-name" href="#">{{$team->profile->nama}}</a>
+                            <span class="users-list-date">{{$team->status_text}}</span>
+                        </li>
+                        @empty
+                        <li>Tidak tersedia</li>
+                        @endforelse
+                    </ul>
+                </div>
 
-            @if ($programTeam->teams)
-            <div class="card-footer text-center">
-                <a href="{{route('program-kanidat.show', $programTeam->teams[$key]->grup_id)}}">{{$programTeam->teams[$key]->grup_nama}}</a>
+                @if ($programTeam->teams)
+                <div class="card-footer text-center">
+                    <a href="{{route('program-kanidat.show', $programTeam->teams[$key]->grup_id)}}">{{$programTeam->teams[$key]->grup_nama}}</a>
+                </div>
+                @endif
             </div>
             @endif
-        </div>
-        @endforeach
+        @empty
+
+        @endforelse
     </div>
 </div>
 @stop

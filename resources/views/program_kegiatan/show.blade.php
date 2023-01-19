@@ -35,13 +35,7 @@
                 </div>
             </div>
 
-            <x-adminlte-select name="template" label="Template" placeholder="Template" fgroup-class="col-md-12" disabled>
-                <option value="">Pilih</option>
-                <option value="form_pendaftaran" {{$row->template == 'form_pendaftaran' ? 'selected' : ''}}>Form Pendaftaran Kanidat</option>
-                <option value="polling" {{$row->template == 'polling' ? 'selected' : ''}}>Polling</option>
-                <option value="laporan" {{$row->template == 'laporan' ? 'selected' : ''}}>Laporan</option>
-            </x-adminlte-select>
-
+            <x-adminlte-input name="template" label="Template" placeholder="Template" fgroup-class="col-md-12" value="{{$row->template_text}}" disabled />
 
             <div class="form-group col-md-12">
                 <label for="tanggal_berakhir">

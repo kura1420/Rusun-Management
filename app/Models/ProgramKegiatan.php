@@ -54,6 +54,23 @@ class ProgramKegiatan extends Model
         }
     }
 
+    public function getTemplateTextAttribute()
+    {
+        switch ($this->template) {
+            case 'form_pendaftaran':
+                return 'Form Pendaftaran Kanidat';
+                break;
+
+            case 'polling':
+                return 'Polling';
+                break;
+            
+            default:
+                return 'No Defined';
+                break;
+        }
+    }
+
     public function rusun()
     {
         return $this->belongsTo(Rusun::class);

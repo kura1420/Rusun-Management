@@ -152,7 +152,7 @@ class ProgramLaporanController extends Controller
     {
         //
         $title = self::TITLE;
-        $subTitle = 'Tambah Data';
+        $subTitle = 'Edit Data';
 
         $row = $programLaporan;
 
@@ -238,5 +238,16 @@ class ProgramLaporanController extends Controller
         $file = Storage::path(str_replace('.', '', self::FOLDER_VIEW) . '/' . $row->filename);
 
         return response()->file($file);
+    }
+
+    public function dokumentasiDestroy($id)
+    {
+        $row = \App\Models\ProgramLaporanDokumen::findOrFail($id);
+
+        Storage::delete(str_replace('.', '', self::FOLDER_VIEW) . '/' . $row->filename);
+
+        $row->delete();
+
+        return response()->json('Success');
     }
 }

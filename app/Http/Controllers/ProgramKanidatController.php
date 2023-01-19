@@ -181,7 +181,6 @@ class ProgramKanidatController extends Controller
             ->map(function ($kanidat) use ($programDokumens) {
                 $kanidatDokumen = $kanidat->program_kanidat_dokumens()->count();
 
-
                 $kanidat->dokumen = $kanidatDokumen == count($programDokumens) ? 'Sudah Dipenuhi' : 'Belum Dipenuhi';
 
                 return $kanidat;
@@ -448,5 +447,26 @@ class ProgramKanidatController extends Controller
         $subTitle = 'Daftar ' . $program->nama;
 
         return view(self::FOLDER_VIEW . 'register', compact('title', 'subTitle', 'program', 'jabatans', 'towers', 'pemilikPenghuni', 'apakah_pemilik', 'rusun_unit_detail_id'));
+    }
+
+    public function listData(Request $request)
+    {
+        $program_id = $request->program_id ?? NULL;
+
+        $programDokumens = \App\Models\ProgramDokumen::where('program_id', $program_id)->orderBy('nama')->get();
+
+        $rows = ProgramKanidat::orderBy('created_at')
+            ->where('program_id', $program_id)
+            ->groupBy('grup_nama')
+            ->select('id', 'grup_id', 'grup_nama', DB::raw('COUNT(grup_nama) as total'), 'grup_status')
+            ->get()
+            ->map(function ($row) use ($programDokumens) {
+                $row->members = $row->members($row->grup_id, $programDokumens);
+                $row->grup_status = $row->grup_status_text;
+
+                return $row;
+            });
+
+        return response()->json(['data' => $rows]);
     }
 }
