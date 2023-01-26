@@ -15,11 +15,12 @@ class DatabaseSeeder extends Seeder
     {
         // \App\Models\User::factory(10)->create();
         
-        // $this->call([
-        //     PengelolaSeeder::class,
-        //     PengembangSeeder::class,
-        //     RusunSeeder::class,
-        // ]);
+        $this->call([
+            // PengelolaSeeder::class,
+            // PengembangSeeder::class,
+            // RusunSeeder::class,
+            // PollingKanidatSeeder::class,
+        ]);
 
         // \App\Models\PengelolaDokumen::factory(50)->create();
         // \App\Models\PengembangDokumen::factory(50)->create();

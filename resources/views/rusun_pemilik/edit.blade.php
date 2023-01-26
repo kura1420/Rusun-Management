@@ -33,7 +33,6 @@
                 <strong>Status:</strong> {{$row->status_text}} <br>
                 <strong>Alasan Ditolak: </strong> <br> {{$row->alasan}}
             </p>
-            <p>{{$row->keterangan}}</p>
         </div>
     </div>
 
@@ -54,11 +53,7 @@
                         <x-adminlte-input type="email" name="email" label="Email" placeholder="Email" fgroup-class="col-md-4" value="{{$row->pemiliks->email}}" readonly />
                         <x-adminlte-input name="phone" label="Phone" placeholder="Phone" fgroup-class="col-md-4" value="{{$row->pemiliks->phone}}" readonly />
                         <x-adminlte-input name="identitas_nomor" label="Identitas Nomor" placeholder="Identitas Nomor" fgroup-class="col-md-4" value="{{$row->pemiliks->identitas_nomor}}" readonly />
-                        <x-adminlte-select name="identitas_tipe" label="Identitas Tipe" placeholder="Identitas Tipe" fgroup-class="col-md-4" readonly>
-                            <option {{$row->pemiliks->identitas_tipe == NULL ? 'selected' : ''}}></option>
-                            <option value="KTP" {{$row->pemiliks->identitas_tipe == 'KTP' ? 'selected' : ''}}>KTP</option>
-                            <option value="PASSPORT" {{$row->pemiliks->identitas_tipe == 'PASSPORT' ? 'selected' : ''}}>PASSPORT</option>
-                        </x-adminlte-select>
+                        <x-adminlte-input name="identitas_tipe" label="Identitas Nomor" placeholder="Identitas Nomor" fgroup-class="col-md-4" value="{{$row->pemiliks->identitas_tipe_text}}" readonly />
 
                         <div class="form-group col-md-4">
                             <label for="identitas_file">
@@ -78,7 +73,7 @@
                     </div>  
                     @else
                         Tidak Tersedia
-                    @endif                  
+                    @endif
                 </div>
                 <div class="tab-pane fade" id="product-comments" role="tabpanel" aria-labelledby="product-comments-tab">
                     @if (isset($row->rusun_penghuni))
@@ -145,6 +140,10 @@
             </div>
         </div>
     </div>
+
+    <x-slot name="footerSlot">
+        <x-adminlte-button type="button" id="btnVerif" class="btn-sm" label="Verifikasi" theme="primary" icon="fab fa-telegram-plane" />
+    </x-slot>
 </x-adminlte-card>
 
 <x-adminlte-modal id="modalDokumen" title="Dokumen Pemilik" theme="purple" icon="fas fa-file-alt" size='lg' v-centered static-backdrop scrollable>
@@ -164,6 +163,12 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.3.0/ekko-lightbox.js" integrity="sha512-YibiFIKqwi6sZFfPm5HNHQYemJwFbyyYHjrr3UT+VobMt/YBo1kBxgui5RWc4C3B4RJMYCdCAJkbXHt+irKfSA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
 $(document).ready(function () {
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+        }
+    });
+
     $(document).on('click', '[data-toggle="lightbox"]', function(event) {
         event.preventDefault();
         $(this).ekkoLightbox();
@@ -174,8 +179,6 @@ $(document).ready(function () {
 
         const value = $(this).val();
         const url = $(this).attr('id');
-
-        console.log(value, url);
         
         $('#btnModalViewOnTap').val(url);
         $('#modalViewDokumen').attr('src', url);
@@ -193,6 +196,82 @@ $(document).ready(function () {
 
         window.open(url_file, '_blank');
     });
+
+    $('#btnVerif').on('click', function () {
+        Swal.fire({
+            title: "Verifikasi Pemilik?",
+            showDenyButton: true,
+            showCancelButton: true,
+            confirmButtonText: "Terima",
+            denyButtonText: "Tolak",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                var params = {
+                    status: 'verif',
+                }
+
+                updateData(params);
+            } else if (result.isDenied) {
+                Swal.fire({
+                    title: "Harap berikan alasannya",
+                    input: "text",
+                    showCancelButton: true,
+                    confirmButtonText: "Kirim",
+                    showLoaderOnConfirm: true,
+                    preConfirm: (alasan) => {
+                        if (alasan) {
+                            var params = {
+                                status: 'unverif',
+                                alasan: alasan,
+                            }
+
+                            updateData(params);
+                        } else {
+                            Swal.fire('Kotak alasan tidak boleh kosong.');
+                        }
+                    },
+                    allowOutsideClick: () => !Swal.isLoading(),
+                }).then((result) => {
+                    const {isConfirmed, value} = result;
+
+                    if (isConfirmed == true && value !== '') {
+                        Swal.fire("Terimakasih konfirmasinya!", "", "success");
+                    }
+                });
+            }
+        });
+    });
+
+    const updateData = params => {
+        $.ajax({
+            type: "PUT",
+            url: "{{route('rusun-pemilik.update', $row->id)}}",
+            data: params,
+            dataType: "json",
+            success: function (response) {
+                Swal.fire("Terimakasih konfirmasinya!", "", "success");
+
+                window.location.reload();
+            },
+            error: function (xhr) {
+                const {status, statusText, responseText, responseJSON} = xhr;
+
+                switch (status) {
+                    case 500:
+                    case 419:
+                    case 403:
+                        Swal.fire({
+                            title: statusText,
+                            text: responseText,
+                        });                        
+                        break;
+                    
+                    default:
+                        break;
+                }
+            }
+        });
+    }
 });
 </script>
 @stop

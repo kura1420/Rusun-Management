@@ -135,7 +135,7 @@ class SyncData
                             'name' => $nama_pemilik,
                             'username' => $usernamePemilik,
                             'email' => $email ?? $usernamePemilik . '@domain.com',
-                            'password' => Hash::make(config('app.user_password_default', 'RusunKT@2022')),
+                            'password' => Hash::make(config('app.user_password_default', 'RusunKita')),
                             'active' => 1,
                             'level' => 'pemilik',
                         ]);
@@ -164,12 +164,20 @@ class SyncData
                         );
 
                     if (strlen($nama_penyewa) > 0) {
+                        $rusunPemilik = RusunPemilik::where([
+                            ['rusun_unit_detail_id', $unit->id],
+                            ['rusun_detail_id', $unit->rusun_detail_id],
+                            ['rusun_id', $unit->rusun_id],
+                            ['pemilik_id', $pemilik->id],
+                        ])->first();
+
                         RusunPenghuni::updateOrCreate(
                             [
                                 'rusun_unit_detail_id' => $unit->id,
                                 'rusun_detail_id' => $unit->rusun_detail_id,
                                 'rusun_id' => $unit->rusun_id,
                                 'pemilik_id' => $pemilik->id,
+                                'rusun_pemilik_id' => $rusunPemilik->id,
                             ],
                             [
                                 'nama' => $nama_penyewa,
@@ -193,7 +201,7 @@ class SyncData
                                 'name' => $nama_penyewa,
                                 'username' => $usernamePenghuni,
                                 'email' => $email,
-                                'password' => Hash::make(config('app.user_password_default', 'RusunKT@2022')),
+                                'password' => Hash::make(config('app.user_password_default', 'RusunKita')),
                                 'active' => 1,
                                 'level' => 'penghuni',
                             ]);

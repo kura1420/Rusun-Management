@@ -64,6 +64,10 @@ class ProgramKegiatan extends Model
             case 'polling':
                 return 'Polling';
                 break;
+
+            case 'laporan':
+                return 'Laporan';
+                break;
             
             default:
                 return 'No Defined';

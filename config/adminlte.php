@@ -313,6 +313,11 @@ return [
             'icon' => 'fas fa-fw fa-tachometer-alt',
         ],
         [
+            'text' => 'Kabar & Berita',
+            'route' => 'blog.index',
+            'icon' => 'fas fa-fw fa-newspaper',
+        ],
+        [
             'text' => 'Pengembang',
             'route'  => 'pengembang.index',
             'icon' => 'fas fa-fw fa-building',
@@ -361,7 +366,7 @@ return [
             'text'    => 'Pemilik',
             'icon'    => 'fas fa-fw fa-user-check',
             'route'  => 'pemilik.index',
-            'can' => ['Pemilik'],
+            'can' => ['Root', 'Pemilik'],
         ],
         [
             'text' => 'Penghuni',
@@ -373,6 +378,7 @@ return [
         [
             'text'    => 'Program & Kegiatan',
             'icon'    => 'fas fa-fw fa-sitemap',
+            'can' => ['Root', 'Admin', 'Pemda', 'Rusun'],
             'submenu' => [      
                 [
                     'text' => 'Jabatan',

@@ -258,7 +258,7 @@ class PengelolaDokumenController extends Controller
         $row = PengelolaDokumen::findOrFail($id);
 
         if (! $this->sessionUser->can('delete', $row)) {
-            return abort(403, "User does not have the right roles");
+            return response()->json("User does not have the right roles", 403);
         }
         
         if ($row->status == 0) {

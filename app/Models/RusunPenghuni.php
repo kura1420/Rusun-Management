@@ -14,11 +14,6 @@ class RusunPenghuni extends Model
 
     protected $guarded = [];
 
-    public function getStatusTextAttribute()
-    {
-        return $this->status ? 'DPT' : 'DPS';
-    }
-
     public function getJenisTextAttribute()
     {    
         switch ($this->jenis) {

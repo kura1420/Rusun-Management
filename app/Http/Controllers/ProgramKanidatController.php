@@ -8,6 +8,7 @@ use App\Models\ProgramKanidat;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Database\Eloquent\Builder;
 
 class ProgramKanidatController extends Controller
 {
@@ -37,7 +38,15 @@ class ProgramKanidatController extends Controller
         //
         $program_id = $request->program_id ?? NULL;
 
-        $program = \App\Models\Program::where('id', $program_id)->firstOrFail();
+        $program = \App\Models\Program::whereHas('program_kegiatans', function (Builder $query) {
+                $query->where('template', 'form_pendaftaran');
+            })
+            ->where('id', $program_id)
+            ->first();
+
+        if (! $program) {
+            return abort(403, "Anda tidak ada kegiatan pencalonan.");
+        }
         
         $title = self::TITLE;
         $subTitle = 'List Data';
@@ -268,8 +277,6 @@ class ProgramKanidatController extends Controller
             ->when($user, function ($query, $user) use ($row) {
                 if ($user->level == 'pemilik') {
                     $pemilik = session()->get('pemilik');
-
-                    $pemilikPenghuniLogin = $pemilik->id;
             
                     $rusunDetails = \App\Models\RusunPemilik::where([
                         ['rusun_id', $row->rusun_id],
@@ -281,8 +288,6 @@ class ProgramKanidatController extends Controller
 
                 if ($user->level == 'penghuni') {
                     $rusunPenghuni = session()->get('rusun_penghuni');
-
-                    $pemilikPenghuniLogin = $rusunPenghuni->id;
 
                     $query->where('id', $rusunPenghuni->rusun_detail_id);
                 }
@@ -402,7 +407,12 @@ class ProgramKanidatController extends Controller
 
     public function register($id)
     {
-        $program = \App\Models\Program::findOrFail($id);
+        $program = \App\Models\Program::whereHas('program_kegiatans', function (Builder $query) {
+                $query->where('template', 'form_pendaftaran');
+            })
+            ->where('id', $id)
+            ->firstOrFail();
+            
         $jabatans = \App\Models\ProgramJabatan::where('rusun_id', $program->rusun_id)->orderBy('nama')->get();
 
         $user = $this->sessionUser;

@@ -172,6 +172,10 @@ class KomplainController extends Controller
                 return abort(404);
             }
         }
+
+        if ($this->sessionUser->level !== 'Pemilik' || $this->sessionUser->level !== 'Penghuni') {
+            return abort(403, "Anda tidak memiliki akses ke halaman ini.");
+        }
         
         $rusuns = $this->getRusun();
 

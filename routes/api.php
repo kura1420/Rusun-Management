@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Api\PemilikController;
+use App\Http\Controllers\Api\RusunController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,3 +19,24 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::group(
+    [
+        'middleware' => 'auth.basic'
+    ],
+    function () {
+        Route::prefix('rusun')
+            ->as('rusun.')
+            ->controller(RusunController::class)
+            ->group(function () {
+                Route::get('/', 'index')->name('index');
+            });
+
+        Route::prefix('pemilik')
+            ->as('pemilik.')
+            ->controller(PemilikController::class)
+            ->group(function () {
+                Route::get('/', 'index')->name('index');
+            });
+    }
+);

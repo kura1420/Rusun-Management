@@ -10,7 +10,7 @@
 <div class="row">
     <div class="col-md-8">
         @forelse ($programs as $program)
-        <div class="card card-outline card-primary card-widget collapsed-card">
+        <div class="card card-outline card-primary card-widget collapsed-card1">
             <div class="card-header">
                 <div class="user-block">
                     <img class="img-circle" src="{{asset('logo.png')}}" alt="User Image" />
@@ -42,6 +42,10 @@
                 
                 <a href="{{asset('storage/program/' . $program->file)}}" target="_blank" class="btn btn-default btn-sm text-danger"><i class="fas fa-file"></i> Lampiran</a>
                 <a href="{{route('blog.program-show', $program->slug)}}" class="btn btn-default btn-sm text-info"><i class="fas fa-book-reader"></i> Lebih lengkap</a>
+
+                @if ($program->polling_result)
+                <a href="{{route('polling-kanidat.index', ['program_id' => $program->id])}}" class="btn btn-success btn-sm"><i class="fas fa-tasks"></i> Hasil Pemilihan</a>
+                @endif
             </div>
 
             <div class="card-footer">
@@ -161,7 +165,7 @@
 
             <div class="card-body p-0">
                 <ul class="products-list product-list-in-card pl-2 pr-2">
-                    @foreach ($program->grups as $grup)
+                    @forelse ($program->grups as $grup)
                     <li class="item">
                         <div class="product-info">
                             <a href="{{route('program-kanidat.show', $grup->grup_id)}}" class="product-title">{{$grup->grup_nama}} <span class="badge badge-warning float-right">{{$program->program_kanidats()->count()}} Peserta</span></a>
@@ -170,12 +174,14 @@
                             </span>
                         </div>
                     </li>
-                    @endforeach
+                    @empty
+                    <li class="item">Data Kosong</li>
+                    @endforelse
                 </ul>
             </div>
 
             <div class="card-footer text-center">
-                <a href="{{route('program-kanidat.index', ['program_id' => $grup->program_id])}}" class="uppercase">Lihat Semua</a>
+                <a href="{{route('program-kanidat.index', ['program_id' => $program->id])}}" class="uppercase">Lihat Semua</a>
             </div>
         </div>
         @endif

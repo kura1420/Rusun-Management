@@ -43,4 +43,9 @@ class RusunPemilik extends Model
     {
         return $this->belongsTo(Pemilik::class, 'pemilik_id');
     }
+
+    public function rusun_penghuni()
+    {
+        return $this->hasOne(RusunPenghuni::class);
+    }
 }

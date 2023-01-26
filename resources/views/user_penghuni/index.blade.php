@@ -8,7 +8,7 @@
 
 @section('content')
 <x-adminlte-callout theme="warning" title="Perhatian">
-    User masuk ke aplikasi secara otomatis dibuat ketika data melakukan singkronisasi ke API, default password yang digunakan adalah <strong>{{config('app.user_password_default', 'RusunKT@2022')}}</strong>. <br>
+    User masuk ke aplikasi secara otomatis dibuat ketika data melakukan singkronisasi ke API, default password yang digunakan adalah <strong>{{config('app.user_password_default', 'RusunKita')}}</strong>. <br>
     Silahkan menginformasikan akses masuk ke aplikasi berdasarkan username/email dan passwordnya.
 </x-adminlte-callout>
 

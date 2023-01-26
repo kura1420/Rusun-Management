@@ -7,6 +7,7 @@ use App\Http\Requests\StorePemilikRequest;
 use App\Http\Requests\UpdatePemilikRequest;
 use App\Models\Pemilik;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Builder;
 
 class PemilikController extends Controller
 {
@@ -46,6 +47,18 @@ class PemilikController extends Controller
                     $sessionData = session()->get('pemilik');
 
                     $query->where('id', $sessionData->id);
+                }
+
+                if ($user->level == 'pemda') {
+                    $sessionData = session()->get('pemda');
+
+                    $rusuns = \App\Models\Rusun::where('province_id', $sessionData->province_id)
+                        ->where('regencie_id', $sessionData->regencie_id)
+                        ->pluck('id');
+
+                    $query->whereHas('rusun_pemiliks', function (Builder $builder) use ($rusuns) {
+                        $builder->where('rusun_id', $rusuns);
+                    });
                 }
             })
             ->get()

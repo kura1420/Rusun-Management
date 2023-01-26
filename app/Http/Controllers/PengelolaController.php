@@ -180,7 +180,7 @@ class PengelolaController extends Controller
         $row = Pengelola::findOrFail($id);
 
         if (! $this->sessionUser->can('delete', $row)) {
-            return abort(403, "User does not have the right roles");
+            return response()->json("User does not have the right roles", 403);
         }
 
         $kontaks = $row->pengelola_kontaks->count();

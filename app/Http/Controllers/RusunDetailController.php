@@ -259,8 +259,8 @@ class RusunDetailController extends Controller
         //
         $row = RusunDetail::findOrFail($id);
 
-        if (! $this->sessionUser->can('delete', $row)) {
-            return abort(403, "User does not have the right roles");
+if (! $this->sessionUser->can('delete', $row)) {
+            return response()->json("User does not have the right roles", 403);
         }
 
         $row->delete();

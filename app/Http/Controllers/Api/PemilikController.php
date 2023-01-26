@@ -3,10 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Rusun;
+use App\Models\Pemilik;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
-class RusunController extends Controller
+class PemilikController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,35 +17,29 @@ class RusunController extends Controller
     public function index(Request $request)
     {
         //
+        $rusunNama = $request->rusun ?? NULL;
         $search = $request->search ?? NULL;
 
-        $rows = Rusun::orderBy('nama')
-            ->when($search, function ($query, $search) {
-                $query->where('nama', 'like', "%{$search}%");
+        $rusun = \App\Models\Rusun::where('nama', $rusunNama)->firstOrFail();
+
+        $rows = Pemilik::orderBy('nama')
+            ->whereHas('rusun_pemiliks', function (Builder $query) use ($rusun) {
+                $query->where('rusun_id', $rusun->id);
             })
-            ->select([
-                'nama', 
-                'alamat', 
-                'kode_pos', 
-                'email', 
-                'telp', 
-                'province_id',
-                'regencie_id',
-                'district_id',
-                'village_id',
-            ])
+            ->when($search, function ($query, $search) {
+                $query->where('nama', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%");
+            })
             ->get()
             ->map(function ($row) {
-                $row->provinces;
-                $row->kotas;
-                $row->kecamatans;
-                $row->desas;
+                $row->penyewas = $row->rusun_penghunis;
 
                 unset(
-                    $row->province_id,
-                    $row->regencie_id,
-                    $row->district_id,
-                    $row->village_id,
+                    $row->id, 
+                    $row->created_at, 
+                    $row->updated_at,
+                    $row->rusun_penghunis,
                 );
 
                 return $row;
@@ -67,10 +62,10 @@ class RusunController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Rusun  $rusun
+     * @param  \App\Models\Pemilik  $pemilik
      * @return \Illuminate\Http\Response
      */
-    public function show(Rusun $rusun)
+    public function show(Pemilik $pemilik)
     {
         //
     }
@@ -79,10 +74,10 @@ class RusunController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Rusun  $rusun
+     * @param  \App\Models\Pemilik  $pemilik
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Rusun $rusun)
+    public function update(Request $request, Pemilik $pemilik)
     {
         //
     }
@@ -90,10 +85,10 @@ class RusunController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Rusun  $rusun
+     * @param  \App\Models\Pemilik  $pemilik
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Rusun $rusun)
+    public function destroy(Pemilik $pemilik)
     {
         //
     }

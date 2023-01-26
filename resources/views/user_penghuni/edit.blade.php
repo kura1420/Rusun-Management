@@ -48,7 +48,7 @@
                 </label>
 
                 <div class="input-group">
-                    {{config('app.user_password_default', 'RusunKT@2022')}}
+                    {{config('app.user_password_default', 'RusunKita')}}
                 </div>
             </div>
         </div>

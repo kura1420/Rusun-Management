@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class BlogController extends Controller
@@ -19,7 +20,7 @@ class BlogController extends Controller
 
         $rows = \App\Models\Program::where([
             ['status', 2],
-            ['publish', 1]
+            ['publish', 1],
         ])
         ->latest('publish_at')
         ->paginate(10)

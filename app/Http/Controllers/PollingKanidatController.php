@@ -1,0 +1,197 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Http\Requests\StorePollingKanidatRequest;
+use App\Models\PollingKanidat;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
+class PollingKanidatController extends Controller
+{
+    
+    const TITLE = 'Polling Kanidat';
+    const FOLDER_VIEW = 'polling_kanidat.';
+    const FOLDER_UPLOAD = 'polling_kanidat';
+    const URL = 'polling_kanidat.';
+
+    protected $sessionUser;
+
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            $this->sessionUser = auth()->user();
+
+            return $next($request);
+        });
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index(Request $request)
+    {
+        //
+        $program_id = $request->program_id ?? NULL;
+
+        $program = \App\Models\Program::whereHas('program_kegiatans', function (Builder $query) {
+                $query->where('template', 'polling');
+            })
+            ->whereHas('program_kegiatans', function (Builder $query) {
+                $query->where('template', 'form_pendaftaran');
+            })
+            ->where('id', $program_id)
+            ->first();
+
+        if (! $program) {
+            return abort(403, "Program ini tidak memiliki template Form Pendaftaran atau Polling");
+        }
+
+        $totalSuara = PollingKanidat::where([
+            ['program_id', $program->id],
+            ['rusun_id', $program->rusun_id],
+        ])->count();
+
+        $grups = \App\Models\ProgramKanidat::orderBy('created_at')
+            ->where('program_id', $program_id)
+            // ->where('grup_status', 1)
+            ->groupBy('grup_nama')
+            ->select('id', 'grup_id', 'grup_nama', DB::raw('COUNT(grup_nama) as total'), 'grup_status', 'program_id')
+            ->get()
+            ->map(function ($grup) use ($totalSuara) {
+                $count = $grup->polling_kanidats()->count();
+
+                $grup->total_suara = $count;
+
+                if ($totalSuara > 0) {
+                    $grup->total_suara_percent = round(($count / $totalSuara) * 100, 2);
+                } else {
+                    $grup->total_suara_percent = 0;
+                }
+
+                return $grup;
+            });
+
+        $kanidats = \App\Models\ProgramKanidat::where('program_id', $program_id)
+            // ->where('grup_status', 1)
+            ->pluck('pemilik_penghuni_id');
+
+        $rusunPenghuni = \App\Models\RusunPenghuni::where('rusun_id', $program->rusun_id);
+            // ->whereNotIn('id', $kanidats);
+        $rusunPenghuniCount = $rusunPenghuni->count();
+        $rusunPenghuniPemilik = $rusunPenghuni->pluck('rusun_pemilik_id');
+
+        $rusunPemilikCount = \App\Models\RusunPemilik::whereNotIn('id', $rusunPenghuniPemilik)
+            // ->whereNotIn('pemilik_id', $kanidats)
+            ->count();
+
+        $totalPemilikPenghuni = $rusunPenghuniCount + $rusunPemilikCount;
+
+        $pollingKanidat = PollingKanidat::latest('waktu')->where('program_id', $program_id)->first();
+        $pollingKanidatCount = PollingKanidat::latest('waktu')->where('program_id', $program_id)->count();
+        $pollingKanidats = PollingKanidat::latest('waktu')->where('program_id', $program_id)->get();
+
+        $title = self::TITLE;
+        $subTitle = $program->nama;
+
+        return view(self::FOLDER_VIEW . 'index', compact('title', 'subTitle', 'program', 'grups', 'pollingKanidat', 'pollingKanidatCount', 'totalPemilikPenghuni', 'pollingKanidats'));
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(StorePollingKanidatRequest $request)
+    {
+        //
+        $input = $request->all();
+        $pemilik_penghuni_memilih = NULL;
+        $user = $this->sessionUser;
+
+        if ($user->level == 'pemilik') {
+            $pemilik = session()->get('pemilik');
+
+            $pemilik_penghuni_memilih = $pemilik->id;
+        } else {
+            $rusunPenghuni = session()->get('rusun_penghuni');
+
+            $pemilik_penghuni_memilih = $rusunPenghuni->id;
+        }
+
+        $programKanidat = \App\Models\ProgramKanidat::where([
+            ['grup_id', $request->grup_id],
+            ['grup_status', 1]
+        ])->firstOrFail();
+
+        $input['waktu'] = Carbon::now();
+        $input['apakah_pemilik'] = $user->level == 'pemilik' ? 1 : 0;
+        $input['pemilik_penghuni_memilih'] = $pemilik_penghuni_memilih;
+        $input['program_id'] = $programKanidat->program_id;
+        $input['rusun_id'] = $programKanidat->rusun_id;
+
+        PollingKanidat::create($input);
+
+        return response()->json('Success');
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\PollingKanidat  $pollingKanidat
+     * @return \Illuminate\Http\Response
+     */
+    public function show(PollingKanidat $pollingKanidat)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  \App\Models\PollingKanidat  $pollingKanidat
+     * @return \Illuminate\Http\Response
+     */
+    public function edit(PollingKanidat $pollingKanidat)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\PollingKanidat  $pollingKanidat
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, PollingKanidat $pollingKanidat)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Models\PollingKanidat  $pollingKanidat
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(PollingKanidat $pollingKanidat)
+    {
+        //
+    }
+}

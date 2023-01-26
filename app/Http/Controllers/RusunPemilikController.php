@@ -65,6 +65,7 @@ class RusunPemilikController extends Controller
                 $row->pemiliks->nama ?? NULL,
                 $row->status_text,
                 '<nobr>' . 
+                    '<a href="'.route(self::URL .'edit', $row->id).'" class="btn btn-warning btn-sm" title="Verifikasi"><i class="fas fa-tasks"></i> Verifikasi</a> ' .
                     '<a href="'.route(self::URL .'show', $row->id).'" class="btn btn-success btn-sm" title="Detail"><i class="fas fa-folder"></i> Detail</a> ' .
                 '</nobr>',
             ]);
@@ -121,11 +122,6 @@ class RusunPemilikController extends Controller
 
         $row = RusunPemilik::findOrFail($id);
 
-        $row->penghunis = $row->pemiliks
-            ->rusun_penghunis()
-            ->where('rusun_unit_detail_id', $row->rusun_unit_detail_id)
-            ->first();
-
         $row->rusun_pemilik_dokumens = $row->pemiliks
             ->rusun_pemilik_dokumens()
             ->where('rusun_unit_detail_id', $row->rusun_unit_detail_id)
@@ -148,10 +144,28 @@ class RusunPemilikController extends Controller
      * @param  \App\Models\RusunPemilik  $rusunPemilik
      * @return \Illuminate\Http\Response
      */
-    public function edit(RusunPemilik $rusunPemilik)
+    public function edit(RusunPemilik $rusunPemilik, $id)
     {
         //
-        return abort(404);
+        $title = self::TITLE;
+        $subTitle = 'Edit Data';
+
+        $row = RusunPemilik::findOrFail($id);
+
+        $row->rusun_pemilik_dokumens = $row->pemiliks
+            ->rusun_pemilik_dokumens()
+            ->where('rusun_unit_detail_id', $row->rusun_unit_detail_id)
+            ->get()
+            ->map(function ($rusun_pemilik_dokumen) {
+                $rusun_pemilik_dokumen->dokumens = $rusun_pemilik_dokumen->dokumens()->first();
+                $rusun_pemilik_dokumen->rusuns = $rusun_pemilik_dokumen->rusuns()->first();
+                $rusun_pemilik_dokumen->rusun_details = $rusun_pemilik_dokumen->rusun_details()->first();
+                $rusun_pemilik_dokumen->rusun_unit_details = $rusun_pemilik_dokumen->rusun_unit_details()->first();
+    
+                return $rusun_pemilik_dokumen;
+            });
+
+        return view(self::FOLDER_VIEW . 'edit', compact('title', 'subTitle', 'row',));
     }
 
     /**
@@ -161,9 +175,17 @@ class RusunPemilikController extends Controller
      * @param  \App\Models\RusunPemilik  $rusunPemilik
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateRusunPemilikRequest $request, RusunPemilik $rusunPemilik)
+    public function update(UpdateRusunPemilikRequest $request, RusunPemilik $rusunPemilik, $id)
     {
         //
+        $row = RusunPemilik::findOrFail($id);
+
+        $row->update([
+            'status' => $request->status == 'verif' ? 1 : 0,
+            'alasan' => $request->status == 'verif' ? '-' : $request->alasan,
+        ]);
+
+        return response()->json('Success');
     }
 
     /**

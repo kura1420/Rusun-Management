@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 use Jorenvh\Share\ShareFacade as Share;
 
 class HomeController extends Controller
@@ -42,6 +43,7 @@ class HomeController extends Controller
     {
         $title = self::TITLE;
         $subTitle = NULL;
+        $today = Carbon::today()->format('Y-m-d');
 
         $userSession = $this->sessionUser;
         if ($userSession->level == 'pemilik' || $userSession->level == 'penghuni') {
@@ -50,19 +52,38 @@ class HomeController extends Controller
 
         $programs = \App\Models\Program::where([
                 ['status', 2],
-                ['publish', 1]
+                ['publish', 1],
+                [DB::raw('YEAR(publish_at)'), date('Y')],
             ])
             ->latest('publish_at')
             ->get()
-            ->map(function ($program) {
-                $formPendaftaran = $program->program_kegiatans()->where('template', 'form_pendaftaran')->first();
+            ->map(function ($program) use ($today) {
+                $formPendaftaran = $program->program_kegiatans()
+                    ->where('template', 'form_pendaftaran')
+                    // ->where('tanggal_mulai', '>=', $today)
+                    // ->where('tanggal_berakhir', '<=', $today)
+                    ->first();
 
-                $program->form_pendaftaran = $formPendaftaran ? TRUE : FALSE;
+                $polling = $program->program_kegiatans()
+                    ->where('template', 'polling')
+                    // ->where('tanggal_mulai', '>=', $today)
+                    // ->where('tanggal_berakhir', '<=', $today)
+                    ->first();
+
                 if ($formPendaftaran) {
                     $program->grups = $program->program_kanidats()->groupBy('grup_id')->get();
                 } else {
                     $program->grups = [];
                 }
+
+                if ($polling) {
+                    $program->polling_result = $polling;
+                } else {
+                    $program->polling_result = NULL;
+                }
+                
+                $program->form_pendaftaran = $formPendaftaran ? TRUE : FALSE;
+                $program->polling = $polling ? TRUE : FALSE;
                 
                 $program->keterangan = Str::limit($program->keterangan, 500);
                 $program->publish_at = Carbon::parse($program->publish_at)->diffForHumans();
@@ -79,9 +100,18 @@ class HomeController extends Controller
             });
 
         $tickets = \App\Models\Komplain::latest('updated_at', 'desc')
-            ->where('sudah_dijawab', 0)
-            ->where('status', '!=', '1')
-            ->where('status', '!=', '3')
+            ->where([
+                ['sudah_dijawab', 0],
+                ['status', '!=', 1],
+                ['status', '!=', 3],
+                [DB::raw('YEAR(created_at)'), date('Y')],
+            ])
+            ->orWhere([
+                ['sudah_dijawab', 0],
+                ['status', '!=', 1],
+                ['status', '!=', 3],
+                [DB::raw('YEAR(updated_at)'), date('Y')],
+            ])
             ->limit(7)
             ->get();
 
@@ -93,6 +123,7 @@ class HomeController extends Controller
         $title = self::TITLE;
         $subTitle = NULL;
         $pemilik_penghuni_id = NULL;
+        $today = Carbon::today()->format('Y-m-d');
 
         $user = $this->sessionUser;
 
@@ -108,7 +139,8 @@ class HomeController extends Controller
 
         $programs = \App\Models\Program::where([
                 ['status', 2],
-                ['publish', 1]
+                ['publish', 1],
+                [DB::raw('YEAR(publish_at)'), date('Y')],
             ])
             ->when($user, function ($query, $user) {
                 if ($user->level == 'pemilik') {
@@ -127,8 +159,18 @@ class HomeController extends Controller
             })
             ->latest('publish_at')
             ->get()
-            ->map(function ($program) use ($pemilik_penghuni_id) {
-                $formPendaftaran = $program->program_kegiatans()->where('template', 'form_pendaftaran')->first();
+            ->map(function ($program) use ($pemilik_penghuni_id, $today) {
+                $formPendaftaran = $program->program_kegiatans()
+                    ->where('template', 'form_pendaftaran')
+                    // ->where('tanggal_mulai', '>=', $today)
+                    // ->where('tanggal_berakhir', '<=', $today)
+                    ->first();
+
+                $polling = $program->program_kegiatans()
+                    ->where('template', 'polling')
+                    // ->where('tanggal_mulai', '>=', $today)
+                    // ->where('tanggal_berakhir', '<=', $today)
+                    ->first();
 
                 if ($formPendaftaran) {
                     $programKanidat = $program->program_kanidats()
@@ -149,7 +191,15 @@ class HomeController extends Controller
                     $program->register = ! $programKanidatCheck ? TRUE : FALSE;
                 }
 
+                if ($polling) {
+                    $program->polling_result = $polling;
+                } else {
+                    $program->polling_result = NULL;
+                }
+
                 $program->form_pendaftaran = $formPendaftaran ? TRUE : FALSE;
+                $program->polling = $polling ? TRUE : FALSE;
+
                 $program->keterangan = Str::limit($program->keterangan, 500);
                 $program->publish_at = Carbon::parse($program->publish_at)->diffForHumans();
 
@@ -170,7 +220,8 @@ class HomeController extends Controller
             })
             ->where([
                 ['status', 2],
-                ['publish', 1]
+                ['publish', 1],
+                [DB::raw('YEAR(publish_at)'), date('Y')],
             ])
             ->latest('publish_at')
             ->get()

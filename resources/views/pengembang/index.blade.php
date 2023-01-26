@@ -15,9 +15,11 @@
 
 <x-adminlte-card theme="primary" theme-mode="outline" title="{{$subTitle}}">
     <x-slot name="toolsSlot">
+        @role('Root|Admin')
         <a href="{{route('pengembang.create')}}" class="btn btn-sm btn-primary">
             <i class="fa fa-plus"></i> Tambah
         </a>
+        @endrole
     </x-slot>
     
     <x-adminlte-datatable id="table2" :heads="$heads" head-theme="dark" :config="$config" striped hoverable bordered beautify />

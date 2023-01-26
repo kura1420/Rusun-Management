@@ -34,7 +34,7 @@
             <x-adminlte-input name="name" label="Nama" placeholder="Nama" fgroup-class="col-md-6" value="{{old('name')}}" />
             <x-adminlte-input type="email" name="email" label="Email" placeholder="Email" fgroup-class="col-md-6" value="{{old('email')}}" />
             <x-adminlte-input name="username" label="Username" placeholder="Username" fgroup-class="col-md-6" value="{{old('username')}}" />
-            <x-adminlte-input name="password" label="Password" placeholder="Password" fgroup-class="col-md-3" value="{{config('app.user_password_default', 'RusunKT@2022')}}" />
+            <x-adminlte-input name="password" label="Password" placeholder="Password" fgroup-class="col-md-3" value="{{config('app.user_password_default', 'RusunKita')}}" />
 
             <x-adminlte-select name="permission" label="Permission" fgroup-class="col-md-3">
                 <option value="">Pilih</option>

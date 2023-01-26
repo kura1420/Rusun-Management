@@ -147,4 +147,9 @@ class ProgramKanidat extends Model
     {
         return $this->hasMany(ProgramKanidatDokumen::class);
     }
+
+    public function polling_kanidats()
+    {
+        return $this->hasMany(PollingKanidat::class, 'grup_id', 'grup_id');
+    }
 }

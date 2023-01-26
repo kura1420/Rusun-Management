@@ -14,6 +14,23 @@ class Pemilik extends Model
 
     protected $guarded = [];
 
+    public function getIdentitasTipeTextAttribute()
+    {
+        switch ($this->identitas_tipe) {
+            case 'KTP':
+                return 'KTP';
+                break;
+
+            case 'PASSPORT':
+                return 'PASSPORT';
+                break;
+            
+            default:
+                return NULL;
+                break;
+        }
+    }
+
     public function rusun_pemiliks()
     {
         return $this->hasMany(RusunPemilik::class);
