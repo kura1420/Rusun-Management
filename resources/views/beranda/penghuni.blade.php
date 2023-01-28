@@ -10,7 +10,7 @@
 <div class="row">
     <div class="col-md-8">
         @forelse ($programs as $program)
-        <div class="card card-outline card-primary card-widget collapsed-card1">
+        <div class="card card-outline card-primary card-widget collapsed-card">
             <div class="card-header">
                 <div class="user-block">
                     <img class="img-circle" src="{{asset('logo.png')}}" alt="User Image" />
@@ -51,6 +51,10 @@
                 @if ($program->register)
                 <a href="{{route('program-kanidat.register', $program->id)}}" class="btn btn-default btn-sm text-secondary"><i class="fas fa-pencil-alt"></i> Daftarkan Tim Anda</a>
                 @endif
+            @endif
+
+            @if ($program->polling_result)
+                <a href="{{route('polling-kanidat.index', ['program_id' => $program->id])}}" class="btn btn-success btn-sm"><i class="fas fa-tasks"></i> Hasil Pemilihan</a>
             @endif
             </div>
 

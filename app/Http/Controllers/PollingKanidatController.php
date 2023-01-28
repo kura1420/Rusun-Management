@@ -38,6 +38,23 @@ class PollingKanidatController extends Controller
         //
         $program_id = $request->program_id ?? NULL;
 
+        $user = $this->sessionUser;
+
+        $pemilik_penghuni_memilih = NULL;
+        $pemilikPenghuniIsChoose = FALSE;
+
+        if ($user->level == 'pemilik') {
+            $pemilik = session()->get('pemilik');
+
+            $pemilik_penghuni_memilih = $pemilik->id;
+        }
+
+        if ($user->level == 'penghuni') {
+            $penghuni = session()->get('penghuni');
+
+            $pemilik_penghuni_memilih = $penghuni->id;
+        }
+
         $program = \App\Models\Program::whereHas('program_kegiatans', function (Builder $query) {
                 $query->where('template', 'polling');
             })
@@ -49,6 +66,16 @@ class PollingKanidatController extends Controller
 
         if (! $program) {
             return abort(403, "Program ini tidak memiliki template Form Pendaftaran atau Polling");
+        }
+
+        $checkUserHasBeenChoose = PollingKanidat::where([
+            ['program_id', $program->id],
+            ['rusun_id', $program->rusun_id],
+            ['pemilik_penghuni_memilih', $pemilik_penghuni_memilih],
+        ])->first();
+
+        if (! $checkUserHasBeenChoose) {
+            $pemilikPenghuniIsChoose = TRUE;
         }
 
         $totalSuara = PollingKanidat::where([
@@ -91,14 +118,16 @@ class PollingKanidatController extends Controller
 
         $totalPemilikPenghuni = $rusunPenghuniCount + $rusunPemilikCount;
 
-        $pollingKanidat = PollingKanidat::latest('waktu')->where('program_id', $program_id)->first();
-        $pollingKanidatCount = PollingKanidat::latest('waktu')->where('program_id', $program_id)->count();
+        $getPollingKanidat = PollingKanidat::latest('waktu')->where('program_id', $program_id);
+
+        $pollingKanidat = $getPollingKanidat->first();
+        $pollingKanidatCount = $getPollingKanidat->count();
         $pollingKanidats = PollingKanidat::latest('waktu')->where('program_id', $program_id)->get();
 
         $title = self::TITLE;
         $subTitle = $program->nama;
 
-        return view(self::FOLDER_VIEW . 'index', compact('title', 'subTitle', 'program', 'grups', 'pollingKanidat', 'pollingKanidatCount', 'totalPemilikPenghuni', 'pollingKanidats'));
+        return view(self::FOLDER_VIEW . 'index', compact('title', 'subTitle', 'program', 'grups', 'pollingKanidat', 'pollingKanidatCount', 'totalPemilikPenghuni', 'pollingKanidats', 'pemilikPenghuniIsChoose'));
     }
 
     /**

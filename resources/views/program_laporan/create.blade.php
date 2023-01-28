@@ -163,7 +163,7 @@ var program_id = '{{$programKegiatan->program_id}}';
             @break
 
         @case('polling')
-            @include('program_laporan.polling')
+            <script src="{{asset('js/program_laporan/polling.js')}}"></script>
             @break
 
         @default

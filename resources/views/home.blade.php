@@ -10,7 +10,7 @@
 <div class="row">
     <div class="col-md-8">
         @forelse ($programs as $program)
-        <div class="card card-outline card-primary card-widget collapsed-card1">
+        <div class="card card-outline card-primary card-widget collapsed-card">
             <div class="card-header">
                 <div class="user-block">
                     <img class="img-circle" src="{{asset('logo.png')}}" alt="User Image" />

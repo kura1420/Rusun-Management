@@ -56,11 +56,13 @@
 </div>
 
 @role('Pemilik|Penghuni')
-<div class="card">
-    <div class="card-body">
-        Anda belum memilih dari calon kanidat yang tersedia <x-adminlte-button label="Tentukan pilihan anda" theme="primary" icon="fas fa-check"/>
+    @if ($pemilikPenghuniIsChoose)
+    <div class="card">
+        <div class="card-body">
+            Anda belum memilih dari calon kanidat yang tersedia <x-adminlte-button label="Tentukan pilihan anda" theme="primary" icon="fas fa-check" id="btnShowModalChoose" />
+        </div>
     </div>
-</div>
+    @endif
 @endrole
 
 <x-adminlte-card theme="danger" title="Daftar Yang Sudah Memberikan Suara" theme-mode="outline">
@@ -193,6 +195,10 @@ $(function () {
     });
 
     @role('Pemilik|Penghuni')
+    $('#btnShowModalChoose').on('click', function () {
+        $('#modalMemilih').modal('show');
+    });
+
     $('#btnChooseCandidat').on('click', function () {
         const grup_id = $('#grup_id').val();
                 
