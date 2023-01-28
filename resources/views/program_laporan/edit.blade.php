@@ -175,7 +175,7 @@ var program_id = '{{$row->program_id}}';
             @break
 
         @case('polling')
-            @include('program_laporan.polling')
+            <script src="{{asset('js/program_laporan/polling.js')}}"></script>
             @break
 
         @default
@@ -196,8 +196,6 @@ $(function () {
         const value = $(this).val();
         const url = $(this).attr('id');
         const $this = $(this);
-
-        console.log(value, url);
 
         Swal.fire({
             title: 'Apakah anda yakin?',

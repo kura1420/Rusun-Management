@@ -205,7 +205,68 @@ class ProgramLaporanController extends Controller
     public function show(ProgramLaporan $programLaporan)
     {
         //
-        return $programLaporan;
+        $title = self::TITLE;
+        $subTitle = 'Detail Data';
+
+        $row = $programLaporan;
+        $programKegiatan = $row->program_kegiatan;
+
+        $totalSuara = 0;
+        $totalPemilikPenghuni = 0;
+        $pollingKanidatCount = 0;
+        $grups = [];
+        $pollingKanidats = [];
+        $pollingKanidat = NULL;
+
+        if ($programKegiatan->template == 'polling') {
+            $totalSuara = \App\Models\PollingKanidat::where([
+                ['program_id', $programKegiatan->program_id],
+                ['rusun_id', $programKegiatan->rusun_id],
+            ])->count();
+
+            $grups = \App\Models\ProgramKanidat::orderBy('created_at')
+                ->where('program_id', $programKegiatan->program_id)
+                // ->where('grup_status', 1)
+                ->groupBy('grup_nama')
+                ->select('id', 'grup_id', 'grup_nama', DB::raw('COUNT(grup_nama) as total'), 'grup_status', 'program_id')
+                ->get()
+                ->map(function ($grup) use ($totalSuara) {
+                    $count = $grup->polling_kanidats()->count();
+
+                    $grup->total_suara = $count;
+
+                    if ($totalSuara > 0) {
+                        $grup->total_suara_percent = round(($count / $totalSuara) * 100, 2);
+                    } else {
+                        $grup->total_suara_percent = 0;
+                    }
+
+                    return $grup;
+                });
+
+            $kanidats = \App\Models\ProgramKanidat::where('program_id', $programKegiatan->program_id)
+                // ->where('grup_status', 1)
+                ->pluck('pemilik_penghuni_id');
+
+            $rusunPenghuni = \App\Models\RusunPenghuni::where('rusun_id', $programKegiatan->rusun_id);
+                // ->whereNotIn('id', $kanidats);
+            $rusunPenghuniCount = $rusunPenghuni->count();
+            $rusunPenghuniPemilik = $rusunPenghuni->pluck('rusun_pemilik_id');
+
+            $rusunPemilikCount = \App\Models\RusunPemilik::whereNotIn('id', $rusunPenghuniPemilik)
+                // ->whereNotIn('pemilik_id', $kanidats)
+                ->count();
+
+            $totalPemilikPenghuni = $rusunPenghuniCount + $rusunPemilikCount;
+
+            $getPollingKanidat = \App\Models\PollingKanidat::latest('waktu')->where('program_id', $programKegiatan->program_id);
+
+            $pollingKanidat = $getPollingKanidat->first();
+            $pollingKanidatCount = $getPollingKanidat->count();
+            $pollingKanidats = \App\Models\PollingKanidat::latest('waktu')->where('program_id', $programKegiatan->program_id)->get();
+        }
+
+        return view(self::FOLDER_VIEW . 'show', compact('title', 'subTitle', 'row', 'totalSuara', 'totalPemilikPenghuni', 'pollingKanidatCount', 'grups', 'pollingKanidats', 'pollingKanidat'));
     }
 
     /**
@@ -221,8 +282,64 @@ class ProgramLaporanController extends Controller
         $subTitle = 'Edit Data';
 
         $row = $programLaporan;
+        $programKegiatan = $row->program_kegiatan;
 
-        return view(self::FOLDER_VIEW . 'edit', compact('title', 'subTitle', 'row'));
+        $totalSuara = 0;
+        $totalPemilikPenghuni = 0;
+        $pollingKanidatCount = 0;
+        $grups = [];
+        $pollingKanidats = [];
+        $pollingKanidat = NULL;
+
+        if ($programKegiatan->template == 'polling') {
+            $totalSuara = \App\Models\PollingKanidat::where([
+                ['program_id', $programKegiatan->program_id],
+                ['rusun_id', $programKegiatan->rusun_id],
+            ])->count();
+
+            $grups = \App\Models\ProgramKanidat::orderBy('created_at')
+                ->where('program_id', $programKegiatan->program_id)
+                // ->where('grup_status', 1)
+                ->groupBy('grup_nama')
+                ->select('id', 'grup_id', 'grup_nama', DB::raw('COUNT(grup_nama) as total'), 'grup_status', 'program_id')
+                ->get()
+                ->map(function ($grup) use ($totalSuara) {
+                    $count = $grup->polling_kanidats()->count();
+
+                    $grup->total_suara = $count;
+
+                    if ($totalSuara > 0) {
+                        $grup->total_suara_percent = round(($count / $totalSuara) * 100, 2);
+                    } else {
+                        $grup->total_suara_percent = 0;
+                    }
+
+                    return $grup;
+                });
+
+            $kanidats = \App\Models\ProgramKanidat::where('program_id', $programKegiatan->program_id)
+                // ->where('grup_status', 1)
+                ->pluck('pemilik_penghuni_id');
+
+            $rusunPenghuni = \App\Models\RusunPenghuni::where('rusun_id', $programKegiatan->rusun_id);
+                // ->whereNotIn('id', $kanidats);
+            $rusunPenghuniCount = $rusunPenghuni->count();
+            $rusunPenghuniPemilik = $rusunPenghuni->pluck('rusun_pemilik_id');
+
+            $rusunPemilikCount = \App\Models\RusunPemilik::whereNotIn('id', $rusunPenghuniPemilik)
+                // ->whereNotIn('pemilik_id', $kanidats)
+                ->count();
+
+            $totalPemilikPenghuni = $rusunPenghuniCount + $rusunPemilikCount;
+
+            $getPollingKanidat = \App\Models\PollingKanidat::latest('waktu')->where('program_id', $programKegiatan->program_id);
+
+            $pollingKanidat = $getPollingKanidat->first();
+            $pollingKanidatCount = $getPollingKanidat->count();
+            $pollingKanidats = \App\Models\PollingKanidat::latest('waktu')->where('program_id', $programKegiatan->program_id)->get();
+        }
+
+        return view(self::FOLDER_VIEW . 'edit', compact('title', 'subTitle', 'row', 'totalSuara', 'totalPemilikPenghuni', 'pollingKanidatCount', 'grups', 'pollingKanidats', 'pollingKanidat'));
     }
 
     /**
