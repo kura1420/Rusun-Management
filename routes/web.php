@@ -334,13 +334,21 @@ Route::middleware(['auth'])->group(function () {
 
                 Route::delete('/{id}/dokumentasi-delete', 'dokumentasiDestroy')->name('dokumentasi-delete');
             });
+
+        Route::prefix('polling-kanidat')
+            ->as('polling-kanidat.')
+            ->controller(PollingKanidatController::class)
+            ->group(function () {
+                Route::get('/{id}', 'edit')->name('edit');
+
+                Route::put('/{id}', 'update')->name('update');
+            });
     });
 
     Route::middleware(['role_or_permission:Root|Admin|Pemda|Rusun|Pemilik|Penghuni|Verif Dokumen'])->group(function () {
         Route::resources([
             'program-kanidat' => ProgramKanidatController::class,
             'program-kanidat-dokumen' => ProgramKanidatDokumenController::class,
-            'polling-kanidat' => PollingKanidatController::class,
         ]);
 
         Route::prefix('program-kanidat')
@@ -359,6 +367,16 @@ Route::middleware(['auth'])->group(function () {
             ->controller(ProgramKanidatDokumenController::class)
             ->group(function () {
                 Route::get('/view-file/{id}/{file}', 'view_file')->name('view_file');
+            });
+
+        Route::prefix('polling-kanidat')
+            ->as('polling-kanidat.')
+            ->controller(PollingKanidatController::class)
+            ->group(function () {
+                Route::get('/', 'index')->name('index');
+                Route::get('/{id}', 'show')->name('show');
+
+                Route::post('/', 'store')->name('store');
             });
     });
     // end program & kegiatan

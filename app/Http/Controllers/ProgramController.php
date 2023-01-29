@@ -46,6 +46,7 @@ class ProgramController extends Controller
                             <a class="dropdown-item" href="'.route('program-kegiatan.index', ['program_id' => $row->id]).'">Kegiatan</a>
                             <a class="dropdown-item" href="'.route('program-dokumen.index', ['program_id' => $row->id]).'">Dokumen</a>
                             <a class="dropdown-item" href="'.route('program-kanidat.index', ['program_id' => $row->id]).'">Kanidat</a>
+                            <a class="dropdown-item" href="'.route('polling-kanidat.edit', $row->id).'">Penetapan Kanidat</a>
                         </div>
                     </div>' .
                     '<a href="'.route(self::URL .'edit', $row->id).'" class="btn btn-info btn-sm" title="Edit"><i class="fas fa-pencil-alt"></i> Edit</a> ' .

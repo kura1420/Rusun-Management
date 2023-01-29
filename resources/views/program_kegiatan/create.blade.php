@@ -32,6 +32,7 @@
                 <option value="">Pilih</option>
                 <option value="form_pendaftaran" {{old('template') == 'form_pendaftaran' ? 'selected' : ''}}>Form Pendaftaran Kanidat</option>
                 <option value="polling" {{old('template') == 'polling' ? 'selected' : ''}}>Polling</option>
+                <option value="penetapan_hasil_pemilihan" {{old('template') == 'penetapan_hasil_pemilihan' ? 'selected' : ''}}>Penetapan Hasil Pemilihan</option>
             </x-adminlte-select>
 
             <x-adminlte-text-editor name="informasi" id="informasi" label="Informasi" fgroup-class="col-md-12" :config="[

@@ -65,8 +65,8 @@ class ProgramKegiatan extends Model
                 return 'Polling';
                 break;
 
-            case 'laporan':
-                return 'Laporan';
+            case 'penetapan_hasil_pemilihan':
+                return 'Penetapan Hasil Pemilihan';
                 break;
             
             default:
