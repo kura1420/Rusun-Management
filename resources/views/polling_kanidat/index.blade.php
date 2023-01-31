@@ -26,6 +26,12 @@
     </div>
 </div>
 
+@if ($pollingKanidatTerpilih)
+<x-adminlte-callout theme="info" title="{{$pollingKanidatTerpilih->program_kanidat->grup_nama}}">
+    Kanidat terpilih untuk <b>Program {{$pollingKanidatTerpilih->program->nama}}</b>
+</x-adminlte-callout>
+@endif
+
 <div class="card card-outline card-danger">
     <div class="card-header">
         <h5 class="card-title">
@@ -56,7 +62,7 @@
 </div>
 
 @role('Pemilik|Penghuni')
-    @if ($pemilikPenghuniIsChoose)
+    @if ($pemilikPenghuniIsChoose == TRUE && $pollingKanidatTerpilih == NULL)
     <div class="card">
         <div class="card-body">
             Anda belum memilih dari calon kanidat yang tersedia <x-adminlte-button label="Tentukan pilihan anda" theme="primary" icon="fas fa-check" id="btnShowModalChoose" />

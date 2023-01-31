@@ -339,7 +339,7 @@ Route::middleware(['auth'])->group(function () {
             ->as('polling-kanidat.')
             ->controller(PollingKanidatController::class)
             ->group(function () {
-                Route::get('/{id}', 'edit')->name('edit');
+                Route::get('/{id}/edit', 'edit')->name('edit');
 
                 Route::put('/{id}', 'update')->name('update');
             });

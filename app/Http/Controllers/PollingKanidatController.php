@@ -124,10 +124,12 @@ class PollingKanidatController extends Controller
         $pollingKanidatCount = $getPollingKanidat->count();
         $pollingKanidats = PollingKanidat::latest('waktu')->where('program_id', $program_id)->get();
 
+        $pollingKanidatTerpilih = \App\Models\ProgramKanidatTerpilih::where('program_id', $program_id)->first();
+
         $title = self::TITLE;
         $subTitle = $program->nama;
 
-        return view(self::FOLDER_VIEW . 'index', compact('title', 'subTitle', 'program', 'grups', 'pollingKanidat', 'pollingKanidatCount', 'totalPemilikPenghuni', 'pollingKanidats', 'pemilikPenghuniIsChoose'));
+        return view(self::FOLDER_VIEW . 'index', compact('title', 'subTitle', 'program', 'grups', 'pollingKanidat', 'pollingKanidatCount', 'totalPemilikPenghuni', 'pollingKanidats', 'pemilikPenghuniIsChoose', 'pollingKanidatTerpilih'));
     }
 
     /**
@@ -196,9 +198,61 @@ class PollingKanidatController extends Controller
      * @param  \App\Models\PollingKanidat  $pollingKanidat
      * @return \Illuminate\Http\Response
      */
-    public function edit(PollingKanidat $pollingKanidat)
+    public function edit($id)
     {
         //
+        $title = self::TITLE;
+        $subTitle = 'Penetapan Program';
+
+        $row = PollingKanidat::where('program_id', $id)->firstOrFail();
+
+        $totalSuara = \App\Models\PollingKanidat::where([
+            ['program_id', $row->program_id],
+            ['rusun_id', $row->rusun_id],
+        ])->count();
+
+        $grups = \App\Models\ProgramKanidat::orderBy('created_at')
+            ->where('program_id', $row->program_id)
+            // ->where('grup_status', 1)
+            ->groupBy('grup_nama')
+            ->select('id', 'grup_id', 'grup_nama', DB::raw('COUNT(grup_nama) as total'), 'grup_status', 'program_id')
+            ->get()
+            ->map(function ($grup) use ($totalSuara) {
+                $count = $grup->polling_kanidats()->count();
+
+                $grup->total_suara = $count;
+
+                if ($totalSuara > 0) {
+                    $grup->total_suara_percent = round(($count / $totalSuara) * 100, 2);
+                } else {
+                    $grup->total_suara_percent = 0;
+                }
+
+                return $grup;
+            });
+
+        $kanidats = \App\Models\ProgramKanidat::where('program_id', $row->program_id)
+            // ->where('grup_status', 1)
+            ->pluck('pemilik_penghuni_id');
+
+        $rusunPenghuni = \App\Models\RusunPenghuni::where('rusun_id', $row->rusun_id);
+            // ->whereNotIn('id', $kanidats);
+        $rusunPenghuniCount = $rusunPenghuni->count();
+        $rusunPenghuniPemilik = $rusunPenghuni->pluck('rusun_pemilik_id');
+
+        $rusunPemilikCount = \App\Models\RusunPemilik::whereNotIn('id', $rusunPenghuniPemilik)
+            // ->whereNotIn('pemilik_id', $kanidats)
+            ->count();
+
+        $totalPemilikPenghuni = $rusunPenghuniCount + $rusunPemilikCount;
+
+        $getPollingKanidat = \App\Models\PollingKanidat::latest('waktu')->where('program_id', $row->program_id);
+
+        $pollingKanidat = $getPollingKanidat->first();
+        $pollingKanidatCount = $getPollingKanidat->count();
+        $pollingKanidats = \App\Models\PollingKanidat::latest('waktu')->where('program_id', $row->program_id)->get();
+
+        return view(self::FOLDER_VIEW . 'edit', compact('title', 'subTitle', 'row', 'totalSuara', 'totalPemilikPenghuni', 'pollingKanidatCount', 'grups', 'pollingKanidats', 'pollingKanidat'));
     }
 
     /**
@@ -208,9 +262,32 @@ class PollingKanidatController extends Controller
      * @param  \App\Models\PollingKanidat  $pollingKanidat
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, PollingKanidat $pollingKanidat)
+    public function update(Request $request, $id)
     {
         //
+        $input = $request->all();
+        
+        \App\Models\Program::findOrFail($id);
+
+        $grups = \App\Models\ProgramKanidat::where('grup_id', $input['grup_id'])->get();
+
+        foreach ($grups as $grup) {
+            \App\Models\ProgramKanidatTerpilih::create([
+                'apakah_pemilik' => $grup->apakah_pemilik,
+                'rusun_unit_detail_id' => $grup->rusun_unit_detail_id,
+                'rusun_detail_id' => $grup->rusun_detail_id,
+                'pemilik_penghuni_id' => $grup->pemilik_penghuni_id,
+                'program_jabatan_id' => $grup->program_jabatan_id,
+                'program_id' => $grup->program_id,
+                'rusun_id' => $grup->rusun_id,
+                'program_kanidat_id' => $grup->id,
+                'grup_id' => $grup->grup_id,
+            ]);
+        }
+
+        return redirect()
+            ->route('program.index')
+            ->with('success', 'Update data berhasil...');
     }
 
     /**
