@@ -85,7 +85,7 @@ class PollingKanidatController extends Controller
 
         $grups = \App\Models\ProgramKanidat::orderBy('created_at')
             ->where('program_id', $program_id)
-            // ->where('grup_status', 1)
+            ->where('grup_status', 1)
             ->groupBy('grup_nama')
             ->select('id', 'grup_id', 'grup_nama', DB::raw('COUNT(grup_nama) as total'), 'grup_status', 'program_id')
             ->get()
@@ -213,7 +213,7 @@ class PollingKanidatController extends Controller
 
         $grups = \App\Models\ProgramKanidat::orderBy('created_at')
             ->where('program_id', $row->program_id)
-            // ->where('grup_status', 1)
+            ->where('grup_status', 1)
             ->groupBy('grup_nama')
             ->select('id', 'grup_id', 'grup_nama', DB::raw('COUNT(grup_nama) as total'), 'grup_status', 'program_id')
             ->get()
